@@ -10,9 +10,9 @@ import logging as _logging
 import os
 import re
 
-from twitter.ml.common.resources import AuroraPath
-from twitter.deepbird.hparam import HParams
-from twitter.deepbird.io.util import (
+from X.ml.common.resources import AuroraPath
+from X.deepbird.hparam import HParams
+from X.deepbird.io.util import (
   _get_feature_id,  # noqa: F401
   feature_id,  # noqa: F401
   preprocess_feature_regex,  # noqa: F401
@@ -22,12 +22,12 @@ from twitter.deepbird.io.util import (
   list_files,  # noqa: F401
   match_files,  # noqa: F401
 )
-from twitter.deepbird.io.legacy.util import (
+from X.deepbird.io.legacy.util import (
   batch_apply,  # noqa: F401
   boolean_mask,  # noqa: F401
   fixed_length_tensor,  # noqa: F401
 )
-from twitter.deepbird.sparse.util import (
+from X.deepbird.sparse.util import (
   convert_to_sparse,  # noqa: F401
   limit_bits,  # noqa: F401
 )
@@ -304,9 +304,9 @@ def rehash_sparse_features_nbits(sp_a, nbits, hash_fn=multiplicative_hash):
 
 def convert_to_hparams(opt):
   """
-  Converts argparse.Namespace object to twitter.deepbird.hparam.hparam.HParams.
+  Converts argparse.Namespace object to X.deepbird.hparam.hparam.HParams.
   Note that tensorflow.contrib.training.HParams is gone in TF 2.x, and we forward ported
-  tensorflow.contrib.training.HParams to twitter.deepbird.hparam.hapram.HParams.
+  tensorflow.contrib.training.HParams to X.deepbird.hparam.hapram.HParams.
 
   NOTE: If you are using estimators, please don't call this method and directly pass python dict
   to TensorFlow estimator. Starting TensorFlow 2.0, Estimator will only accept dicts.
@@ -323,7 +323,7 @@ def convert_to_hparams(opt):
   else:
     raise ValueError("Input can not be of type %s. "
                      "It can be one of { argparse.Namespace, dict, "
-                     "twitter.deepbird.hparam.HParams}."
+                     "X.deepbird.hparam.HParams}."
                      % type(opt))
 
   params = HParams()

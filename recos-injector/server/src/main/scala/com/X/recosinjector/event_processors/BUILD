@@ -1,0 +1,20 @@
+scala_library(
+    platform = "java11",
+    strict_deps = False,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "eventbus/client",
+        "recos-injector/server/config",
+        "recos-injector/server/src/main/scala/com/X/recosinjector/clients",
+        "recos-injector/server/src/main/scala/com/X/recosinjector/config",
+        "recos-injector/server/src/main/scala/com/X/recosinjector/decider",
+        "recos-injector/server/src/main/scala/com/X/recosinjector/edges",
+        "recos-injector/server/src/main/scala/com/X/recosinjector/publishers",
+        "src/thrift/com/X/clientapp/gen:clientapp-scala",
+        "src/thrift/com/X/gizmoduck:user-thrift-scala",
+        "src/thrift/com/X/socialgraph:thrift-scala",
+        "src/thrift/com/X/timelineservice/server/internal:thrift-scala",
+        "src/thrift/com/X/tweetypie:events-scala",
+        "src/thrift/com/X/tweetypie:tweet-scala",
+    ],
+)

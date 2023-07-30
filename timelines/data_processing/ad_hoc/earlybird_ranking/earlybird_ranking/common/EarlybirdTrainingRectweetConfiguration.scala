@@ -1,14 +1,14 @@
-package com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.common
+package com.X.timelines.data_processing.ad_hoc.earlybird_ranking.common
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.ITransform
-import com.twitter.ml.api.transform.CascadeTransform
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.search.common.features.SearchResultFeature
-import com.twitter.search.common.features.TweetFeature
-import com.twitter.timelines.prediction.features.itl.ITLFeatures._
+import com.X.ml.api.DataRecord
+import com.X.ml.api.Feature
+import com.X.ml.api.FeatureContext
+import com.X.ml.api.ITransform
+import com.X.ml.api.transform.CascadeTransform
+import com.X.ml.api.util.SRichDataRecord
+import com.X.search.common.features.SearchResultFeature
+import com.X.search.common.features.TweetFeature
+import com.X.timelines.prediction.features.itl.ITLFeatures._
 import scala.collection.JavaConverters._
 
 class EarlybirdTrainingRectweetConfiguration extends EarlybirdTrainingConfiguration {

@@ -1,5 +1,5 @@
 """
-Module containing extra tensorflow metrics used at Twitter.
+Module containing extra tensorflow metrics used at X.
 This module conforms to conventions used by tf.metrics.*.
 In particular, each metric constructs two subgraphs: value_op and update_op:
   - The value op is used to fetch the current metric value.

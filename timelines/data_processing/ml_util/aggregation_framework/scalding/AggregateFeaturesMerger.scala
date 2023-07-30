@@ -1,12 +1,12 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.scalding
+package com.X.timelines.data_processing.ml_util.aggregation_framework.scalding
 
-import com.twitter.ml.api._
-import com.twitter.ml.api.constant.SharedFeatures._
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.scalding.Stat
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework._
-import com.twitter.timelines.data_processing.ml_util.sampling.SamplingUtils
+import com.X.ml.api._
+import com.X.ml.api.constant.SharedFeatures._
+import com.X.ml.api.util.SRichDataRecord
+import com.X.scalding.Stat
+import com.X.scalding.typed.TypedPipe
+import com.X.timelines.data_processing.ml_util.aggregation_framework._
+import com.X.timelines.data_processing.ml_util.sampling.SamplingUtils
 
 trait AggregateFeaturesMergerBase {
   import Utils._

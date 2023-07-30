@@ -73,7 +73,7 @@ main = JVMProcess(
     ' -kafka.bootstrap.servers={{profile.kafka_bootstrap_servers}}'
     ' -kafka.output.server={{profile.kafka_output_server}}'
     ' -kafka.application.id=uua-enrichment-planner'
-    ' -com.twitter.finatra.kafkastreams.config.principal={{role}}'
+    ' -com.X.finatra.kafkastreams.config.principal={{role}}'
     ' -decider.base=decider.yml'
     ' -decider.overlay={{profile.decider_overlay}}'
     ' {{profile.cmdline_flags}}',
@@ -89,7 +89,7 @@ job_template = Service(
   name = SERVICE_NAME,
   role = 'discode',
   instances = '{{profile.instances}}',
-  contact = 'disco-data-eng@twitter.com',
+  contact = 'disco-data-eng@X.com',
   constraints = {'rack': 'limit:1', 'host': 'limit:1'},
   announce = Announcer(
     primary_port = 'health',

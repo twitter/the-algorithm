@@ -11,7 +11,7 @@ for production training:
 Until MLCE team resolves the above issues, MLCE team recommends the following:
   - Please feel free to use Keras models for experimentation and exploration.
   - Please stick to twml Trainer for production training & exporting,
-    especially if you want to serve your model using Twitter's prediction servers.
+    especially if you want to serve your model using X's prediction servers.
 
 This module provide tooling for easily training keras models using twml Trainer.
 
@@ -24,7 +24,7 @@ This input function can be created from the tf.data.Dataset you used with your K
 .. note: this util handles the most common case. If you have cases not satisfied by this util,
          consider writing your own build_graph to wrap your keras models.
 """
-from twitter.deepbird.hparam import HParams
+from X.deepbird.hparam import HParams
 
 import tensorflow  # noqa: F401
 import tensorflow.compat.v2 as tf
@@ -58,7 +58,7 @@ def build_keras_trainer(
 
     **kwargs: for people familiar with twml Trainer's options, they can be passed in here
       as kwargs, and they will be forwarded to Trainer as opts.
-      See https://cgit.twitter.biz/source/tree/twml/twml/argument_parser.py#n43 for available args.
+      See https://cgit.X.biz/source/tree/twml/twml/argument_parser.py#n43 for available args.
 
   Returns:
     a twml.trainers.Trainer object which can be used for training and exporting models.

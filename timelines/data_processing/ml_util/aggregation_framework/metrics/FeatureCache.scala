@@ -1,6 +1,6 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics
+package com.X.timelines.data_processing.ml_util.aggregation_framework.metrics
 
-import com.twitter.ml.api._
+import com.X.ml.api._
 import scala.collection.mutable
 
 trait FeatureCache[T] {

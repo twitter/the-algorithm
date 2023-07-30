@@ -1,0 +1,17 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    platform = "java8",
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "src/scala/com/X/search/blender/services/strato",
+        "src/thrift/com/X/spam/rtf:safety-label-scala",
+        "src/thrift/com/X/spam/rtf:tweet-rtf-event-scala",
+        "stitch/stitch-core",
+        "strato/src/main/scala/com/X/strato/catalog",
+        "strato/src/main/scala/com/X/strato/client",
+        "strato/src/main/scala/com/X/strato/data",
+        "strato/src/main/scala/com/X/strato/thrift",
+    ],
+)

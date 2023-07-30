@@ -1,15 +1,15 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.job
+package com.X.timelines.data_processing.ml_util.aggregation_framework.job
 
-import com.twitter.algebird.Semigroup
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.DataRecordMerger
-import com.twitter.summingbird.Platform
-import com.twitter.summingbird.Producer
-import com.twitter.summingbird.TailProducer
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateSource
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateStore
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregationKey
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup
+import com.X.algebird.Semigroup
+import com.X.ml.api.DataRecord
+import com.X.ml.api.DataRecordMerger
+import com.X.summingbird.Platform
+import com.X.summingbird.Producer
+import com.X.summingbird.TailProducer
+import com.X.timelines.data_processing.ml_util.aggregation_framework.AggregateSource
+import com.X.timelines.data_processing.ml_util.aggregation_framework.AggregateStore
+import com.X.timelines.data_processing.ml_util.aggregation_framework.AggregationKey
+import com.X.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup
 
 object AggregatesV2Job {
   private lazy val merger = new DataRecordMerger

@@ -1,12 +1,12 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.query
+package com.X.timelines.data_processing.ml_util.aggregation_framework.query
 
-import com.twitter.dal.personal_data.thriftjava.PersonalDataType
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.FeatureBuilder
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.thriftscala.{DataRecord => ScalaDataRecord}
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics.AggregationMetricCommon
+import com.X.dal.personal_data.thriftjava.PersonalDataType
+import com.X.ml.api.DataRecord
+import com.X.ml.api.Feature
+import com.X.ml.api.FeatureBuilder
+import com.X.ml.api.FeatureContext
+import com.X.ml.api.thriftscala.{DataRecord => ScalaDataRecord}
+import com.X.timelines.data_processing.ml_util.aggregation_framework.metrics.AggregationMetricCommon
 import java.lang.{Double => JDouble}
 import java.lang.{Long => JLong}
 import scala.collection.JavaConverters._

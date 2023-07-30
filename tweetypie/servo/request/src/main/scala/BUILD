@@ -2,7 +2,7 @@ scala_library(
     sources = ["**/*.scala"],
     platform = "java8",
     provides = scala_artifact(
-        org = "com.twitter",
+        org = "com.X",
         name = "servo-request",
         repo = artifactory,
     ),
@@ -11,7 +11,7 @@ scala_library(
     dependencies = [
         "finagle/finagle-core/src/main",
         "tweetypie/servo/util",
-        "twitter-config/yaml",
+        "X-config/yaml",
         "util/util-stats/src/main/scala",
     ],
     exports = [

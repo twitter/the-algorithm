@@ -52,8 +52,8 @@ python3_library(
     sources = ["**/*.py"],
     tags = ["no-mypy"],
     dependencies = [
-        "src/python/twitter/deepbird/projects/magic_recs/libs",
-        "src/python/twitter/deepbird/util/data",
+        "src/python/X/deepbird/projects/magic_recs/libs",
+        "src/python/X/deepbird/util/data",
         "twml:twml-nodeps",
     ],
 )
@@ -63,7 +63,7 @@ python3_library(
     sources = ["**/*.py"],
     tags = ["no-mypy"],
     dependencies = [
-        "src/python/twitter/deepbird/projects/magic_recs/libs",
+        "src/python/X/deepbird/projects/magic_recs/libs",
         "twml",
     ],
 )

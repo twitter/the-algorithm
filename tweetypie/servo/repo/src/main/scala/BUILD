@@ -2,7 +2,7 @@ scala_library(
     sources = ["**/*.scala"],
     platform = "java8",
     provides = scala_artifact(
-        org = "com.twitter",
+        org = "com.X",
         name = "servo-repo",
         repo = artifactory,
     ),
@@ -23,7 +23,7 @@ scala_library(
         "util/util-codec/src/main/scala",
         "util/util-hashing/src/main/scala",
         "util/util-logging",
-        "util/util-security/src/main/scala/com/twitter/util/security",
+        "util/util-security/src/main/scala/com/X/util/security",
         "util/util-stats/src/main/scala",
     ],
 )

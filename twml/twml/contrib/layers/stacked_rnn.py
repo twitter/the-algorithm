@@ -1,5 +1,5 @@
 
-from twitter.deepbird.compat.v1.rnn import stack_bidirectional_dynamic_rnn
+from X.deepbird.compat.v1.rnn import stack_bidirectional_dynamic_rnn
 
 import tensorflow.compat.v1 as tf
 import tensorflow

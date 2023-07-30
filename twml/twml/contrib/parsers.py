@@ -7,7 +7,7 @@ the DataRecordTrainer constructor to customize how to parse their datasets.
 Modelers may also provide custom implementations of train/eval_parse_fn using these as reference.
 '''
 
-from twitter.deepbird.io.legacy.contrib.parsers import (
+from X.deepbird.io.legacy.contrib.parsers import (
   _convert_to_fixed_length_tensor,  # noqa: F401
   _get_input_receiver_fn_feature_dict,  # noqa: F401
   _merge_dictionaries,  # noqa: F401

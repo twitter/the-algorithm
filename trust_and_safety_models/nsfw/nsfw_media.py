@@ -198,7 +198,7 @@ tuner = kt.tuners.BayesianOptimization(
   objective=kt.Objective('val_loss', direction="min"),
   max_trials=30,
   directory='tuner_dir',
-  project_name='with_twitter_clip')
+  project_name='with_X_clip')
 
 callbacks = [tf.keras.callbacks.EarlyStopping(
     monitor='val_loss', min_delta=0, patience=5, verbose=0,
@@ -240,7 +240,7 @@ callbacks = [tf.keras.callbacks.EarlyStopping(
 )]
 history = best_model.fit(train_ds, epochs=100, validation_data=eval_ds, steps_per_epoch=steps_per_epoch, callbacks=callbacks)
 
-model_name = 'twitter_hypertuned'
+model_name = 'X_hypertuned'
 model_path = f'models/nsfw_Keras_with_CLIP_{model_name}'
 tf.keras.models.save_model(best_model, model_path)
 
@@ -292,7 +292,7 @@ plt.ylabel('precision_at_recall')
 plt.xlabel('epoch')
 plt.legend(['train', 'test'], loc='upper left')
 
-plt.savefig('history_with_twitter_clip.pdf')
+plt.savefig('history_with_X_clip.pdf')
 
 test_labels = []
 test_preds = []
@@ -393,7 +393,7 @@ plt.plot(pr[1], pr[0])
 plt.xlabel("recall")
 plt.ylabel("precision")
 
-plt.savefig('with_twitter_clip.pdf')
+plt.savefig('with_X_clip.pdf')
 
 def get_point_for_recall(recall_value, recall, precision):
   idx = np.argmin(np.abs(recall - recall_value))
@@ -432,7 +432,7 @@ plt.title(
   size=20
 )
 plt.subplots_adjust(top=0.72)
-plt.savefig('recall_precision_nsfw_Keras_with_twitter_CLIP_MU_test.pdf')
+plt.savefig('recall_precision_nsfw_Keras_with_X_CLIP_MU_test.pdf')
 
 precision, recall, thresholds = pr_sens_prev
 
@@ -463,4 +463,4 @@ plt.title(
   size=20
 )
 plt.subplots_adjust(top=0.72)
-plt.savefig('recall_precision_nsfw_Keras_with_twitter_CLIP_sens_prev_test.pdf')
+plt.savefig('recall_precision_nsfw_Keras_with_X_CLIP_sens_prev_test.pdf')

@@ -1,5 +1,5 @@
 target(
     dependencies = [
-        "tweetypie/servo/json/src/main/scala/com/twitter/servo/json",
+        "tweetypie/servo/json/src/main/scala/com/X/servo/json",
     ],
 )

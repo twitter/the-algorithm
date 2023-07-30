@@ -37,7 +37,7 @@ class ReadableWrapper(object):
 
 class EventBusPipedBinaryRecordReader(BinaryRecordReader):
 
-  JAVA = '/usr/lib/jvm/java-11-twitter/bin/java'
+  JAVA = '/usr/lib/jvm/java-11-X/bin/java'
   RECORD_SEPARATOR_HEX = [
     0x29, 0xd8, 0xd5, 0x06, 0x58, 0xcd, 0x4c, 0x29,
     0xb2, 0xbc, 0x57, 0x99, 0x21, 0x71, 0xbd, 0xff

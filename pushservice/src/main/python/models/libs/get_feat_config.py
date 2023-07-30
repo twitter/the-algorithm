@@ -1,7 +1,7 @@
 import os
 
-from twitter.deepbird.projects.magic_recs.libs.metric_fn_utils import USER_AGE_FEATURE_NAME
-from twitter.deepbird.projects.magic_recs.libs.model_utils import read_config
+from X.deepbird.projects.magic_recs.libs.metric_fn_utils import USER_AGE_FEATURE_NAME
+from X.deepbird.projects.magic_recs.libs.model_utils import read_config
 from twml.contrib import feature_config as contrib_feature_config
 
 

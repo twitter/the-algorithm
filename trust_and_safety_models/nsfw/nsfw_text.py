@@ -9,8 +9,8 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 import re
 
-from twitter.cuad.representation.models.optimization import create_optimizer
-from twitter.cuad.representation.models.text_encoder import TextEncoder
+from X.cuad.representation.models.optimization import create_optimizer
+from X.cuad.representation.models.text_encoder import TextEncoder
 
 pd.set_option('display.max_colwidth', None)
 pd.set_option('display.expand_frame_repr', False)
@@ -25,7 +25,7 @@ tweet_text_feature = 'text'
 params = {
   'batch_size': 32,
   'max_seq_lengths': 256,
-  'model_type': 'twitter_bert_base_en_uncased_augmented_mlm',
+  'model_type': 'X_bert_base_en_uncased_augmented_mlm',
   'trainable_text_encoder': True,
   'lr': 5e-5,
   'epochs': 10,

@@ -128,7 +128,7 @@ pub fn to_feature_info(input_feature: &seg_dense::InputFeature) -> Option<Featur
         3223956748566688423 => 5,
 
         _ => match input_feature.feature_type {
-            //   feature_type : src/thrift/com/twitter/ml/api/data.thrift
+            //   feature_type : src/thrift/com/X/ml/api/data.thrift
             //       BINARY = 1, CONTINUOUS = 2, DISCRETE = 3,
             //    Map to slots in [Continious, Binary, Discrete, ..]
             1 => 1,

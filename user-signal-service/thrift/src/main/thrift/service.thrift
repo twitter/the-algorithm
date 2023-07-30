@@ -1,7 +1,7 @@
-namespace java com.twitter.usersignalservice.thriftjava
-namespace py gen.twitter.usersignalservice.service
-#@namespace scala com.twitter.usersignalservice.thriftscala
-#@namespace strato com.twitter.usersignalservice.strato
+namespace java com.X.usersignalservice.thriftjava
+namespace py gen.X.usersignalservice.service
+#@namespace scala com.X.usersignalservice.thriftscala
+#@namespace strato com.X.usersignalservice.strato
 
 include "signal.thrift"
 include "client_identifier.thrift"

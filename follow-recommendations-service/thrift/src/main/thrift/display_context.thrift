@@ -1,9 +1,9 @@
 include "flows.thrift"
 include "recently_engaged_user_id.thrift"
 
-namespace java com.twitter.follow_recommendations.thriftjava
-#@namespace scala com.twitter.follow_recommendations.thriftscala
-#@namespace strato com.twitter.follow_recommendations
+namespace java com.X.follow_recommendations.thriftjava
+#@namespace scala com.X.follow_recommendations.thriftscala
+#@namespace strato com.X.follow_recommendations
 
 struct Profile {
     1: required i64 profileId(personalDataType='UserId')

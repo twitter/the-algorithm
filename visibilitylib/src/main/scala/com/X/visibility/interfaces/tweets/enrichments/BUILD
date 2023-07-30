@@ -1,0 +1,25 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    platform = "java8",
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "featureswitches/featureswitches-core/src/main/scala",
+        "src/thrift/com/X/spam/rtf:safety-result-scala",
+        "stitch/stitch-core",
+        "visibility/common/src/main/scala/com/X/visibility/common",
+        "visibility/common/src/main/scala/com/X/visibility/common/actions",
+        "visibility/common/src/main/scala/com/X/visibility/common/actions/converter/scala",
+        "visibility/lib/src/main/scala/com/X/visibility",
+        "visibility/lib/src/main/scala/com/X/visibility/builder",
+        "visibility/lib/src/main/scala/com/X/visibility/builder/tweets",
+        "visibility/lib/src/main/scala/com/X/visibility/features",
+        "visibility/lib/src/main/scala/com/X/visibility/rules",
+        "visibility/results/src/main/scala/com/X/visibility/results/richtext",
+    ],
+    exports = [
+        "featureswitches/featureswitches-core/src/main/scala",
+        "visibility/lib/src/main/scala/com/X/visibility/builder",
+    ],
+)

@@ -1,9 +1,9 @@
-namespace java com.twitter.usersignalservice.thriftjava
-namespace py gen.twitter.usersignalservice.signal
-#@namespace scala com.twitter.usersignalservice.thriftscala
-#@namespace strato com.twitter.usersignalservice.strato
+namespace java com.X.usersignalservice.thriftjava
+namespace py gen.X.usersignalservice.signal
+#@namespace scala com.X.usersignalservice.thriftscala
+#@namespace strato com.X.usersignalservice.strato
 
-include "com/twitter/simclusters_v2/identifier.thrift"
+include "com/X/simclusters_v2/identifier.thrift"
 
 
 enum SignalType {

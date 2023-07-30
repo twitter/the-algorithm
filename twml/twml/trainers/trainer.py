@@ -5,7 +5,7 @@
 to expose an easier to use API by
 hiding rarely used config knobs and supplying default values.
 
-The `Trainer` facilitates multi-phase training commonly used at Twitter: e.g.
+The `Trainer` facilitates multi-phase training commonly used at X: e.g.
 MDL calibration -> MLP training -> Isotonic calibration.
 The `Trainer` also facilitates hyperparameters tuning,
 with its simple `add_parser_arguments()` method.
@@ -79,12 +79,12 @@ import sys
 import time
 from threading import Thread
 
-from twitter.common.metrics import AtomicGauge
-from twitter.deepbird.stats_server import utils as stats_server_utils
-from twitter.deepbird.stats_server.stats_exporter import StatsExporter
-from twitter.ml.common import metrics
-from twitter.ml.common.kubernetes import kubectl_delete_by_name, Resource
-from twitter.ml.twml.status import get_distributed_training_job_status, TrainingJobStatus
+from X.common.metrics import AtomicGauge
+from X.deepbird.stats_server import utils as stats_server_utils
+from X.deepbird.stats_server.stats_exporter import StatsExporter
+from X.ml.common import metrics
+from X.ml.common.kubernetes import kubectl_delete_by_name, Resource
+from X.ml.twml.status import get_distributed_training_job_status, TrainingJobStatus
 
 from absl import logging
 from twml.optimizers import LazyAdamOptimizer, optimize_loss, OPTIMIZER_SUMMARIES
@@ -101,7 +101,7 @@ import tensorflow.compat.v1 as tf
 import tensorflow
 import tensorflow_hub as hub
 
-import twitter.ml.twml.kubernetes.status as k8s_status
+import X.ml.twml.kubernetes.status as k8s_status
 import twml
 import twml.export_output_fns
 import twml.learning_rate_decay
@@ -292,7 +292,7 @@ class Trainer(object):
     if isinstance(warm_start_from, str):
       warm_start_from = sanitize_hdfs_path(warm_start_from)
 
-    # convert to twitter.deepbird.hparam.hparam.HParams object
+    # convert to X.deepbird.hparam.hparam.HParams object
     params = twml.util.convert_to_hparams(params)
 
     # keep a copy of the params because calling self._estimator.params creates a deepcopy
@@ -1497,7 +1497,7 @@ class Trainer(object):
         self._tensorboard_handle = subprocess.Popen(['tensorboard'] + tensorboard_args)
       except OSError:
         try:
-          # this will work with Twitter internal pants build when run locally
+          # this will work with X internal pants build when run locally
           args = ['./pants', 'run', 'twml:tensorboard', '--'] + tensorboard_args
           self._tensorboard_handle = subprocess.Popen(args)
         except OSError:
@@ -1703,7 +1703,7 @@ class Trainer(object):
     return True
 
   def _maybe_del_tsd_exit(self, state_files) -> None:
-    """Handle potential early exit and TwitterSetDeployment deletion.
+    """Handle potential early exit and XSetDeployment deletion.
 
       If:
         - distributed training
@@ -1712,7 +1712,7 @@ class Trainer(object):
       we will exit early and not restart work
 
       If --distributed_training_cleanup = True then we will also handle
-      cleaning up the TwitterSetDeployments.
+      cleaning up the XSetDeployments.
 
       Args:
         state_files: A python list indicate state files to determine the finish 
@@ -1747,7 +1747,7 @@ class Trainer(object):
         os.environ['TWML_DISTRIBUTED_JOB_TYPE'],
         os.environ['TWML_JOB_ENV'],
       ])
-      logging.info(f"Deleting TwitterSetDeployment {resource_name}")
+      logging.info(f"Deleting XSetDeployment {resource_name}")
       # each job type will manage its own deletion so that deletion happens
       # in the trainer init call for every job type
       # otherwise we may kill another job type during an important

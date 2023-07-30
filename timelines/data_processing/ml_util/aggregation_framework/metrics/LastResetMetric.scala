@@ -1,11 +1,11 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics
+package com.X.timelines.data_processing.ml_util.aggregation_framework.metrics
 
 import java.lang.{Long => JLong}
-import com.twitter.ml.api._
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics.ConversionUtils._
-import com.twitter.util.Duration
-import com.twitter.util.Time
+import com.X.ml.api._
+import com.X.ml.api.util.SRichDataRecord
+import com.X.timelines.data_processing.ml_util.aggregation_framework.metrics.ConversionUtils._
+import com.X.util.Duration
+import com.X.util.Time
 import scala.math.max
 
 /**

@@ -13,8 +13,8 @@ extensions = [
   "sphinx.ext.intersphinx",
   "sphinx.ext.ifconfig",
   "sphinx.ext.graphviz",
-  "twitter.docbird.ext.thriftlexer",
-  "twitter.docbird.ext.toctree_default_caption",
+  "X.docbird.ext.thriftlexer",
+  "X.docbird.ext.toctree_default_caption",
   "sphinxcontrib.httpdomain",
 ]
 

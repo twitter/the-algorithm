@@ -10,7 +10,7 @@ Given these groups, this section will discuss how you can setup offline batch jo
 Input Data
 ----------
 
-In order to generate aggregate features, the relevant input features need to be available offline as a daily scalding source in `DataRecord` format (typically `DailySuffixFeatureSource <https://cgit.twitter.biz/source/tree/src/scala/com/twitter/ml/api/FeatureSource.scala>`_, though `HourlySuffixFeatureSource` could also be usable but we have not tested this).
+In order to generate aggregate features, the relevant input features need to be available offline as a daily scalding source in `DataRecord` format (typically `DailySuffixFeatureSource <https://cgit.X.biz/source/tree/src/scala/com/X/ml/api/FeatureSource.scala>`_, though `HourlySuffixFeatureSource` could also be usable but we have not tested this).
 
 .. admonition:: Note
 
@@ -23,7 +23,7 @@ Now that we have a daily data source with input features and labels, we need to 
 
 .. admonition:: Example: Timelines Quality config
 
-  `TimelinesAggregationConfig <https://cgit.twitter.biz/source/tree/src/scala/com/twitter/timelines/prediction/common/aggregates/TimelinesAggregationConfig.scala>`_ imports the configured `AggregationGroups` from `TimelinesAggregationConfigDetails <https://cgit.twitter.biz/source/tree/src/scala/com/twitter/timelines/prediction/common/aggregates/TimelinesAggregationConfigDetails.scala>`_. The config is then referenced by the implementing summingbird-scalding job which we will setup below.
+  `TimelinesAggregationConfig <https://cgit.X.biz/source/tree/src/scala/com/X/timelines/prediction/common/aggregates/TimelinesAggregationConfig.scala>`_ imports the configured `AggregationGroups` from `TimelinesAggregationConfigDetails <https://cgit.X.biz/source/tree/src/scala/com/X/timelines/prediction/common/aggregates/TimelinesAggregationConfigDetails.scala>`_. The config is then referenced by the implementing summingbird-scalding job which we will setup below.
 
 OfflineAggregateSource
 ----------------------
@@ -46,11 +46,11 @@ Each `AggregateGroup` will need to define a (daily) source of input features. We
 
   #. The name is not important as long as it is unique.
 
-  #. `timestampFeature` must be a discrete feature of type `com.twitter.ml.api.Feature[Long]` and represents the “time” of a given training record in milliseconds - for example, the time at which an engagement, push open event, or abuse event took place that you are trying to train on. If you do not already have such a feature in your daily training data, you need to add one.
+  #. `timestampFeature` must be a discrete feature of type `com.X.ml.api.Feature[Long]` and represents the “time” of a given training record in milliseconds - for example, the time at which an engagement, push open event, or abuse event took place that you are trying to train on. If you do not already have such a feature in your daily training data, you need to add one.
 
   #. `scaldingSuffixType` can be “hourly” or “daily” depending on the type of source (`HourlySuffixFeatureSource` vs `DailySuffixFeatureSource`).
   
-  #. Set `withValidation` to true to validate the presence of _SUCCESS file. Context: https://jira.twitter.biz/browse/TQ-10618
+  #. Set `withValidation` to true to validate the presence of _SUCCESS file. Context: https://jira.X.biz/browse/TQ-10618
 
 Output HDFS store
 -----------------
@@ -76,7 +76,7 @@ The `outputHdfsPathPrefix` is the only field that matters, and should be set to 
 Setting Up Aggregates Job
 -------------------------
 
-Once you have defined a config file with the aggregates you would like to compute, the next step is to create the aggregates scalding job using the config (`example <https://cgit.twitter.biz/source/tree/timelines/data_processing/ad_hoc/aggregate_interactions/v2/offline_aggregation/TimelinesAggregationScaldingJob.scala>`_). This is very concise and requires only a few lines of code:
+Once you have defined a config file with the aggregates you would like to compute, the next step is to create the aggregates scalding job using the config (`example <https://cgit.X.biz/source/tree/timelines/data_processing/ad_hoc/aggregate_interactions/v2/offline_aggregation/TimelinesAggregationScaldingJob.scala>`_). This is very concise and requires only a few lines of code:
 
 .. code-block:: scala
 
@@ -84,7 +84,7 @@ Once you have defined a config file with the aggregates you would like to comput
     override val aggregatesToCompute = TimelinesAggregationConfig.aggregatesToCompute
   }
 
-Now that the scalding job is implemented with the aggregation config, we need to setup a capesos config similar to https://cgit.twitter.biz/source/tree/science/scalding/mesos/timelines/prod.yml:
+Now that the scalding job is implemented with the aggregation config, we need to setup a capesos config similar to https://cgit.X.biz/source/tree/science/scalding/mesos/timelines/prod.yml:
 
 .. code-block:: scala
 
@@ -163,7 +163,7 @@ The VersionedKeyValSource is difficult to use directly in your jobs/offline trai
 
 .. code-block:: scala
 
-  import com.twitter.timelines.data_processing.ml_util.aggregation_framework.conversion._
+  import com.X.timelines.data_processing.ml_util.aggregation_framework.conversion._
 
   val pipe: DataSetPipe = AggregatesV2FeatureSource(
     rootPath = "/user/timelines/processed/aggregates_v2",
@@ -212,4 +212,4 @@ Therefore, being a quote tweet makes this specific user `123456789L` approximate
 
 Tests for Feature Names
 --------------------------
-When you change or add AggregateGroup, feature names might change. And the Feature Store provides a testing mechanism to assert that the feature names change as you expect. See `tests for feature names <https://docbird.twitter.biz/ml_feature_store/catalog.html#tests-for-feature-names>`_.
+When you change or add AggregateGroup, feature names might change. And the Feature Store provides a testing mechanism to assert that the feature names change as you expect. See `tests for feature names <https://docbird.X.biz/ml_feature_store/catalog.html#tests-for-feature-names>`_.

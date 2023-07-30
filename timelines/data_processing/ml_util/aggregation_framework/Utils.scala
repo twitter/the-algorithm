@@ -1,13 +1,13 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework
+package com.X.timelines.data_processing.ml_util.aggregation_framework
 
-import com.twitter.algebird.ScMapMonoid
-import com.twitter.algebird.Semigroup
-import com.twitter.ml.api._
-import com.twitter.ml.api.constant.SharedFeatures
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.FeatureType
-import com.twitter.ml.api.util.SRichDataRecord
+import com.X.algebird.ScMapMonoid
+import com.X.algebird.Semigroup
+import com.X.ml.api._
+import com.X.ml.api.constant.SharedFeatures
+import com.X.ml.api.DataRecord
+import com.X.ml.api.Feature
+import com.X.ml.api.FeatureType
+import com.X.ml.api.util.SRichDataRecord
 import java.lang.{Long => JLong}
 import scala.collection.{Map => ScMap}
 

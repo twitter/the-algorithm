@@ -17,7 +17,7 @@ def parse_d6w_config(argv=None):
   """
 
   parser = argparse.ArgumentParser(
-    description="See https://docbird.twitter.biz/d6w/model.html for any parameters inherited from d6w job config"
+    description="See https://docbird.X.biz/d6w/model.html for any parameters inherited from d6w job config"
   )
   parser.add_argument("--job_name", dest="job_name", required=True, help="d6w attribute")
   parser.add_argument("--project", dest="project", required=True, help="d6w attribute")
@@ -59,15 +59,15 @@ def parse_d6w_config(argv=None):
   d6w_config["metric"] = parse_metric(d6w_config)
 
   """
-  WARNING: Currently, d6w (a Twitter tool used to deploy Dataflow jobs to GCP) and
-  PipelineOptions.for_dataflow_runner (a helper method in twitter.ml.common.apache_beam) do not
+  WARNING: Currently, d6w (a X tool used to deploy Dataflow jobs to GCP) and
+  PipelineOptions.for_dataflow_runner (a helper method in X.ml.common.apache_beam) do not
   play nicely together. The helper method will overwrite some of the config specified in the d6w
-  file using the defaults in https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/src/python/twitter/ml/common/apache_beam/__init__.py?L24.'
+  file using the defaults in https://sourcegraph.X.biz/git.X.biz/source/-/blob/src/python/X/ml/common/apache_beam/__init__.py?L24.'
   However, the d6w output message will still report that the config specified in the d6w file was used.
   """
   logging.warning(
     f"The following d6w config parameters will be overwritten by the defaults in "
-    f"https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/src/python/twitter/ml/common/apache_beam/__init__.py?L24\n"
+    f"https://sourcegraph.X.biz/git.X.biz/source/-/blob/src/python/X/ml/common/apache_beam/__init__.py?L24\n"
     f"{str(unknown_args)}"
   )
   return d6w_config

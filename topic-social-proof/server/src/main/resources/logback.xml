@@ -56,7 +56,7 @@
   </appender>
 
   <!-- LogLens -->
-  <appender name="LOGLENS" class="com.twitter.loglens.logback.LoglensAppender">
+  <appender name="LOGLENS" class="com.X.loglens.logback.LoglensAppender">
     <mdcAdditionalContext>true</mdcAdditionalContext>
     <category>loglens</category>
     <index>${log.lens.index}</index>
@@ -68,7 +68,7 @@
       <cacheSize>500</cacheSize>
       <allowedRepetitions>50</allowedRepetitions>
     </turboFilter>
-    <filter class="com.twitter.strato.logging.logback.RegexFilter">
+    <filter class="com.X.strato.logging.logback.RegexFilter">
       <forLogger>manhattan-client</forLogger>
       <excludeRegex>.*InvalidRequest.*</excludeRegex>
     </filter>
@@ -101,31 +101,31 @@
   <!-- ===================================================== -->
 
   <!-- Per-Package Config (shared) -->
-  <logger name="com.twitter" level="info"/>
+  <logger name="com.X" level="info"/>
 
   <!--
     By default, we leave the strato package at INFO level.
     However, this line allows us to set the entire strato package, or a subset of it, to
     a specific level. For example, if you pass -Dstrato_log_package=streaming -Dstrato_log_level=DEBUG
-    only loggers under com.twitter.strato.streaming.* will be set to DEBUG level. Passing only
+    only loggers under com.X.strato.streaming.* will be set to DEBUG level. Passing only
     -Dstrato_log_level will set all of strato.* to the specified level.
   -->
-  <logger name="com.twitter.strato${strato_log_package:-}" level="${strato_log_level:-INFO}"/>
+  <logger name="com.X.strato${strato_log_package:-}" level="${strato_log_level:-INFO}"/>
 
-  <logger name="com.twitter.wilyns" level="warn"/>
-  <logger name="com.twitter.finagle.mux" level="warn"/>
-  <logger name="com.twitter.finagle.serverset2" level="warn"/>
-  <logger name="com.twitter.logging.ScribeHandler" level="warn"/>
-  <logger name="com.twitter.zookeeper.client.internal" level="warn"/>
-  <logger name="com.twitter.decider.StoreDecider" level="warn"/>
+  <logger name="com.X.wilyns" level="warn"/>
+  <logger name="com.X.finagle.mux" level="warn"/>
+  <logger name="com.X.finagle.serverset2" level="warn"/>
+  <logger name="com.X.logging.ScribeHandler" level="warn"/>
+  <logger name="com.X.zookeeper.client.internal" level="warn"/>
+  <logger name="com.X.decider.StoreDecider" level="warn"/>
 
   <!-- Per-Package Config (Strato) -->
-  <logger name="com.twitter.distributedlog.client" level="warn"/>
-  <logger name="com.twitter.finagle.mtls.authorization.config.AccessControlListConfiguration" level="warn"/>
-  <logger name="com.twitter.finatra.kafka.common.kerberoshelpers" level="warn"/>
-  <logger name="com.twitter.finatra.kafka.utils.BootstrapServerUtils" level="warn"/>
-  <logger name="com.twitter.server.coordinate" level="error"/>
-  <logger name="com.twitter.zookeeper.client" level="info"/>
+  <logger name="com.X.distributedlog.client" level="warn"/>
+  <logger name="com.X.finagle.mtls.authorization.config.AccessControlListConfiguration" level="warn"/>
+  <logger name="com.X.finatra.kafka.common.kerberoshelpers" level="warn"/>
+  <logger name="com.X.finatra.kafka.utils.BootstrapServerUtils" level="warn"/>
+  <logger name="com.X.server.coordinate" level="error"/>
+  <logger name="com.X.zookeeper.client" level="info"/>
   <logger name="org.apache.zookeeper" level="error"/>
   <logger name="org.apache.zookeeper.ClientCnxn" level="warn"/>
   <logger name="ZkSession" level="info"/>
@@ -145,7 +145,7 @@
   </root>
 
   <!-- Strato package only logging-->
-  <logger name="com.twitter.strato"
+  <logger name="com.X.strato"
           level="info"
           additivity="true">
     <appender-ref ref="ASYNC-STRATO-ONLY" />

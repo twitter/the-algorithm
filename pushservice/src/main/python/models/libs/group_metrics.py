@@ -1,10 +1,10 @@
 import os
 import time
 
-from twitter.cortex.ml.embeddings.deepbird.grouped_metrics.computation import (
+from X.cortex.ml.embeddings.deepbird.grouped_metrics.computation import (
   write_grouped_metrics_to_mldash,
 )
-from twitter.cortex.ml.embeddings.deepbird.grouped_metrics.configuration import (
+from X.cortex.ml.embeddings.deepbird.grouped_metrics.configuration import (
   ClassificationGroupedMetricsConfiguration,
   NDCGGroupedMetricsConfiguration,
 )

@@ -2,7 +2,7 @@ scala_library(
     sources = ["**/*.scala"],
     platform = "java8",
     provides = scala_artifact(
-        org = "com.twitter",
+        org = "com.X",
         name = "servo-decider",
         repo = artifactory,
     ),
@@ -12,7 +12,7 @@ scala_library(
         "decider",
         "finagle/finagle-core/src/main",
         "tweetypie/servo/util",
-        "twitter-server-internal",
-        "twitter-server/server/src/main/scala",
+        "X-server-internal",
+        "X-server/server/src/main/scala",
     ],
 )

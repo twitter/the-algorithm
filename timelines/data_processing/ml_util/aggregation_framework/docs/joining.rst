@@ -50,7 +50,7 @@ these different sets of counting features to produce a more compact, fixed-size 
 
 .. admonition:: Merge policies
 
-  To do this, the aggregate framework provides a trait `SparseBinaryMergePolicy <https://cgit.twitter.biz/source/tree/timelines/data_processing/ml_util/aggregation_framework/conversion/SparseBinaryMergePolicy.scala>`_. Classes overriding this trait define policies
+  To do this, the aggregate framework provides a trait `SparseBinaryMergePolicy <https://cgit.X.biz/source/tree/timelines/data_processing/ml_util/aggregation_framework/conversion/SparseBinaryMergePolicy.scala>`_. Classes overriding this trait define policies
   that state how to merge the individual aggregate features from each sparse binary value (in this case, each `INTEREST_ID` for a user).
   Furthermore, we provide `SparseBinaryMultipleAggregateJoin` which executes these policies to merge aggregates.
 
@@ -58,15 +58,15 @@ A simple policy might simply average all the counts from the individual interest
 a specific quantile. More advanced policies might use custom criteria to decide which interest is most relevant and choose
 features from that interest to represent the user, or use some weighted combination of counts.
 
-The framework provides two simple in-built policies (`PickTopCtrPolicy <https://cgit.twitter.biz/source/tree/timelines/data_processing/ml_util/aggregation_framework/conversion/PickTopCtrPolicy.scala>`_
-and `CombineCountsPolicy <https://cgit.twitter.biz/source/tree/timelines/data_processing/ml_util/aggregation_framework/conversion/CombineCountsPolicy.scala>`_, which keeps the topK counts per
+The framework provides two simple in-built policies (`PickTopCtrPolicy <https://cgit.X.biz/source/tree/timelines/data_processing/ml_util/aggregation_framework/conversion/PickTopCtrPolicy.scala>`_
+and `CombineCountsPolicy <https://cgit.X.biz/source/tree/timelines/data_processing/ml_util/aggregation_framework/conversion/CombineCountsPolicy.scala>`_, which keeps the topK counts per
 record) that you can get started with, though you likely want to implement your own policy based on domain knowledge to get
 the best results for your specific problem domain.
 
 .. admonition:: Offline Code Example
 
-  The scalding job `TrainingDataWithAggV2Generator <https://cgit.twitter.biz/source/tree/timelines/data_processing/ad_hoc/recap/training_data_generator/TrainingDataWithAggV2Generator.scala>`_ shows how multiple merge policies are defined and implemented to merge aggregates on sparse binary keys to the TQ's training data records.
+  The scalding job `TrainingDataWithAggV2Generator <https://cgit.X.biz/source/tree/timelines/data_processing/ad_hoc/recap/training_data_generator/TrainingDataWithAggV2Generator.scala>`_ shows how multiple merge policies are defined and implemented to merge aggregates on sparse binary keys to the TQ's training data records.
 
 .. admonition:: Online Code Example
 
-  In our (non-FeatureStore enabled) online code path, we merge aggregates on sparse binary keys using the `CombineCountsPolicy <https://cgit.twitter.biz/source/tree/timelinemixer/server/src/main/scala/com/twitter/timelinemixer/injection/recapbase/aggregates/UserFeaturesHydrator.scala#n201>`_.
+  In our (non-FeatureStore enabled) online code path, we merge aggregates on sparse binary keys using the `CombineCountsPolicy <https://cgit.X.biz/source/tree/timelinemixer/server/src/main/scala/com/X/timelinemixer/injection/recapbase/aggregates/UserFeaturesHydrator.scala#n201>`_.

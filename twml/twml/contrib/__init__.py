@@ -14,7 +14,7 @@ from . import export # noqa: F401
 from . import feature_config_parsers # noqa: F401
 
 # These imports do not work with TF 2.x and are not needed either.
-# If you are using TF 2.x, use the modular targets under src/python/twitter/deepbird.
+# If you are using TF 2.x, use the modular targets under src/python/X/deepbird.
 import tensorflow
 from . import trainers  # noqa: F401
 from . import metrics  # noqa: F401

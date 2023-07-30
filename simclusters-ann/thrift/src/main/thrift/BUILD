@@ -5,7 +5,7 @@ create_thrift_libraries(
     tags = ["bazel-compatible"],
     dependency_roots = [
         "finatra-internal/thrift/src/main/thrift",
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift",
+        "src/thrift/com/X/simclusters_v2:simclusters_v2-thrift",
     ],
     generate_languages = [
         "java",

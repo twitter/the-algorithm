@@ -21,7 +21,7 @@ to index. -->
 
   <!-- Read tweets from the thrift kafka queue. The reader loops forever. -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.kafka.KafkaRawRecordConsumerStage"
+      className="com.X.search.ingester.pipeline.X.kafka.KafkaRawRecordConsumerStage"
       kafkaClusterPath=""
       kafkaClientId=""
       kafkaTopicName=""
@@ -34,19 +34,19 @@ to index. -->
 
   <!-- Deserialize the bytes into TweetData -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.TweetEventDeserializerStage"
+      className="com.X.search.ingester.pipeline.X.TweetEventDeserializerStage"
       driverFactoryId="kafka"/>
 
   <!-- Filter to only have the safetytype = PUBLIC or PROTECTED -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.FilterEventsBySafetyTypeStage"
+      className="com.X.search.ingester.pipeline.X.FilterEventsBySafetyTypeStage"
       tweetCreateLatencyLogThresholdMillis="5000"
       safetyType="PUBLIC_OR_PROTECTED"
       driverFactoryId="kafka"/>
 
-  <!-- Parse to TwitterMessage -->
+  <!-- Parse to XMessage -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.ThriftTweetParserStage"
+      className="com.X.search.ingester.pipeline.X.ThriftTweetParserStage"
       tweetDeleteEventBranchNames="kafka_update_events_delete"
       driverFactoryId="kafka"/>
 
@@ -71,7 +71,7 @@ to index. -->
       </driverFactory>
 
       <stage
-          className="com.twitter.search.ingester.pipeline.twitter.kafka.DeleteUpdateEventsKafkaProducerStage"
+          className="com.X.search.ingester.pipeline.X.kafka.DeleteUpdateEventsKafkaProducerStage"
           kafkaClusterPath=""
           kafkaClientId=""
           kafkaTopicName=""
@@ -81,43 +81,43 @@ to index. -->
 
   <!-- filters out messages that are not formatted correctly -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.FilterTwitterMessageStage"
+      className="com.X.search.ingester.pipeline.X.FilterXMessageStage"
       driverFactoryId="kafka"/>
 
   <!-- retrieves space ids from space urls if the tweet has space urls -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.RetrieveSpaceIdsStage"
+      className="com.X.search.ingester.pipeline.X.RetrieveSpaceIdsStage"
       driverFactoryId="kafka"/>
 
 
   <!-- looks up user reputation scores for each message -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.LookupUserPropertiesBatchedStage"
+      className="com.X.search.ingester.pipeline.X.LookupUserPropertiesBatchedStage"
       driverFactoryId="kafka"/>
 
   <!-- extract text features of the message -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.TextFeatureExtractionWorkersStage"
+      className="com.X.search.ingester.pipeline.X.TextFeatureExtractionWorkersStage"
       driverFactoryId="kafka"/>
 
   <!-- compute text quality score of the message -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.TextQualityEvaluationWorkerStage"
+      className="com.X.search.ingester.pipeline.X.TextQualityEvaluationWorkerStage"
       driverFactoryId="kafka"/>
 
   <!-- Extract lat/lon pairs from the text, and geocode them -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.SingleTweetExtractAndGeocodeLatLonStage"
+      className="com.X.search.ingester.pipeline.X.SingleTweetExtractAndGeocodeLatLonStage"
       driverFactoryId="kafka"/>
 
   <!-- adds coded locations -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.PopulateCodedLocationsBatchedStage"
+      className="com.X.search.ingester.pipeline.X.PopulateCodedLocationsBatchedStage"
       driverFactoryId="kafka"/>
 
-  <!-- Parse the TwitterMessages into ThriftStatuses -->
+  <!-- Parse the XMessages into ThriftStatuses -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.ConvertMessageToThriftStage"
+      className="com.X.search.ingester.pipeline.X.ConvertMessageToThriftStage"
       thriftVersionedEventsBranchName="kafka_base_tweets"
       driverFactoryId="kafka"/>
 
@@ -141,7 +141,7 @@ to index. -->
       </driverFactory>
 
       <stage
-          className="com.twitter.search.ingester.pipeline.twitter.kafka.TweetThriftVersionedEventsKafkaProducerStage"
+          className="com.X.search.ingester.pipeline.X.kafka.TweetThriftVersionedEventsKafkaProducerStage"
           kafkaClusterPath=""
           kafkaClientId=""
           kafkaTopicName=""
@@ -151,7 +151,7 @@ to index. -->
 
   <!-- Resolve compressed URL via Pink -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.ResolveCompressedUrlsBatchedStage"
+      className="com.X.search.ingester.pipeline.X.ResolveCompressedUrlsBatchedStage"
       pinkClientId="INGESTER"
       batchedStageBatchSize="10"
       tweetMaxAgeToResolve="10000"
@@ -159,38 +159,38 @@ to index. -->
 
   <!-- Retrieve card information -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.RetrieveCardBatchedStage"
+      className="com.X.search.ingester.pipeline.X.RetrieveCardBatchedStage"
       tweetypieClientId=""
       internalBatchSize="50"
       driverFactoryId="kafka"/>
 
   <!-- Retrieve named entities -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.RetrieveNamedEntitiesSingleTweetStage"
+      className="com.X.search.ingester.pipeline.X.RetrieveNamedEntitiesSingleTweetStage"
       driverFactoryId="kafka"/>
 
   <!-- retrieves space admins and title for a tweet if the tweet has space urls -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.RetrieveSpaceAdminsAndTitleStage"
+      className="com.X.search.ingester.pipeline.X.RetrieveSpaceAdminsAndTitleStage"
       driverFactoryId="kafka"/>
 
   <!-- extract text features of the message -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.TextUrlsFeatureExtractionStage"
+      className="com.X.search.ingester.pipeline.X.TextUrlsFeatureExtractionStage"
       driverFactoryId="kafka"/>
 
   <!-- Compute the tweet signature -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.ComputeTweetSignatureStage"
+      className="com.X.search.ingester.pipeline.X.ComputeTweetSignatureStage"
       driverFactoryId="kafka"/>
 
-  <!-- Parse the TwitterMessages into ThriftStatuses -->
+  <!-- Parse the XMessages into ThriftStatuses -->
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.ConvertDelayedMessageToThriftStage"
+      className="com.X.search.ingester.pipeline.X.ConvertDelayedMessageToThriftStage"
       driverFactoryId="kafka"/>
 
   <stage
-      className="com.twitter.search.ingester.pipeline.twitter.kafka.TweetThriftVersionedEventsKafkaProducerStage"
+      className="com.X.search.ingester.pipeline.X.kafka.TweetThriftVersionedEventsKafkaProducerStage"
       kafkaClusterPath=""
       stageName="UpdateEvents"
       kafkaClientId=""

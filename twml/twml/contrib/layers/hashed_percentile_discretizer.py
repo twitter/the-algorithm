@@ -4,7 +4,7 @@ Implementing HashedPercentileDiscretizer Layer
 """
 
 
-from twitter.deepbird.util.hashing import (
+from X.deepbird.util.hashing import (
   integer_multiplicative_hashing_uniform,
   integer_multiplicative_hashing,
 )  # noqa: F401

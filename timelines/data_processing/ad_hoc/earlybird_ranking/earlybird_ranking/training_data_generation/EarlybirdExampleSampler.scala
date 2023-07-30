@@ -1,11 +1,11 @@
-package com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.training_data_generation
+package com.X.timelines.data_processing.ad_hoc.earlybird_ranking.training_data_generation
 
-import com.twitter.ml.api.constant.SharedFeatures
-import com.twitter.ml.api.DataSetPipe
-import com.twitter.ml.api.Feature
-import com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.common.LabelInfo
-import com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.common.LabelInfoWithFeature
-import com.twitter.timelines.prediction.features.recap.RecapFeatures
+import com.X.ml.api.constant.SharedFeatures
+import com.X.ml.api.DataSetPipe
+import com.X.ml.api.Feature
+import com.X.timelines.data_processing.ad_hoc.earlybird_ranking.common.LabelInfo
+import com.X.timelines.data_processing.ad_hoc.earlybird_ranking.common.LabelInfoWithFeature
+import com.X.timelines.prediction.features.recap.RecapFeatures
 import java.lang.{Double => JDouble}
 import scala.util.Random
 
@@ -18,7 +18,7 @@ class EarlybirdExampleSampler(
   labelInfos: List[LabelInfoWithFeature],
   negativeInfo: LabelInfo) {
 
-  import com.twitter.ml.api.util.FDsl._
+  import com.X.ml.api.util.FDsl._
 
   private[this] val ImportanceFeature: Feature[JDouble] =
     SharedFeatures.RECORD_WEIGHT_FEATURE_BUILDER

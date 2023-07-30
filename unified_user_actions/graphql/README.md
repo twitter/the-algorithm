@@ -12,4 +12,4 @@ $ graphql stored_document put unified_user_actions/graphql/TweetHydration.graphq
 ```
 
 DocumentId: `M5sHxua-RDiRtTn48CAhng` 
-Test: https://graphql.twitter.com/snaptest/tests/1580340324727017472/
+Test: https://graphql.X.com/snaptest/tests/1580340324727017472/

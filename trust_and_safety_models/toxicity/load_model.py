@@ -11,7 +11,7 @@ import tensorflow as tf
 
 
 try:
-  from twitter.cuad.representation.models.text_encoder import TextEncoder
+  from X.cuad.representation.models.text_encoder import TextEncoder
 except ModuleNotFoundError:
   print("No TextEncoder package")
 
@@ -26,9 +26,9 @@ LOCAL_MODEL_DIR = os.path.join(LOCAL_DIR, "models")
 def reload_model_weights(weights_dir, language, **kwargs):
   optimizer = tf.keras.optimizers.Adam(0.01)
   model_type = (
-    "twitter_bert_base_en_uncased_mlm"
+    "X_bert_base_en_uncased_mlm"
     if language == "en"
-    else "twitter_multilingual_bert_base_cased_mlm"
+    else "X_multilingual_bert_base_cased_mlm"
   )
   model = load(optimizer=optimizer, seed=42, model_type=model_type, **kwargs)
   model.load_weights(weights_dir)
@@ -37,9 +37,9 @@ def reload_model_weights(weights_dir, language, **kwargs):
 
 
 def _locally_copy_models(model_type):
-  if model_type == "twitter_multilingual_bert_base_cased_mlm":
+  if model_type == "X_multilingual_bert_base_cased_mlm":
     preprocessor = "bert_multi_cased_preprocess_3"
-  elif model_type == "twitter_bert_base_en_uncased_mlm":
+  elif model_type == "X_bert_base_en_uncased_mlm":
     preprocessor = "bert_en_uncased_preprocess_3"
   else:
     raise NotImplementedError
@@ -192,7 +192,7 @@ def load_bertweet(**kwargs):
 def load(
   optimizer,
   seed,
-  model_type="twitter_multilingual_bert_base_cased_mlm",
+  model_type="X_multilingual_bert_base_cased_mlm",
   loss_name="BCE",
   trainable=True,
   **kwargs,

@@ -1,11 +1,11 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework
+package com.X.timelines.data_processing.ml_util.aggregation_framework
 
-import com.twitter.algebird.Monoid
-import com.twitter.ml.api._
-import com.twitter.ml.api.constant.SharedFeatures
-import com.twitter.ml.api.util.SRichDataRecord
+import com.X.algebird.Monoid
+import com.X.ml.api._
+import com.X.ml.api.constant.SharedFeatures
+import com.X.ml.api.util.SRichDataRecord
 import scala.collection.mutable
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics.AggregationMetricCommon._
+import com.X.timelines.data_processing.ml_util.aggregation_framework.metrics.AggregationMetricCommon._
 
 /**
  * Monoid to aggregate over DataRecord objects.

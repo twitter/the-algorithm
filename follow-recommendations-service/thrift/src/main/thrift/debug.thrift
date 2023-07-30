@@ -1,6 +1,6 @@
-namespace java com.twitter.follow_recommendations.thriftjava
-#@namespace scala com.twitter.follow_recommendations.thriftscala
-#@namespace strato com.twitter.follow_recommendation
+namespace java com.X.follow_recommendations.thriftjava
+#@namespace scala com.X.follow_recommendations.thriftscala
+#@namespace strato com.X.follow_recommendation
 
 // These are broken into their own union
 // because we can have features that are

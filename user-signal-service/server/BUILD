@@ -1,15 +1,15 @@
 jvm_binary(
     name = "bin",
     basename = "user-signal-service",
-    main = "com.twitter.usersignalservice.UserSignalServiceStratoFedServerMain",
+    main = "com.X.usersignalservice.UserSignalServiceStratoFedServerMain",
     runtime_platform = "java11",
     tags = ["bazel-compatible"],
     dependencies = [
         "3rdparty/jvm/ch/qos/logback:logback-classic",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
-        "strato/src/main/scala/com/twitter/strato/logging/logback",
+        "loglens/loglens-logback/src/main/scala/com/X/loglens/logback",
+        "strato/src/main/scala/com/X/strato/logging/logback",
         "user-signal-service/server/src/main/resources",
-        "user-signal-service/server/src/main/scala/com/twitter/usersignalservice",
+        "user-signal-service/server/src/main/scala/com/X/usersignalservice",
     ],
 )
 

@@ -8,7 +8,7 @@ This page provides an overview of the aggregation framework and goes through exa
 AggregateGroup
 --------------
 
-An `AggregateGroup` defines a single unit of aggregate computation, similar to a SQL query. These are executed by the underlying jobs (internally, a `DataRecordAggregationMonoid <https://cgit.twitter.biz/source/tree/timelines/data_processing/ml_util/aggregation_framework/DataRecordAggregationMonoid.scala#n42>`_ is applied to `DataRecords` that contain the features to aggregate). Many of these groups can exist to define different types of aggregate features.
+An `AggregateGroup` defines a single unit of aggregate computation, similar to a SQL query. These are executed by the underlying jobs (internally, a `DataRecordAggregationMonoid <https://cgit.X.biz/source/tree/timelines/data_processing/ml_util/aggregation_framework/DataRecordAggregationMonoid.scala#n42>`_ is applied to `DataRecords` that contain the features to aggregate). Many of these groups can exist to define different types of aggregate features.
 
 Let's start with the following examples of an `AggregateGroup` to discuss the meaning of each of its constructor arguments:
 
@@ -46,7 +46,7 @@ Naming and preprocessing
 
 `aggregatePrefix` tells the framework what prefix to use for the aggregate features it generates. A descriptive naming scheme with versioning makes it easier to maintain features as you add or remove them over the long-term.
 
-`preTransforms` is a `Seq[com.twitter.ml.api.ITransform] <https://cgit.twitter.biz/source/tree/src/java/com/twitter/ml/api/ITransform.java>`_ that can be applied to the data records read from the input source before they are fed into the `AggregateGroup` to apply aggregation. These transforms are optional but can be useful for certain preprocessing operations for a group's raw input features. 
+`preTransforms` is a `Seq[com.X.ml.api.ITransform] <https://cgit.X.biz/source/tree/src/java/com/X/ml/api/ITransform.java>`_ that can be applied to the data records read from the input source before they are fed into the `AggregateGroup` to apply aggregation. These transforms are optional but can be useful for certain preprocessing operations for a group's raw input features. 
 
 .. admonition:: Examples
   
@@ -56,7 +56,7 @@ Naming and preprocessing
 Keys
 ----
 
-`keys` is a crucial field in the config. It defines a `Set[com.twitter.ml.api.Feature]` which specifies a set of grouping keys to use for this `AggregateGroup`.
+`keys` is a crucial field in the config. It defines a `Set[com.X.ml.api.Feature]` which specifies a set of grouping keys to use for this `AggregateGroup`.
 
 Keys can only be of 3 supported types currently: `DISCRETE`, `STRING` and `SPARSE_BINARY`. Using a discrete or a string/text feature as a key specifies the unit to group records by before applying counting/aggregation operators.
 
@@ -74,7 +74,7 @@ Keys can only be of 3 supported types currently: `DISCRETE`, `STRING` and `SPARS
 Features
 --------
 
-`features` specifies a `Set[com.twitter.ml.api.Feature]` to aggregate within each group (defined by the keys specified earlier).
+`features` specifies a `Set[com.X.ml.api.Feature]` to aggregate within each group (defined by the keys specified earlier).
 
 We support 2 types of `features`: `BINARY` and `CONTINUOUS`.
 
@@ -134,7 +134,7 @@ Metrics
 
 As mentioned before, `Count` can be applied to all types of features, but treats every feature as binary and ignores the value of the feature. `Sum` and `SumSq` can only be applied to Continuous features - they will ignore all other features you specify. By combining sum and sumsq and count, you can produce powerful “z-score” features or other distributional features using a post-transform.
 
-It is also possible to add your own aggregate operators (e.g. `LastResetMetric <https://phabricator.twitter.biz/D228537>`_) to the framework with some additional work.
+It is also possible to add your own aggregate operators (e.g. `LastResetMetric <https://phabricator.X.biz/D228537>`_) to the framework with some additional work.
 
 HalfLives
 ---------

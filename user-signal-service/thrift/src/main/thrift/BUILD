@@ -8,7 +8,7 @@ create_thrift_libraries(
     platform = "java8",
     tags = ["bazel-compatible"],
     dependency_roots = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift",
+        "src/thrift/com/X/simclusters_v2:simclusters_v2-thrift",
     ],
     generate_languages = [
         "java",

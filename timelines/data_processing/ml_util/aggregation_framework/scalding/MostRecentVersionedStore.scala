@@ -1,16 +1,16 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.scalding
+package com.X.timelines.data_processing.ml_util.aggregation_framework.scalding
 
-import com.twitter.bijection.Injection
-import com.twitter.scalding.commons.source.VersionedKeyValSource
-import com.twitter.scalding.TypedPipe
-import com.twitter.scalding.{Hdfs => HdfsMode}
-import com.twitter.summingbird.batch.store.HDFSMetadata
-import com.twitter.summingbird.batch.BatchID
-import com.twitter.summingbird.batch.Batcher
-import com.twitter.summingbird.batch.OrderedFromOrderingExt
-import com.twitter.summingbird.batch.PrunedSpace
-import com.twitter.summingbird.scalding._
-import com.twitter.summingbird.scalding.store.VersionedBatchStore
+import com.X.bijection.Injection
+import com.X.scalding.commons.source.VersionedKeyValSource
+import com.X.scalding.TypedPipe
+import com.X.scalding.{Hdfs => HdfsMode}
+import com.X.summingbird.batch.store.HDFSMetadata
+import com.X.summingbird.batch.BatchID
+import com.X.summingbird.batch.Batcher
+import com.X.summingbird.batch.OrderedFromOrderingExt
+import com.X.summingbird.batch.PrunedSpace
+import com.X.summingbird.scalding._
+import com.X.summingbird.scalding.store.VersionedBatchStore
 import org.slf4j.LoggerFactory
 
 object MostRecentLagCorrectingVersionedStore {

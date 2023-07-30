@@ -1,7 +1,7 @@
 Home Mixer
 ==========
 
-Home Mixer is the main service used to construct and serve Twitter's Home Timelines. It currently
+Home Mixer is the main service used to construct and serve X's Home Timelines. It currently
 powers:
 - For you - best Tweets from people you follow + recommended out-of-network content
 - Following - reverse chronological Tweets from people you follow

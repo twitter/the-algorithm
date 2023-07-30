@@ -1,6 +1,6 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics
+package com.X.timelines.data_processing.ml_util.aggregation_framework.metrics
 
-import com.twitter.util.Time
+import com.X.util.Time
 
 /**
  * Case class wrapping a (value, timestamp) tuple.

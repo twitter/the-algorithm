@@ -1,15 +1,15 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework
+package com.X.timelines.data_processing.ml_util.aggregation_framework
 
-import com.twitter.ml.api._
-import com.twitter.ml.api.constant.SharedFeatures
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics.AggregateFeature
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics.AggregationMetric
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics.AggregationMetricCommon
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics.AggregationMetricCommon._
-import com.twitter.timelines.data_processing.ml_util.transforms.OneToSomeTransform
-import com.twitter.util.Duration
-import com.twitter.util.Try
+import com.X.ml.api._
+import com.X.ml.api.constant.SharedFeatures
+import com.X.ml.api.util.SRichDataRecord
+import com.X.timelines.data_processing.ml_util.aggregation_framework.metrics.AggregateFeature
+import com.X.timelines.data_processing.ml_util.aggregation_framework.metrics.AggregationMetric
+import com.X.timelines.data_processing.ml_util.aggregation_framework.metrics.AggregationMetricCommon
+import com.X.timelines.data_processing.ml_util.aggregation_framework.metrics.AggregationMetricCommon._
+import com.X.timelines.data_processing.ml_util.transforms.OneToSomeTransform
+import com.X.util.Duration
+import com.X.util.Try
 import java.lang.{Boolean => JBoolean}
 import java.lang.{Double => JDouble}
 import java.lang.{Long => JLong}
@@ -205,7 +205,7 @@ object TypedAggregateGroup {
  * Specifies one or more related aggregate(s) to compute in the summingbird job.
  *
  * @param inputSource Source to compute this aggregate over
- * @param preTransforms Sequence of [[com.twitter.ml.api.RichITransform]] that transform
+ * @param preTransforms Sequence of [[com.X.ml.api.RichITransform]] that transform
  * data records pre-aggregation (e.g. discretization, renaming)
  * @param samplingTransformOpt Optional [[OneToSomeTransform]] that transform data
  * record to optional data record (e.g. for sampling) before aggregation

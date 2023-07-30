@@ -14,7 +14,7 @@ python3_library(
     tags = ["no-mypy"],
     dependencies = [
         "3rdparty/python/pydantic:default",
-        "src/python/twitter/deepbird/projects/magic_recs/v11/lib:params_lib",
+        "src/python/X/deepbird/projects/magic_recs/v11/lib:params_lib",
     ],
 )
 
@@ -24,7 +24,7 @@ python3_library(
     tags = ["no-mypy"],
     dependencies = [
         ":params_lib",
-        "src/python/twitter/deepbird/projects/magic_recs/libs",
+        "src/python/X/deepbird/projects/magic_recs/libs",
         "twml:twml-nodeps",
     ],
 )
@@ -36,7 +36,7 @@ python3_library(
     dependencies = [
         ":features_lib",
         ":params_lib",
-        "src/python/twitter/deepbird/projects/magic_recs/v11/lib:model_lib",
+        "src/python/X/deepbird/projects/magic_recs/v11/lib:model_lib",
     ],
 )
 
@@ -46,7 +46,7 @@ python3_library(
     tags = ["no-mypy"],
     dependencies = [
         ":params_lib",
-        "src/python/twitter/deepbird/projects/magic_recs/libs",
+        "src/python/X/deepbird/projects/magic_recs/libs",
     ],
 )
 
@@ -71,8 +71,8 @@ python3_library(
         ":model_pools_lib",
         ":params_lib",
         ":run_args_lib",
-        "src/python/twitter/deepbird/projects/magic_recs/libs",
-        "src/python/twitter/deepbird/util/data",
+        "src/python/X/deepbird/projects/magic_recs/libs",
+        "src/python/X/deepbird/util/data",
         "twml:twml-nodeps",
     ],
 )
@@ -87,7 +87,7 @@ python3_library(
         ":model_pools_lib",
         ":params_lib",
         ":run_args_lib",
-        "src/python/twitter/deepbird/projects/magic_recs/libs",
+        "src/python/X/deepbird/projects/magic_recs/libs",
         "twml:twml-nodeps",
     ],
 )

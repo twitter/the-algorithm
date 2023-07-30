@@ -287,9 +287,9 @@ tweetypie_should_materialize_containers:
     Otherwise, TP will not call CCS and return a StatusState of NotFound.
   default_availability: 0
 
-tweetypie_check_twitter_blue_subscription_for_edit:
+tweetypie_check_X_blue_subscription_for_edit:
   comment:
-    Controls whether we check if the User is subscribed to Twitter Blue when editing a Tweet.
+    Controls whether we check if the User is subscribed to X Blue when editing a Tweet.
   default_availability: 0
 
 tweetypie_hydrate_bookmarks_count:

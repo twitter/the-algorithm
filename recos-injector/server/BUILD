@@ -2,7 +2,7 @@ target(
     name = "server",
     tags = ["bazel-compatible"],
     dependencies = [
-        "recos-injector/server/src/main/scala/com/twitter/recosinjector",
+        "recos-injector/server/src/main/scala/com/X/recosinjector",
     ],
 )
 
@@ -10,14 +10,14 @@ test_suite(
     name = "tests",
     tags = ["bazel-compatible"],
     dependencies = [
-        "recos-injector/server/src/test/scala/com/twitter/recosinjector",
+        "recos-injector/server/src/test/scala/com/X/recosinjector",
     ],
 )
 
 jvm_binary(
     name = "bin",
     basename = "recos-injector-server",
-    main = "com.twitter.recosinjector.Main",
+    main = "com.X.recosinjector.Main",
     platform = "java11",
     runtime_platform = "java11",
     tags = [

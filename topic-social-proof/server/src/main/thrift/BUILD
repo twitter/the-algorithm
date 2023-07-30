@@ -9,7 +9,7 @@ create_thrift_libraries(
         "content-recommender/thrift/src/main/thrift",
         "content-recommender/thrift/src/main/thrift:content-recommender-common",
         "interests-service/thrift/src/main/thrift",
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift",
+        "src/thrift/com/X/simclusters_v2:simclusters_v2-thrift",
     ],
     generate_languages = [
         "java",

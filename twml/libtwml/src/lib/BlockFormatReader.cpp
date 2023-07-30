@@ -11,7 +11,7 @@
 
 /*
    This was all extracted from the ancient elephant bird scrolls
-   https://github.com/twitter/elephant-bird/blob/master/core/src/main/java/com/twitter/elephantbird/mapreduce/io/BinaryBlockReader.java
+   https://github.com/X/elephant-bird/blob/master/core/src/main/java/com/X/elephantbird/mapreduce/io/BinaryBlockReader.java
 */
 
 #define MARKER_SIZE (16)

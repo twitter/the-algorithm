@@ -25,17 +25,17 @@ A ``DataRecord`` is a Thrift struct that defines how to encode the data:
   }
 
 
-A significant portion of Twitter data is hydrated
+A significant portion of X data is hydrated
 and then temporarily stored on HDFS as DataRecords.
 The files are compressed (.gz or .lzo) partitions of data records.
 These form supervised datasets. Each sample captures the relationship
 between input and output (cause and effect).
-To create your own dataset, please see https://github.com/twitter/elephant-bird.
+To create your own dataset, please see https://github.com/X/elephant-bird.
 
 The default ``DataRecordTrainer.[train,evaluate,learn]()`` reads these datarecords.
 The data is a read from multiple ``part-*.[compression]`` files.
 The default behavior of ``DataRecordTrainer`` is to read sparse features from ``DataRecords``.
-This is a legacy default piping format at Twitter.
+This is a legacy default piping format at X.
 The ``DataRecordTrainer`` is flexible enough for research and yet simple enough
 for a new beginner ML practioner.
 
@@ -58,7 +58,7 @@ CPUs and GPUs much prefer dense tensor data.
 import datetime
 
 import tensorflow.compat.v1 as tf
-from twitter.deepbird.io.dal import dal_to_hdfs_path, is_dal_path
+from X.deepbird.io.dal import dal_to_hdfs_path, is_dal_path
 import twml
 from twml.trainers import Trainer
 from twml.contrib.feature_importances.feature_importances import (
@@ -72,11 +72,11 @@ from absl import logging
 class DataRecordTrainer(Trainer):  # pylint: disable=abstract-method
   """
   The ``DataRecordTrainer`` implementation is intended to satisfy the most common use cases
-  at Twitter where only the build_graph methods needs to be overridden.
+  at X where only the build_graph methods needs to be overridden.
   For this reason, ``Trainer.[train,eval]_input_fn`` methods
   assume a DataRecord dataset partitioned into part files stored in compressed (e.g. gzip) format.
 
-  For use-cases that differ from this common Twitter use-case,
+  For use-cases that differ from this common X use-case,
   further Trainer methods can be overridden.
   If that still doesn't provide enough flexibility, the user can always
   use the tf.estimator.Esimator or tf.session.run directly.
@@ -419,7 +419,7 @@ class DataRecordTrainer(Trainer):  # pylint: disable=abstract-method
       write_to_hdfs (bool): Setting this to True writes the feature importance metrics to HDFS
     extra_groups (dict<str, list<str>>): A dictionary mapping the name of extra feature groups to the list of
       the names of the features in the group
-    datarecord_filter_fn (function): a function takes a single data sample in com.twitter.ml.api.ttypes.DataRecord format
+    datarecord_filter_fn (function): a function takes a single data sample in com.X.ml.api.ttypes.DataRecord format
         and return a boolean value, to indicate if this data record should be kept in feature importance module or not.
     """
     logging.info("Computing feature importance")

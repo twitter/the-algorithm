@@ -1,10 +1,10 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.heron
+package com.X.timelines.data_processing.ml_util.aggregation_framework.heron
 
-import com.twitter.finagle.mtls.authentication.EmptyServiceIdentifier
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.ml.api.DataRecord
-import com.twitter.summingbird.Options
-import com.twitter.timelines.data_processing.ml_util.transforms.OneToSomeTransform
+import com.X.finagle.mtls.authentication.EmptyServiceIdentifier
+import com.X.finagle.mtls.authentication.ServiceIdentifier
+import com.X.ml.api.DataRecord
+import com.X.summingbird.Options
+import com.X.timelines.data_processing.ml_util.transforms.OneToSomeTransform
 
 /**
  *

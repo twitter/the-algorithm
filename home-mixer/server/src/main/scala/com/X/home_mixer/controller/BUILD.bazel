@@ -1,0 +1,17 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "finatra/thrift/src/main/scala/com/X/finatra/thrift:controller",
+        "home-mixer/server/src/main/scala/com/X/home_mixer/marshaller/request",
+        "home-mixer/server/src/main/scala/com/X/home_mixer/service",
+        "home-mixer/thrift/src/main/thrift:thrift-scala",
+        "product-mixer/core/src/main/scala/com/X/product_mixer/core/controllers",
+        "product-mixer/core/src/main/scala/com/X/product_mixer/core/functional_component/configapi",
+        "product-mixer/core/src/main/scala/com/X/product_mixer/core/service/debug_query",
+        "product-mixer/core/src/main/scala/com/X/product_mixer/core/service/urt",
+        "snowflake/src/main/scala/com/X/snowflake/id",
+    ],
+)

@@ -6,7 +6,7 @@ Feature configuration for DeepBird jobs:
 - Which feature is the weight
 """
 
-from twitter.deepbird.io.legacy import feature_config
+from X.deepbird.io.legacy import feature_config
 
 
 class FeatureConfig(feature_config.FeatureConfig):

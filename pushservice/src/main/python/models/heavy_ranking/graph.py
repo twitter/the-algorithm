@@ -11,7 +11,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Any, Dict
 
-from twitter.deepbird.hparam import HParams
+from X.deepbird.hparam import HParams
 import twml
 
 from ..libs.model_utils import generate_disliked_mask

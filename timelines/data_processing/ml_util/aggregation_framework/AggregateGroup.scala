@@ -1,17 +1,17 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework
+package com.X.timelines.data_processing.ml_util.aggregation_framework
 
-import com.twitter.ml.api._
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics.AggregationMetric
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics.EasyMetric
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics.MaxMetric
-import com.twitter.timelines.data_processing.ml_util.transforms.OneToSomeTransform
-import com.twitter.util.Duration
+import com.X.ml.api._
+import com.X.timelines.data_processing.ml_util.aggregation_framework.metrics.AggregationMetric
+import com.X.timelines.data_processing.ml_util.aggregation_framework.metrics.EasyMetric
+import com.X.timelines.data_processing.ml_util.aggregation_framework.metrics.MaxMetric
+import com.X.timelines.data_processing.ml_util.transforms.OneToSomeTransform
+import com.X.util.Duration
 import java.lang.{Boolean => JBoolean}
 import java.lang.{Long => JLong}
 import scala.language.existentials
 
 /**
- * A wrapper for [[com.twitter.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup]]
+ * A wrapper for [[com.X.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup]]
  * (see TypedAggregateGroup.scala) with some convenient syntactic sugar that avoids
  * the user having to specify different groups for different types of features.
  * Gets translated into multiple strongly typed TypedAggregateGroup(s)

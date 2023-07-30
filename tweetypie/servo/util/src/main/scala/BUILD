@@ -1,16 +1,16 @@
 EXCEPTION_SOURCES = [
-    "com/twitter/servo/util/Effect.scala",
-    "com/twitter/servo/util/ExceptionCounter.scala",
-    "com/twitter/servo/util/Gate.scala",
-    "com/twitter/servo/util/ThrowableHelper.scala",
-    "com/twitter/servo/util/package.scala",
+    "com/X/servo/util/Effect.scala",
+    "com/X/servo/util/ExceptionCounter.scala",
+    "com/X/servo/util/Gate.scala",
+    "com/X/servo/util/ThrowableHelper.scala",
+    "com/X/servo/util/package.scala",
 ]
 
 scala_library(
     sources = ["**/*.scala"] + exclude_globs(EXCEPTION_SOURCES),
     platform = "java8",
     provides = scala_artifact(
-        org = "com.twitter",
+        org = "com.X",
         name = "servo-util",
         repo = artifactory,
     ),
@@ -25,12 +25,12 @@ scala_library(
         "scrooge/scrooge-core",
         "scrooge/scrooge-serializer",
         "util-internal/scribe",
-        "util/util-logging/src/main/scala/com/twitter/logging",
+        "util/util-logging/src/main/scala/com/X/logging",
         "util/util-stats/src/main/scala",
     ],
     exports = [
         ":exception",
-        "util/util-logging/src/main/scala/com/twitter/logging",
+        "util/util-logging/src/main/scala/com/X/logging",
     ],
 )
 
@@ -40,7 +40,7 @@ scala_library(
     compiler_option_sets = ["fatal_warnings"],
     platform = "java8",
     provides = scala_artifact(
-        org = "com.twitter",
+        org = "com.X",
         name = "servo-util-exception",
         repo = artifactory,
     ),

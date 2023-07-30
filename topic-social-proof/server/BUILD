@@ -1,15 +1,15 @@
 jvm_binary(
     name = "bin",
     basename = "topic-social-proof",
-    main = "com.twitter.tsp.TopicSocialProofStratoFedServerMain",
+    main = "com.X.tsp.TopicSocialProofStratoFedServerMain",
     runtime_platform = "java11",
     tags = [
         "bazel-compatible",
     ],
     dependencies = [
-        "strato/src/main/scala/com/twitter/strato/logging/logback",
+        "strato/src/main/scala/com/X/strato/logging/logback",
         "topic-social-proof/server/src/main/resources",
-        "topic-social-proof/server/src/main/scala/com/twitter/tsp",
+        "topic-social-proof/server/src/main/scala/com/X/tsp",
     ],
 )
 

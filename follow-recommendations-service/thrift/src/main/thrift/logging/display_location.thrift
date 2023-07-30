@@ -1,12 +1,12 @@
-namespace java com.twitter.follow_recommendations.logging.thriftjava
-#@namespace scala com.twitter.follow_recommendations.logging.thriftscala
-#@namespace strato com.twitter.follow_recommendations.logging
+namespace java com.X.follow_recommendations.logging.thriftjava
+#@namespace scala com.X.follow_recommendations.logging.thriftscala
+#@namespace strato com.X.follow_recommendations.logging
 
 /**
  * Make sure you add the new DL to the following files and redeploy our attribution jobs
  *  - follow-recommendations-service/thrift/src/main/thrift/display_location.thrift
  *  - follow-recommendations-service/thrift/src/main/thrift/logging/display_location.thrift
- *  - follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/models/DisplayLocation.scala
+ *  - follow-recommendations-service/common/src/main/scala/com/X/follow_recommendations/common/models/DisplayLocation.scala
  */
 
 // Offline equal of DisplayLocation

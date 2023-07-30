@@ -1,9 +1,9 @@
-namespace java com.twitter.simclustersann.thriftjava
-#@namespace scala com.twitter.simclustersann.thriftscala
+namespace java com.X.simclustersann.thriftjava
+#@namespace scala com.X.simclustersann.thriftscala
 
 include "finatra-thrift/finatra_thrift_exceptions.thrift"
-include "com/twitter/simclusters_v2/identifier.thrift"
-include "com/twitter/simclusters_v2/score.thrift"
+include "com/X/simclusters_v2/identifier.thrift"
+include "com/X/simclusters_v2/score.thrift"
 
 struct Query {
     1: required identifier.SimClustersEmbeddingId sourceEmbeddingId;

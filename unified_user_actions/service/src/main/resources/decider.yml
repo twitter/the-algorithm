@@ -1,5 +1,5 @@
 # Naming convention:
-# For publishing action types, use [Publish][ActionTypeInThrift]. Please see the Thrift definition at unified_user_actions/thrift/src/main/thrift/com/twitter/unified_user_actions/action_info.thrift
+# For publishing action types, use [Publish][ActionTypeInThrift]. Please see the Thrift definition at unified_user_actions/thrift/src/main/thrift/com/X/unified_user_actions/action_info.thrift
 
 PublishServerTweetFav:
   default_availability: 0

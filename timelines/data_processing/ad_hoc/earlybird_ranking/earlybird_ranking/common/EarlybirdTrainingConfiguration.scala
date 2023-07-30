@@ -1,21 +1,21 @@
-package com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.common
+package com.X.timelines.data_processing.ad_hoc.earlybird_ranking.common
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.ITransform
-import com.twitter.ml.api.transform.CascadeTransform
-import com.twitter.ml.api.transform.TransformFactory
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.ml.api.constant.SharedFeatures
-import com.twitter.search.common.features.SearchResultFeature
-import com.twitter.search.common.features.ExternalTweetFeature
-import com.twitter.search.common.features.TweetFeature
-import com.twitter.timelines.prediction.features.recap.RecapFeatures
-import com.twitter.timelines.prediction.features.request_context.RequestContextFeatures
-import com.twitter.timelines.prediction.features.time_features.TimeDataRecordFeatures
-import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures
-import com.twitter.timelines.prediction.features.real_graph.RealGraphDataRecordFeatures
+import com.X.ml.api.DataRecord
+import com.X.ml.api.Feature
+import com.X.ml.api.FeatureContext
+import com.X.ml.api.ITransform
+import com.X.ml.api.transform.CascadeTransform
+import com.X.ml.api.transform.TransformFactory
+import com.X.ml.api.util.SRichDataRecord
+import com.X.ml.api.constant.SharedFeatures
+import com.X.search.common.features.SearchResultFeature
+import com.X.search.common.features.ExternalTweetFeature
+import com.X.search.common.features.TweetFeature
+import com.X.timelines.prediction.features.recap.RecapFeatures
+import com.X.timelines.prediction.features.request_context.RequestContextFeatures
+import com.X.timelines.prediction.features.time_features.TimeDataRecordFeatures
+import com.X.timelines.prediction.features.common.TimelinesSharedFeatures
+import com.X.timelines.prediction.features.real_graph.RealGraphDataRecordFeatures
 import scala.collection.JavaConverters._
 import java.lang.{Boolean => JBoolean}
 
@@ -238,13 +238,13 @@ trait EarlybirdTrainingConfiguration {
 
     require(
       !tweetFeature.isDiscrete && (
-        featureType == com.twitter.search.common.features.thrift.ThriftSearchFeatureType.BOOLEAN_VALUE ||
-          featureType == com.twitter.search.common.features.thrift.ThriftSearchFeatureType.DOUBLE_VALUE ||
-          featureType == com.twitter.search.common.features.thrift.ThriftSearchFeatureType.INT32_VALUE
+        featureType == com.X.search.common.features.thrift.ThriftSearchFeatureType.BOOLEAN_VALUE ||
+          featureType == com.X.search.common.features.thrift.ThriftSearchFeatureType.DOUBLE_VALUE ||
+          featureType == com.X.search.common.features.thrift.ThriftSearchFeatureType.INT32_VALUE
       )
     )
 
-    if (featureType == com.twitter.search.common.features.thrift.ThriftSearchFeatureType.BOOLEAN_VALUE)
+    if (featureType == com.X.search.common.features.thrift.ThriftSearchFeatureType.BOOLEAN_VALUE)
       new Feature.Binary(featureName)
     else
       new Feature.Continuous(featureName)

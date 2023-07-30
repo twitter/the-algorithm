@@ -1,21 +1,21 @@
-package com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.training_data_generation
+package com.X.timelines.data_processing.ad_hoc.earlybird_ranking.training_data_generation
 
-import com.twitter.ml.api.analytics.DataSetAnalyticsPlugin
-import com.twitter.ml.api.matcher.FeatureMatcher
-import com.twitter.ml.api.util.FDsl
-import com.twitter.ml.api.DailySuffixFeatureSource
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.DataSetPipe
-import com.twitter.ml.api.FeatureStats
-import com.twitter.ml.api.IMatcher
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding.Execution
-import com.twitter.scalding.TypedJson
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.timelines.data_processing.util.execution.UTCDateRangeFromArgs
-import com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.common.EarlybirdTrainingConfiguration
-import com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.common.EarlybirdTrainingRecapConfiguration
-import com.twitter.timelines.prediction.features.recap.RecapFeatures
+import com.X.ml.api.analytics.DataSetAnalyticsPlugin
+import com.X.ml.api.matcher.FeatureMatcher
+import com.X.ml.api.util.FDsl
+import com.X.ml.api.DailySuffixFeatureSource
+import com.X.ml.api.DataRecord
+import com.X.ml.api.DataSetPipe
+import com.X.ml.api.FeatureStats
+import com.X.ml.api.IMatcher
+import com.X.scalding.typed.TypedPipe
+import com.X.scalding.Execution
+import com.X.scalding.TypedJson
+import com.X.scalding_internal.job.XExecutionApp
+import com.X.timelines.data_processing.util.execution.UTCDateRangeFromArgs
+import com.X.timelines.data_processing.ad_hoc.earlybird_ranking.common.EarlybirdTrainingConfiguration
+import com.X.timelines.data_processing.ad_hoc.earlybird_ranking.common.EarlybirdTrainingRecapConfiguration
+import com.X.timelines.prediction.features.recap.RecapFeatures
 import scala.collection.JavaConverters._
 
 /**
@@ -25,7 +25,7 @@ import scala.collection.JavaConverters._
  * --input   recap data source (containing all labels)
  * --output  path to output JSON file containing stats
  */
-object EarlybirdStatsJob extends TwitterExecutionApp with UTCDateRangeFromArgs {
+object EarlybirdStatsJob extends XExecutionApp with UTCDateRangeFromArgs {
 
   import DataSetAnalyticsPlugin._
   import FDsl._

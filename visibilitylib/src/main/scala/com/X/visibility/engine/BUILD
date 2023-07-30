@@ -1,0 +1,22 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    platform = "java8",
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "abdecider/src/main/scala",
+        "configapi/configapi-core",
+        "servo/util/src/main/scala",
+        "src/thrift/com/X/search/common:constants-scala",
+        "src/thrift/com/X/spam/rtf:safety-level-scala",
+        "src/thrift/com/X/tweetypie:tweet-scala",
+        "stitch/stitch-core",
+        "visibility/lib/src/main/scala/com/X/visibility/builder",
+        "visibility/lib/src/main/scala/com/X/visibility/configapi/params",
+        "visibility/lib/src/main/scala/com/X/visibility/features",
+        "visibility/lib/src/main/scala/com/X/visibility/models",
+        "visibility/lib/src/main/scala/com/X/visibility/rules",
+        "visibility/lib/src/main/scala/com/X/visibility/rules/providers",
+    ],
+)

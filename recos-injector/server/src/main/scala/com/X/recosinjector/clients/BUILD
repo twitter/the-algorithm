@@ -1,0 +1,20 @@
+scala_library(
+    platform = "java11",
+    strict_deps = False,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "3rdparty/jvm/com/X/storehaus:core",
+        "finagle/finagle-memcached/src/main/scala",
+        "finagle/finagle-stats",
+        "frigate/frigate-common/src/main/scala/com/X/frigate/common/base",
+        "frigate/frigate-common/src/main/scala/com/X/frigate/common/util",
+        "servo/repo/src/main/scala",
+        "src/thrift/com/X/gizmoduck:thrift-scala",
+        "src/thrift/com/X/gizmoduck:user-thrift-scala",
+        "src/thrift/com/X/recos:recos-internal-scala",
+        "src/thrift/com/X/socialgraph:thrift-scala",
+        "src/thrift/com/X/tweetypie:service-scala",
+        "stitch/stitch-tweetypie/src/main/scala",
+        "util/util-logging/src/main/scala",
+    ],
+)

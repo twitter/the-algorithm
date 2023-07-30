@@ -1,8 +1,8 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics
+package com.X.timelines.data_processing.ml_util.aggregation_framework.metrics
 
-import com.twitter.ml.api._
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.util.Time
+import com.X.ml.api._
+import com.X.ml.api.util.SRichDataRecord
+import com.X.util.Time
 import java.lang.{Long => JLong}
 
 case class TypedCountMetric[T](

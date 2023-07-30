@@ -2,9 +2,9 @@
  * This file defines additional thrift objects that should be specified in FRS request for context of recommendation, specifically the previous recommendations / new interactions in an interactive flow (series of follow steps). These typically are sent from OCF
  */
 
-namespace java com.twitter.follow_recommendations.thriftjava
-#@namespace scala com.twitter.follow_recommendations.thriftscala
-#@namespace strato com.twitter.follow_recommendations
+namespace java com.X.follow_recommendations.thriftjava
+#@namespace scala com.X.follow_recommendations.thriftscala
+#@namespace strato com.X.follow_recommendations
 
 struct FlowRecommendation {
   1: required i64 userId(personalDataType='UserId')

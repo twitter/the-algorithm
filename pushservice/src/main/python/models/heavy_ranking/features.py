@@ -1,7 +1,7 @@
 import os
 from typing import Dict
 
-from twitter.deepbird.projects.magic_recs.libs.model_utils import filter_nans_and_infs
+from X.deepbird.projects.magic_recs.libs.model_utils import filter_nans_and_infs
 import twml
 from twml.layers import full_sparse, sparse_max_norm
 

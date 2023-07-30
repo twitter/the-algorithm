@@ -1,0 +1,22 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    platform = "java8",
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "src/scala/com/X/search/blender/services/strato",
+        "src/thrift/com/X/content-health/sensitivemediasettings:sensitivemediasettings-scala",
+        "src/thrift/com/X/gizmoduck:user-thrift-scala",
+        "stitch/stitch-core",
+        "visibility/common/src/main/scala/com/X/visibility/common",
+        "visibility/common/src/main/scala/com/X/visibility/common/user_result",
+        "visibility/common/src/main/thrift/com/X/visibility:action-scala",
+        "visibility/lib/src/main/resources/config",
+        "visibility/lib/src/main/scala/com/X/visibility",
+        "visibility/lib/src/main/scala/com/X/visibility/features",
+        "visibility/lib/src/main/scala/com/X/visibility/interfaces/common/blender",
+        "visibility/lib/src/main/scala/com/X/visibility/interfaces/common/search",
+        "visibility/lib/src/main/thrift/com/X/visibility/context:vf-context-scala",
+    ],
+)

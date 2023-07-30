@@ -1,13 +1,13 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework
+package com.X.timelines.data_processing.ml_util.aggregation_framework
 
-import com.twitter.dal.personal_data.thriftscala.PersonalDataType
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.Feature
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.Batched
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.JavaCompactThrift
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.genericInjection
-import com.twitter.summingbird.batch.BatchID
+import com.X.dal.personal_data.thriftscala.PersonalDataType
+import com.X.ml.api.DataRecord
+import com.X.ml.api.Feature
+import com.X.scalding_internal.multiformat.format.keyval.KeyValInjection
+import com.X.scalding_internal.multiformat.format.keyval.KeyValInjection.Batched
+import com.X.scalding_internal.multiformat.format.keyval.KeyValInjection.JavaCompactThrift
+import com.X.scalding_internal.multiformat.format.keyval.KeyValInjection.genericInjection
+import com.X.summingbird.batch.BatchID
 import scala.collection.JavaConverters._
 
 object OfflineAggregateInjections {

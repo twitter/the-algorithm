@@ -1,24 +1,24 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.scalding
+package com.X.timelines.data_processing.ml_util.aggregation_framework.scalding
 
-import com.twitter.algebird.ScMapMonoid
-import com.twitter.bijection.Injection
-import com.twitter.bijection.thrift.CompactThriftCodec
-import com.twitter.ml.api.util.CompactDataRecordConverter
-import com.twitter.ml.api.CompactDataRecord
-import com.twitter.ml.api.DataRecord
-import com.twitter.scalding.commons.source.VersionedKeyValSource
-import com.twitter.scalding.Args
-import com.twitter.scalding.Days
-import com.twitter.scalding.Duration
-import com.twitter.scalding.RichDate
-import com.twitter.scalding.TypedPipe
-import com.twitter.scalding.TypedTsv
-import com.twitter.scalding_internal.job.HasDateRange
-import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchJob
-import com.twitter.summingbird.batch.BatchID
-import com.twitter.summingbird_internal.bijection.BatchPairImplicits
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregationKey
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregationKeyInjection
+import com.X.algebird.ScMapMonoid
+import com.X.bijection.Injection
+import com.X.bijection.thrift.CompactThriftCodec
+import com.X.ml.api.util.CompactDataRecordConverter
+import com.X.ml.api.CompactDataRecord
+import com.X.ml.api.DataRecord
+import com.X.scalding.commons.source.VersionedKeyValSource
+import com.X.scalding.Args
+import com.X.scalding.Days
+import com.X.scalding.Duration
+import com.X.scalding.RichDate
+import com.X.scalding.TypedPipe
+import com.X.scalding.TypedTsv
+import com.X.scalding_internal.job.HasDateRange
+import com.X.scalding_internal.job.analytics_batch.AnalyticsBatchJob
+import com.X.summingbird.batch.BatchID
+import com.X.summingbird_internal.bijection.BatchPairImplicits
+import com.X.timelines.data_processing.ml_util.aggregation_framework.AggregationKey
+import com.X.timelines.data_processing.ml_util.aggregation_framework.AggregationKeyInjection
 import java.lang.{Double => JDouble}
 import java.lang.{Long => JLong}
 import scala.collection.JavaConverters._
