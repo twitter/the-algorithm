@@ -1,0 +1,7 @@
+scala_library(
+    sources = ["*.scala"],
+    dependencies = [
+        "src/java/com/X/ml/api:api-base",
+        "src/thrift/com/X/dal/personal_data:personal_data-java",
+    ],
+)

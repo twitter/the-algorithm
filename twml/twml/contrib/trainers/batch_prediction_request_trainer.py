@@ -11,11 +11,11 @@ from twml.trainers import DataRecordTrainer
 class BatchPredictionRequestTrainer(DataRecordTrainer):  # pylint: disable=abstract-method
   """
   The ``BatchPredictionRequestTrainer`` implementation is intended to satisfy use cases
-  that input is BatchPredictionRequest at Twitter and also where only the build_graph methods
+  that input is BatchPredictionRequest at X and also where only the build_graph methods
   needs to be overridden. For this reason, ``Trainer.[train,eval]_input_fn`` methods
   assume a DataRecord dataset partitioned into part files stored in compressed (e.g. gzip) format.
 
-  For use-cases that differ from this common Twitter use-case,
+  For use-cases that differ from this common X use-case,
   further Trainer methods can be overridden.
   If that still doesn't provide enough flexibility, the user can always
   use the tf.estimator.Esimator or tf.session.run directly.

@@ -1,0 +1,21 @@
+java_library(
+    sources = ["*.java"],
+    platform = "java8",
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "3rdparty/jvm/com/google/guava",
+        "3rdparty/jvm/org/slf4j:slf4j-api",
+        "3rdparty/jvm/org/tensorflow",
+        "finatra/inject/inject-slf4j/src/main/scala/com/X/inject",
+        "src/java/com/X/ml/api:api-base",
+        "src/java/com/X/search/common/file",
+        "src/java/com/X/search/common/schema",
+        "src/java/com/X/search/common/schema/base",
+        "src/java/com/X/search/common/util/ml/models_manager",
+        "src/thrift/com/X/search/common:features-java",
+        "tensorflow/tfcompute-java/src/main/java/com/X/tfcompute_java",
+        "twml/runtime/src/main/scala/com/X/twml/runtime/lib",
+        "twml/runtime/src/main/scala/com/X/twml/runtime/models",
+        "util/util-core:scala",
+    ],
+)

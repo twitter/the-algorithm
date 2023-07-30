@@ -3,9 +3,9 @@
 import time
 from collections import defaultdict
 
-from com.twitter.mlmetastore.modelrepo.client import ModelRepoClient
-from com.twitter.mlmetastore.modelrepo.core import FeatureImportance, FeatureNames
-from twitter.deepbird.io.util import match_feature_regex_list
+from com.X.mlmetastore.modelrepo.client import ModelRepoClient
+from com.X.mlmetastore.modelrepo.core import FeatureImportance, FeatureNames
+from X.deepbird.io.util import match_feature_regex_list
 
 from twml.contrib.feature_importances.helpers import (
   _get_feature_name_from_config,
@@ -152,7 +152,7 @@ def _feature_importances_tree_algorithm(
     stopping_metric (str): The metric to use to determine when to stop expanding trees
     file_list (list<str>): The list of filenames. Exactly one of file_list and data_dir should be
       provided
-    datarecord_filter_fn (function): a function takes a single data sample in com.twitter.ml.api.ttypes.DataRecord format
+    datarecord_filter_fn (function): a function takes a single data sample in com.X.ml.api.ttypes.DataRecord format
         and return a boolean value, to indicate if this data record should be kept in feature importance module or not.
     split_feature_group_on_period (boolean): If true, split feature groups by period rather than on
       optimal prefix
@@ -291,7 +291,7 @@ def compute_feature_importances(
     algorithm (str): The algorithm to use
     parse_fn: (function): The parse_fn used by eval_input_fn. By default this is
       feature_config.get_parse_fn()
-    datarecord_filter_fn (function): a function takes a single data sample in com.twitter.ml.api.ttypes.DataRecord format
+    datarecord_filter_fn (function): a function takes a single data sample in com.X.ml.api.ttypes.DataRecord format
         and return a boolean value, to indicate if this data record should be kept in feature importance module or not.
   """
 

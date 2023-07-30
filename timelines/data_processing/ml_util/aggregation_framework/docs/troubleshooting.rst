@@ -13,7 +13,7 @@ The Summingbird batch job failed due to the following error:
 
 .. code:: bash
 
-  Caused by: com.twitter.bijection.InversionFailure: ...
+  Caused by: com.X.bijection.InversionFailure: ...
 
 It typically indicates the corrupt records of the aggregate store (not the other side of the DataRecord source).
 The following describes the method to re-generate the required (typically the latest) version:
@@ -74,7 +74,7 @@ We can see the slight difference of size:
 Example
 ~~~~~~~~
 
-There is an example in https://phabricator.twitter.biz/D591174
+There is an example in https://phabricator.X.biz/D591174
 
 
 [Batch] Skipping the offline job ahead
@@ -92,7 +92,7 @@ Solution
 
 We will need to skip the job ahead. Unfortunately, this involves manual effort. We also need help from the ADP team (Slack #adp).
 
-1. Ask the ADP team to manually insert an entry into the store via the #adp Slack channel. You may refer to https://jira.twitter.biz/browse/AIPIPE-7520 and https://jira.twitter.biz/browse/AIPIPE-9300 as references. However, please don't create and assign tickets directly to an ADP team member unless they ask you to.
+1. Ask the ADP team to manually insert an entry into the store via the #adp Slack channel. You may refer to https://jira.X.biz/browse/AIPIPE-7520 and https://jira.X.biz/browse/AIPIPE-9300 as references. However, please don't create and assign tickets directly to an ADP team member unless they ask you to.
 
 2. Copy the latest version of the store to the same HDFS directory but with a different destination name. The name MUST be the same as the above inserted version.
 
@@ -102,7 +102,7 @@ For example, if the ADP team manually inserted a version on 12/09/2020, then we 
 
   $ dalv2 segment list --name user_original_author_aggregates --role timelines  --location-name proc2-atla --location-type hadoop-cluster
   ...
-  None	2020-12-09T00:00:00Z	viewfs://hadoop-proc2-nn.atla.twitter.com/user/timelines/processed/aggregates_v2/user_original_author_aggregates/1607472000000	Unknown	None
+  None	2020-12-09T00:00:00Z	viewfs://hadoop-proc2-nn.atla.X.com/user/timelines/processed/aggregates_v2/user_original_author_aggregates/1607472000000	Unknown	None
 
 where `1607472000000` is the timestamp of 12/09/2020.
 Then you will need to duplicate the latest version of the store to a dir of `1607472000000`.

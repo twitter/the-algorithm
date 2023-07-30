@@ -25,10 +25,10 @@ try:
   # ML Metastore packages might not be available on GCP.
   # If they are not found, tracking is disabled
   import requests
-  from com.twitter.mlmetastore.modelrepo.client import ModelRepoClient
-  from com.twitter.mlmetastore.modelrepo.core.path import (
+  from com.X.mlmetastore.modelrepo.client import ModelRepoClient
+  from com.X.mlmetastore.modelrepo.core.path import (
     check_valid_id, get_components_from_id, generate_id)
-  from com.twitter.mlmetastore.modelrepo.core import (
+  from com.X.mlmetastore.modelrepo.core import (
     DeepbirdRun, Experiment, FeatureConfig, FeatureConfigFeature, Model, ProgressReport, Project, StatusUpdate)
 except ImportError:
   ModelRepoClient = None
@@ -518,7 +518,7 @@ class ExperimentTracker(object):
   def compute_model_hash(cls, export_path):
     """
     Computes the hash of an exported model. This is a gfile version of
-    twitter.mlmetastore.common.versioning.compute_hash. The two functions should generate
+    X.mlmetastore.common.versioning.compute_hash. The two functions should generate
     the same hash when given the same model.
 
     Args:

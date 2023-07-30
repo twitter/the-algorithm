@@ -1,0 +1,22 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "3rdparty/jvm/javax/inject:javax.inject",
+        "configapi/configapi-core",
+        "cr-mixer/thrift/src/main/thrift:thrift-scala",
+        "decider/src/main/scala",
+        "finagle-internal/mtls/src/main/scala/com/X/finagle/mtls/authentication",
+        "finagle/finagle-core/src/main",
+        "frigate/frigate-common:base",
+        "frigate/frigate-common:util",
+        "frigate/frigate-common/src/main/scala/com/X/frigate/common/base",
+        "product-mixer/core/src/main/thrift/com/X/product_mixer/core:thrift-scala",
+        "scrooge/scrooge-serializer/src/main/scala",
+        "src/scala/com/X/simclusters_v2/common",
+        "src/thrift/com/X/simclusters_v2:simclusters_v2-thrift-scala",
+        "util-internal/scribe/src/main/scala/com/X/logging",
+    ],
+)

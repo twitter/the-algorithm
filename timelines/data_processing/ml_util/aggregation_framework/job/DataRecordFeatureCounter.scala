@@ -1,11 +1,11 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.job
+package com.X.timelines.data_processing.ml_util.aggregation_framework.job
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.summingbird.Counter
+import com.X.ml.api.DataRecord
+import com.X.summingbird.Counter
 
 /**
  * A summingbird Counter which is associated with a predicate which operates on
- * [[com.twitter.ml.api.DataRecord]] instances.
+ * [[com.X.ml.api.DataRecord]] instances.
  *
  * For example, for a data record which represents a Tweet, one could define a predicate
  * which checks whether the Tweet contains a binary feature representing the presence of

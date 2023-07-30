@@ -1,7 +1,7 @@
 Overview
 ========
 
-Visibility Filtering is a centralized rule engine that instructs clients how to alter the display of certain Twitter content on read time. The Visibility Filtering library is responsible for filtering Twitter content to support legal compliance, improve product quality, increase user trust, protect revenue through the use of hard-filtering, visible product treatments, and coarse-grained downranking.
+Visibility Filtering is a centralized rule engine that instructs clients how to alter the display of certain X content on read time. The Visibility Filtering library is responsible for filtering X content to support legal compliance, improve product quality, increase user trust, protect revenue through the use of hard-filtering, visible product treatments, and coarse-grained downranking.
 
 Notice
 ======

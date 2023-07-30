@@ -1,11 +1,11 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.conversion
+package com.X.timelines.data_processing.ml_util.aggregation_framework.conversion
 
-import com.twitter.ml.api._
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding.typed.UnsortedGrouped
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup
+import com.X.ml.api._
+import com.X.ml.api.Feature
+import com.X.ml.api.util.SRichDataRecord
+import com.X.scalding.typed.TypedPipe
+import com.X.scalding.typed.UnsortedGrouped
+import com.X.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup
 import java.util.{Set => JSet}
 import scala.collection.JavaConverters._
 

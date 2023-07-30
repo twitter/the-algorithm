@@ -1,10 +1,10 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.conversion
+package com.X.timelines.data_processing.ml_util.aggregation_framework.conversion
 
-import com.twitter.ml.api._
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics.AggregationMetricCommon
+import com.X.ml.api._
+import com.X.ml.api.FeatureContext
+import com.X.ml.api.util.SRichDataRecord
+import com.X.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup
+import com.X.timelines.data_processing.ml_util.aggregation_framework.metrics.AggregationMetricCommon
 import java.lang.{Boolean => JBoolean}
 import java.lang.{Double => JDouble}
 

@@ -1,0 +1,20 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "finagle/finagle-core/src/main",
+        "flock-client/src/main/scala",
+        "flock-client/src/main/thrift:thrift-scala",
+        "tweetypie/servo/util/src/main/scala",
+        "snowflake:id",
+        "src/thrift/com/X/gizmoduck:thrift-scala",
+        "src/thrift/com/X/servo:servo-exception-java",
+        "tweetypie/common/src/thrift/com/X/tweetypie:tweet-scala",
+        "tweetypie/server/src/main/scala/com/X/tweetypie",
+        "tweetypie/server/src/main/scala/com/X/tweetypie/serverutil",
+        "tweetypie/common/src/scala/com/X/tweetypie/util",
+        "util/util-core:scala",
+    ],
+)

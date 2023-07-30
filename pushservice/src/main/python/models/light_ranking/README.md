@@ -1,7 +1,7 @@
 # Notification Light Ranker Model
 
 ## Model Context
-There are 4 major components of Twitter notifications recommendation system: 1) candidate generation 2) light ranking 3) heavy ranking & 4) quality control. This notification light ranker model bridges candidate generation and heavy ranking by pre-selecting highly-relevant candidates from the initial huge candidate pool. It’s a light-weight model to reduce system cost during heavy ranking without hurting user experience.
+There are 4 major components of X notifications recommendation system: 1) candidate generation 2) light ranking 3) heavy ranking & 4) quality control. This notification light ranker model bridges candidate generation and heavy ranking by pre-selecting highly-relevant candidates from the initial huge candidate pool. It’s a light-weight model to reduce system cost during heavy ranking without hurting user experience.
 
 ## Directory Structure
 - BUILD: this file defines python library dependencies

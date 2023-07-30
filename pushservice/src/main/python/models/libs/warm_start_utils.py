@@ -3,7 +3,7 @@ import json
 import os
 from os.path import join
 
-from twitter.magicpony.common import file_access
+from X.magicpony.common import file_access
 import twml
 
 from .model_utils import read_config

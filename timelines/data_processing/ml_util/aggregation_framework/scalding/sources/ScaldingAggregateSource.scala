@@ -1,19 +1,19 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.scalding.sources
+package com.X.timelines.data_processing.ml_util.aggregation_framework.scalding.sources
 
-import com.twitter.ml.api.DailySuffixFeatureSource
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FixedPathFeatureSource
-import com.twitter.ml.api.HourlySuffixFeatureSource
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
-import com.twitter.statebird.v2.thriftscala.Environment
-import com.twitter.summingbird._
-import com.twitter.summingbird.scalding.Scalding.pipeFactoryExact
-import com.twitter.summingbird.scalding._
-import com.twitter.summingbird_internal.sources.SourceFactory
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.OfflineAggregateSource
+import com.X.ml.api.DailySuffixFeatureSource
+import com.X.ml.api.DataRecord
+import com.X.ml.api.FixedPathFeatureSource
+import com.X.ml.api.HourlySuffixFeatureSource
+import com.X.ml.api.util.SRichDataRecord
+import com.X.scalding._
+import com.X.scalding_internal.dalv2.DAL
+import com.X.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
+import com.X.statebird.v2.thriftscala.Environment
+import com.X.summingbird._
+import com.X.summingbird.scalding.Scalding.pipeFactoryExact
+import com.X.summingbird.scalding._
+import com.X.summingbird_internal.sources.SourceFactory
+import com.X.timelines.data_processing.ml_util.aggregation_framework.OfflineAggregateSource
 import java.lang.{Long => JLong}
 
 /*
@@ -60,7 +60,7 @@ case class ScaldingAggregateSource(offlineSource: OfflineAggregateSource)
    * This method is similar to [[Scalding.sourceFromMappable]] except that this uses [[pipeFactoryExact]]
    * instead of [[pipeFactory]]. [[pipeFactoryExact]] also invokes [[FileSource.validateTaps]] on the source.
    * The validation ensures the presence of _SUCCESS file before processing. For more details, please refer to
-   * https://jira.twitter.biz/browse/TQ-10618
+   * https://jira.X.biz/browse/TQ-10618
    */
   def sourceFromMappableWithValidation[T: TimeExtractor: Manifest](
     factory: (DateRange) => Mappable[T]

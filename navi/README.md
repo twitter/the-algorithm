@@ -1,6 +1,6 @@
 # Navi: High-Performance Machine Learning Serving Server in Rust
 
-Navi is a high-performance, versatile machine learning serving server implemented in Rust and tailored for production usage. It's designed to efficiently serve within the Twitter tech stack, offering top-notch performance while focusing on core features.
+Navi is a high-performance, versatile machine learning serving server implemented in Rust and tailored for production usage. It's designed to efficiently serve within the X tech stack, offering top-notch performance while focusing on core features.
 
 ## Key Features
 
@@ -12,14 +12,14 @@ Navi is a high-performance, versatile machine learning serving server implemente
 
 While Navi's features may not be as comprehensive as its open-source counterparts, its performance-first mindset makes it highly efficient. 
 - Navi for TensorFlow is currently the most feature-complete, supporting multiple input tensors of different types (float, int, string, etc.).
-- Navi for Onnx primarily supports one input tensor of type string, used in Twitter's home recommendation with a proprietary BatchPredictRequest format.
+- Navi for Onnx primarily supports one input tensor of type string, used in X's home recommendation with a proprietary BatchPredictRequest format.
 - Navi for Pytorch is compilable and runnable but not yet production-ready in terms of performance and stability.
 
 ## Directory Structure
 
 - `navi`: The main code repository for Navi
-- `dr_transform`: Twitter-specific converter that converts BatchPredictionRequest Thrift to ndarray
-- `segdense`: Twitter-specific config to specify how to retrieve feature values from BatchPredictionRequest
+- `dr_transform`: X-specific converter that converts BatchPredictionRequest Thrift to ndarray
+- `segdense`: X-specific config to specify how to retrieve feature values from BatchPredictionRequest
 - `thrift_bpr_adapter`: generated thrift code for BatchPredictionRequest
 
 ## Content

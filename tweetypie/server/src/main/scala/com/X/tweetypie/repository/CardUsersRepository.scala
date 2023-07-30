@@ -1,0 +1,43 @@
+package com.X.tweetypie
+package repository
+
+import com.X.expandodo.thriftscala._
+import com.X.stitch.SeqGroup
+import com.X.stitch.Stitch
+import com.X.stitch.compat.LegacySeqGroup
+import com.X.tweetypie.backends.Expandodo
+
+object CardUsersRepository {
+  type CardUri = String
+  type Type = (CardUri, Context) => Stitch[Option[Set[UserId]]]
+
+  case class Context(perspectiveUserId: UserId) extends AnyVal
+
+  case class GetUsersGroup(perspectiveId: UserId, getCardUsers: Expandodo.GetCardUsers)
+      extends SeqGroup[CardUri, GetCardUsersResponse] {
+    protected override def run(keys: Seq[CardUri]): Future[Seq[Try[GetCardUsersResponse]]] =
+      LegacySeqGroup.liftToSeqTry(
+        getCardUsers(
+          GetCardUsersRequests(
+            requests = keys.map(k => GetCardUsersRequest(k)),
+            perspectiveUserId = Some(perspectiveId)
+          )
+        ).map(_.responses)
+      )
+  }
+
+  def apply(getCardUsers: Expandodo.GetCardUsers): Type =
+    (cardUri, ctx) =>
+      Stitch.call(cardUri, GetUsersGroup(ctx.perspectiveUserId, getCardUsers)).map { resp =>
+        val authorUserIds = resp.authorUserIds.map(_.toSet)
+        val siteUserIds = resp.siteUserIds.map(_.toSet)
+
+        if (authorUserIds.isEmpty) {
+          siteUserIds
+        } else if (siteUserIds.isEmpty) {
+          authorUserIds
+        } else {
+          Some(authorUserIds.get ++ siteUserIds.get)
+        }
+      }
+}

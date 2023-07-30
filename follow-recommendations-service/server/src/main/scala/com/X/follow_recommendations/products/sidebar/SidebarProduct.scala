@@ -1,0 +1,73 @@
+package com.X.follow_recommendations.products.sidebar
+
+import com.X.follow_recommendations.common.base.BaseRecommendationFlow
+import com.X.follow_recommendations.common.base.IdentityTransform
+import com.X.follow_recommendations.common.base.Transform
+import com.X.follow_recommendations.flows.ads.PromotedAccountsFlow
+import com.X.follow_recommendations.flows.ads.PromotedAccountsFlowRequest
+import com.X.follow_recommendations.blenders.PromotedAccountsBlender
+import com.X.follow_recommendations.common.models.DisplayLocation
+import com.X.follow_recommendations.common.models.Recommendation
+import com.X.follow_recommendations.flows.post_nux_ml.PostNuxMlFlow
+import com.X.follow_recommendations.flows.post_nux_ml.PostNuxMlRequestBuilder
+import com.X.follow_recommendations.products.common.Product
+import com.X.follow_recommendations.products.common.ProductRequest
+import com.X.follow_recommendations.products.sidebar.configapi.SidebarParams
+import com.X.stitch.Stitch
+import javax.inject.Inject
+import javax.inject.Singleton
+
+@Singleton
+class SidebarProduct @Inject() (
+  postNuxMlFlow: PostNuxMlFlow,
+  postNuxMlRequestBuilder: PostNuxMlRequestBuilder,
+  promotedAccountsFlow: PromotedAccountsFlow,
+  promotedAccountsBlender: PromotedAccountsBlender)
+    extends Product {
+  override val name: String = "Sidebar"
+
+  override val identifier: String = "sidebar"
+
+  override val displayLocation: DisplayLocation = DisplayLocation.Sidebar
+
+  override def selectWorkflows(
+    request: ProductRequest
+  ): Stitch[Seq[BaseRecommendationFlow[ProductRequest, _ <: Recommendation]]] = {
+    postNuxMlRequestBuilder.build(request).map { postNuxMlRequest =>
+      Seq(
+        postNuxMlFlow.mapKey({ _: ProductRequest => postNuxMlRequest }),
+        promotedAccountsFlow.mapKey(mkPromotedAccountsRequest)
+      )
+    }
+  }
+
+  override val blender: Transform[ProductRequest, Recommendation] = {
+    promotedAccountsBlender.mapTarget[ProductRequest](getMaxResults)
+  }
+
+  private[sidebar] def mkPromotedAccountsRequest(
+    req: ProductRequest
+  ): PromotedAccountsFlowRequest = {
+    PromotedAccountsFlowRequest(
+      req.recommendationRequest.clientContext,
+      req.params,
+      req.recommendationRequest.displayLocation,
+      None,
+      req.recommendationRequest.excludedIds.getOrElse(Nil)
+    )
+  }
+
+  private[sidebar] def getMaxResults(req: ProductRequest): Int = {
+    req.recommendationRequest.maxResults.getOrElse(
+      req.params(SidebarParams.DefaultMaxResults)
+    )
+  }
+
+  override def resultsTransformer(
+    request: ProductRequest
+  ): Stitch[Transform[ProductRequest, Recommendation]] =
+    Stitch.value(new IdentityTransform[ProductRequest, Recommendation])
+
+  override def enabled(request: ProductRequest): Stitch[Boolean] =
+    Stitch.value(request.params(SidebarParams.EnableProduct))
+}

@@ -3,7 +3,7 @@
 Implementing factorization Layer
 """
 
-from twitter.deepbird.sparse.sparse_ops import _pad_empty_outputs
+from X.deepbird.sparse.sparse_ops import _pad_empty_outputs
 
 import tensorflow.compat.v1 as tf
 import twml

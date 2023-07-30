@@ -1,27 +1,27 @@
-package com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.model_evaluation
+package com.X.timelines.data_processing.ad_hoc.earlybird_ranking.model_evaluation
 
-import com.twitter.algebird.Aggregator
-import com.twitter.algebird.AveragedValue
-import com.twitter.ml.api.prediction_engine.PredictionEnginePlugin
-import com.twitter.ml.api.util.FDsl
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.IRecordOneToManyAdapter
-import com.twitter.scalding.Args
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Execution
-import com.twitter.scalding.TypedJson
-import com.twitter.scalding.TypedPipe
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.common.EarlybirdTrainingRecapConfiguration
-import com.twitter.timelines.data_processing.util.RequestImplicits.RichRequest
-import com.twitter.timelines.data_processing.util.example.RecapTweetExample
-import com.twitter.timelines.data_processing.util.execution.UTCDateRangeFromArgs
-import com.twitter.timelines.prediction.adapters.recap.RecapSuggestionRecordAdapter
-import com.twitter.timelines.prediction.features.recap.RecapFeatures
-import com.twitter.timelines.suggests.common.record.thriftscala.SuggestionRecord
-import com.twitter.timelineservice.suggests.logging.recap.thriftscala.HighlightTweet
-import com.twitter.timelineservice.suggests.logging.thriftscala.SuggestsRequestLog
+import com.X.algebird.Aggregator
+import com.X.algebird.AveragedValue
+import com.X.ml.api.prediction_engine.PredictionEnginePlugin
+import com.X.ml.api.util.FDsl
+import com.X.ml.api.DataRecord
+import com.X.ml.api.IRecordOneToManyAdapter
+import com.X.scalding.Args
+import com.X.scalding.DateRange
+import com.X.scalding.Execution
+import com.X.scalding.TypedJson
+import com.X.scalding.TypedPipe
+import com.X.scalding_internal.dalv2.DAL
+import com.X.scalding_internal.job.XExecutionApp
+import com.X.timelines.data_processing.ad_hoc.earlybird_ranking.common.EarlybirdTrainingRecapConfiguration
+import com.X.timelines.data_processing.util.RequestImplicits.RichRequest
+import com.X.timelines.data_processing.util.example.RecapTweetExample
+import com.X.timelines.data_processing.util.execution.UTCDateRangeFromArgs
+import com.X.timelines.prediction.adapters.recap.RecapSuggestionRecordAdapter
+import com.X.timelines.prediction.features.recap.RecapFeatures
+import com.X.timelines.suggests.common.record.thriftscala.SuggestionRecord
+import com.X.timelineservice.suggests.logging.recap.thriftscala.HighlightTweet
+import com.X.timelineservice.suggests.logging.thriftscala.SuggestsRequestLog
 import scala.collection.JavaConverters._
 import scala.language.reflectiveCalls
 import scala.util.Random
@@ -39,7 +39,7 @@ import twadoop_config.configuration.log_categories.group.timelines.Timelineservi
  * --topn_fractions   (optional) list of values of `n` (doubles) for top-N-fraction metrics
  * --seed             (optional) seed for random number generator
  */
-object EarlybirdModelEvaluationJob extends TwitterExecutionApp with UTCDateRangeFromArgs {
+object EarlybirdModelEvaluationJob extends XExecutionApp with UTCDateRangeFromArgs {
 
   import FDsl._
   import PredictionEnginePlugin._

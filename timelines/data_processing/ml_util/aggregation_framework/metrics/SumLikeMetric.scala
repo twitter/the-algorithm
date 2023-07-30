@@ -1,8 +1,8 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics
+package com.X.timelines.data_processing.ml_util.aggregation_framework.metrics
 
-import com.twitter.ml.api._
-import com.twitter.util.Duration
-import com.twitter.util.Time
+import com.X.ml.api._
+import com.X.util.Duration
+import com.X.util.Time
 import java.lang.{Double => JDouble}
 import java.lang.{Long => JLong}
 import java.util.{Map => JMap}

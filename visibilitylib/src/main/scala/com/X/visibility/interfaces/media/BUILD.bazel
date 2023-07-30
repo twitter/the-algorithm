@@ -1,0 +1,16 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = False,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "mediaservices/media-util",
+        "stitch/stitch-core",
+        "visibility/lib/src/main/scala/com/X/visibility",
+        "visibility/lib/src/main/scala/com/X/visibility/builder/media",
+        "visibility/lib/src/main/scala/com/X/visibility/builder/users",
+        "visibility/lib/src/main/scala/com/X/visibility/features",
+        "visibility/lib/src/main/scala/com/X/visibility/rules/providers",
+        "visibility/lib/src/main/scala/com/X/visibility/rules/utils",
+    ],
+)

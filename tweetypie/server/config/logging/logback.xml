@@ -36,7 +36,7 @@
         <!-- Allow all INFO+ messages from tweetypie logs, ERROR+ messages from all others.
              These filters do not change the log levels for the loggers, they only filter what is
              allowed to be logged to the important file. -->
-        <filter class="com.twitter.tweetypie.util.logging.OnlyImportantLogsLoggingFilter" />
+        <filter class="com.X.tweetypie.util.logging.OnlyImportantLogsLoggingFilter" />
     </appender>
 
     <!-- The following appender is effectively a copy of the appender above in order to
@@ -46,7 +46,7 @@
     loglens now is actually sending data to splunk. Due to limitations of logback, we cannot use
     the same appender to write data at multiple places (file and splunk). So, we have 2 similar
     appenders that write to 2 separate places. -->
-    <appender name="LOGLENS-BASE" class="com.twitter.loglens.logback.LoglensAppender">
+    <appender name="LOGLENS-BASE" class="com.X.loglens.logback.LoglensAppender">
         <mdcAdditionalContext>true</mdcAdditionalContext>
         <tag>${log.lens.tag}</tag>
         <index>${log.lens.index}</index>
@@ -58,7 +58,7 @@
         <!-- Allow all INFO+ messages from tweetypie logs, ERROR+ messages from all others.
              These filters do not change the log levels for the loggers, they only filter what is
              allowed to be logged to loglens. -->
-        <filter class="com.twitter.tweetypie.util.logging.OnlyImportantLogsLoggingFilter" />
+        <filter class="com.X.tweetypie.util.logging.OnlyImportantLogsLoggingFilter" />
     </appender>
 
     <!-- The important logs may sometimes get too noisy to find relevant exceptions and errors
@@ -83,13 +83,13 @@
         </encoder>
 
         <!-- Only log alertable exceptions to this file -->
-        <filter class="com.twitter.tweetypie.util.logging.AlertableExceptionLoggingFilter" />
+        <filter class="com.X.tweetypie.util.logging.AlertableExceptionLoggingFilter" />
     </appender>
 
     <!-- This is the persistent version of the appender above for logging Errors and RuntimeExceptions
      to splunk. To make it easier to search for these exceptions/errors in splunk we prefix the
      exceptions with "ALERTABLE:" string. -->
-    <appender name="LOGLENS-ALERTABLE-BASE" class="com.twitter.loglens.logback.LoglensAppender">
+    <appender name="LOGLENS-ALERTABLE-BASE" class="com.X.loglens.logback.LoglensAppender">
         <mdcAdditionalContext>true</mdcAdditionalContext>
         <tag>${log.lens.tag}</tag>
         <index>${log.lens.index}</index>
@@ -101,7 +101,7 @@
         <!-- Allow all Runtime Exceptions and Error messages from tweetypie logs.
              These filters do not change the log levels for the loggers, they only filter what is
              allowed to be logged to loglens. -->
-        <filter class="com.twitter.tweetypie.util.logging.AlertableExceptionLoggingFilter" />
+        <filter class="com.X.tweetypie.util.logging.AlertableExceptionLoggingFilter" />
     </appender>
 
     <!-- Each of the appenders above are called Asynchronously to make sure logging operations
@@ -126,10 +126,10 @@
     <!-- Memcached and ObservableCache log a lot of messages at the WARN level. These messages
          are mostly not useful, so lets filter them out. If you would like to see them,
          you can change the log level on the admin page. -->
-    <logger name="com.twitter.tweetypie.cache" level="error"/>
+    <logger name="com.X.tweetypie.cache" level="error"/>
     <logger name="memcache" level="error"/>
 
-    <logger name="com.twitter.tweetypie.config.MemcacheExceptionLoggingFilter" level="debug" />
+    <logger name="com.X.tweetypie.config.MemcacheExceptionLoggingFilter" level="debug" />
     <!-- Prune the log of noisy DarkTrafficFilter exceptions. If you would like to see them,
          you can change the log level on the admin page. -->
     <logger name="DarkTrafficFilter" level="off"/>

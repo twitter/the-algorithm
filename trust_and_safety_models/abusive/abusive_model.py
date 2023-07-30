@@ -4,11 +4,11 @@ physical_devices = tf.config.list_physical_devices('GPU')
 for device in physical_devices:
     tf.config.experimental.set_memory_growth(device, True)
 
-from twitter.hmli.nimbus.modeling.model_config import FeatureType, EncodingType, Feature, Model, LogType
-from twitter.hmli.nimbus.modeling.feature_loader import BigQueryFeatureLoader
-from twitter.cuad.representation.models.text_encoder import TextEncoder
-from twitter.cuad.representation.models.optimization import create_optimizer
-from twitter.hmli.nimbus.modeling.feature_encoder import FeatureEncoder
+from X.hmli.nimbus.modeling.model_config import FeatureType, EncodingType, Feature, Model, LogType
+from X.hmli.nimbus.modeling.feature_loader import BigQueryFeatureLoader
+from X.cuad.representation.models.text_encoder import TextEncoder
+from X.cuad.representation.models.optimization import create_optimizer
+from X.hmli.nimbus.modeling.feature_encoder import FeatureEncoder
 
 import numpy as np
 import pandas as pd
@@ -72,7 +72,7 @@ params = {
   'cls_dropout_rate': 0.1,
   'epochs': 30,
   'steps_per_epoch': 5000,
-  'model_type': 'twitter_multilingual_bert_base_cased_mlm', 
+  'model_type': 'X_multilingual_bert_base_cased_mlm', 
   'mixed_precision': True,
 }
 params

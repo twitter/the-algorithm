@@ -1,9 +1,9 @@
 from functools import partial
 
-from twitter.cortex.ml.embeddings.deepbird.grouped_metrics.configuration import (
+from X.cortex.ml.embeddings.deepbird.grouped_metrics.configuration import (
   GroupedMetricsConfiguration,
 )
-from twitter.cortex.ml.embeddings.deepbird.grouped_metrics.helpers import (
+from X.cortex.ml.embeddings.deepbird.grouped_metrics.helpers import (
   extract_prediction_from_prediction_record,
 )
 

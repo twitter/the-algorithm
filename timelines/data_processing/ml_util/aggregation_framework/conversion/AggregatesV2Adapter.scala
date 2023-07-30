@@ -1,17 +1,17 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.conversion
+package com.X.timelines.data_processing.ml_util.aggregation_framework.conversion
 
-import com.twitter.algebird.DecayedValue
-import com.twitter.algebird.DecayedValueMonoid
-import com.twitter.algebird.Monoid
-import com.twitter.ml.api._
-import com.twitter.ml.api.constant.SharedFeatures
-import com.twitter.ml.api.util.FDsl._
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.summingbird.batch.BatchID
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregationKey
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics.AggregateFeature
-import com.twitter.util.Duration
+import com.X.algebird.DecayedValue
+import com.X.algebird.DecayedValueMonoid
+import com.X.algebird.Monoid
+import com.X.ml.api._
+import com.X.ml.api.constant.SharedFeatures
+import com.X.ml.api.util.FDsl._
+import com.X.ml.api.util.SRichDataRecord
+import com.X.summingbird.batch.BatchID
+import com.X.timelines.data_processing.ml_util.aggregation_framework.AggregationKey
+import com.X.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup
+import com.X.timelines.data_processing.ml_util.aggregation_framework.metrics.AggregateFeature
+import com.X.util.Duration
 import java.lang.{Double => JDouble}
 import java.lang.{Long => JLong}
 import scala.collection.JavaConverters._

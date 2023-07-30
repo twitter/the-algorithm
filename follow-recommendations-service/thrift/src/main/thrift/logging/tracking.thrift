@@ -1,8 +1,8 @@
-namespace java com.twitter.follow_recommendations.logging.thriftjava
-#@namespace scala com.twitter.follow_recommendations.logging.thriftscala
-#@namespace strato com.twitter.follow_recommendations.logging
+namespace java com.X.follow_recommendations.logging.thriftjava
+#@namespace scala com.X.follow_recommendations.logging.thriftscala
+#@namespace strato com.X.follow_recommendations.logging
 
-include "com/twitter/suggests/controller_data/controller_data.thrift"
+include "com/X/suggests/controller_data/controller_data.thrift"
 include "display_location.thrift"
 
 struct TrackingToken {

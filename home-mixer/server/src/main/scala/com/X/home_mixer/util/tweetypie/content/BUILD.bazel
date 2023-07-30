@@ -1,0 +1,19 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "home-mixer/server/src/main/scala/com/X/home_mixer/model",
+        "home-mixer/thrift/src/main/thrift:thrift-scala",
+        "src/java/com/X/common/text/tagger",
+        "src/java/com/X/common/text/token",
+        "src/java/com/X/common_internal/text",
+        "src/java/com/X/common_internal/text/version",
+        "src/java/com/X/search/common/util/text",
+        "src/thrift/com/X/search/common:features-scala",
+        "src/thrift/com/X/tweetypie:media-entity-scala",
+        "src/thrift/com/X/tweetypie:service-scala",
+        "src/thrift/com/X/tweetypie:tweet-scala",
+    ],
+)

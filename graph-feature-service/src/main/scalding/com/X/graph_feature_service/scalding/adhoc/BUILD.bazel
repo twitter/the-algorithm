@@ -1,0 +1,27 @@
+scala_library(
+    platform = "java8",
+    tags = ["bazel-only"],
+    dependencies = [
+        "3rdparty/jvm/com/X/bijection:core",
+        "3rdparty/jvm/com/X/bijection:scrooge",
+        "frigate/frigate-common/src/main/scala/com/X/frigate/common/constdb_util",
+        "src/java/com/X/ml/api:api-base",
+        "src/scala/com/X/ml/api:api-base",
+        "src/scala/com/X/scalding_internal/job",
+        "src/scala/com/X/scalding_internal/job/analytics_batch",
+        "src/thrift/com/X/ml/api:data-java",
+    ],
+)
+
+hadoop_binary(
+    name = "gfs_random_request-adhoc",
+    main = "com.X.graph_feature_service.scalding.adhoc.RandomRequestGenerationApp",
+    platform = "java8",
+    runtime_platform = "java8",
+    tags = [
+        "bazel-compatible",
+        "bazel-compatible:migrated",
+        "bazel-only",
+    ],
+    dependencies = [":adhoc"],
+)

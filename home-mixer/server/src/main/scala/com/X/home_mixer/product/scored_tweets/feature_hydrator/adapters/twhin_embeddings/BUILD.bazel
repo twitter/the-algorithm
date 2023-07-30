@@ -1,0 +1,16 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "src/java/com/X/ml/api:api-base",
+        "src/scala/com/X/ml/api:api-base",
+        "src/scala/com/X/ml/api/util",
+        "src/scala/com/X/timelines/prediction/common/adapters:base",
+        "src/thrift/com/X/ml/api:data-java",
+        "src/thrift/com/X/ml/api:data-scala",
+        "src/thrift/com/X/ml/api:embedding-java",
+        "src/thrift/com/X/ml/api:embedding-scala",
+    ],
+)

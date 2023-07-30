@@ -177,9 +177,9 @@ def get_trainer_parser():
     "--distributed_training_cleanup",
     dest="distributed_training_cleanup",
     action="store_true",
-    help="Set if using distributed training on GKE to stop TwitterSetDeployment"
+    help="Set if using distributed training on GKE to stop XSetDeployment"
          "from continuing training upon restarts (will be deprecated once we migrate off"
-         "TwitterSetDeployment for distributed training on GKE)."
+         "XSetDeployment for distributed training on GKE)."
   )
   parser.add_argument(
     "--disable_auto_ps_shutdown", default=False, action="store_true",

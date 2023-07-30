@@ -1,16 +1,16 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.heron
+package com.X.timelines.data_processing.ml_util.aggregation_framework.heron
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mtls.authentication.EmptyServiceIdentifier
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.storehaus_internal.memcache.ConnectionConfig
-import com.twitter.storehaus_internal.memcache.MemcacheConfig
-import com.twitter.storehaus_internal.util.KeyPrefix
-import com.twitter.storehaus_internal.util.TTL
-import com.twitter.storehaus_internal.util.ZkEndPoint
-import com.twitter.summingbird_internal.runner.store_config.OnlineStoreOnlyConfig
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateStore
-import com.twitter.util.Duration
+import com.X.conversions.DurationOps._
+import com.X.finagle.mtls.authentication.EmptyServiceIdentifier
+import com.X.finagle.mtls.authentication.ServiceIdentifier
+import com.X.storehaus_internal.memcache.ConnectionConfig
+import com.X.storehaus_internal.memcache.MemcacheConfig
+import com.X.storehaus_internal.util.KeyPrefix
+import com.X.storehaus_internal.util.TTL
+import com.X.storehaus_internal.util.ZkEndPoint
+import com.X.summingbird_internal.runner.store_config.OnlineStoreOnlyConfig
+import com.X.timelines.data_processing.ml_util.aggregation_framework.AggregateStore
+import com.X.util.Duration
 
 object RealTimeAggregateStore {
   val twCacheWilyPrefix = "/srv#" // s2s is only supported for wily path

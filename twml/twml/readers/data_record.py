@@ -3,7 +3,7 @@
 This module includes facilities for manipulating data records.
 """
 
-from twitter.deepbird.io.legacy.readers.data_record import (
+from X.deepbird.io.legacy.readers.data_record import (
   _SPEC_TO_TF,  # noqa: F401
   SPARSE_DATA_RECORD_FEATURE_FIELDS,  # noqa: F401
   _FeaturesBase,  # noqa: F401

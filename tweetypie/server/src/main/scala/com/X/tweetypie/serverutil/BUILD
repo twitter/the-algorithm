@@ -1,0 +1,23 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "3rdparty/jvm/com/google/inject:guice",
+        "finagle/finagle-core/src/main",
+        "finagle/finagle-memcached/src/main/scala",
+        "scrooge/scrooge-core",
+        "tweetypie/servo/util",
+        "tweetypie/common/src/thrift/com/X/tweetypie:tweet-scala",
+        "stitch/stitch-core/src/main/scala/com/X/stitch",
+        "tweetypie/server/src/main/scala/com/X/tweetypie",
+        "tweetypie/common/src/scala/com/X/tweetypie/client_id",
+        "tweetypie/common/src/scala/com/X/tweetypie/thriftscala/entities",
+        "tweetypie/common/src/scala/com/X/tweetypie/tweettext",
+        "X-config/yaml",
+        "util/util-hashing/src/main/scala",
+        "util/util-slf4j-api/src/main/scala/com/X/util/logging",
+        "util/util-stats/src/main/scala",
+    ],
+)

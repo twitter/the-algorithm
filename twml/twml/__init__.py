@@ -2,10 +2,10 @@
 
 import os
 
-# Import from twitter.deepbird
-from twitter.deepbird.logging.log_level import set_logging_level  # noqa: F401
-from twitter.deepbird.sparse import SparseTensor  # noqa: F401
-from twitter.deepbird.sparse import sparse_dense_matmul  # noqa: F401
+# Import from X.deepbird
+from X.deepbird.logging.log_level import set_logging_level  # noqa: F401
+from X.deepbird.sparse import SparseTensor  # noqa: F401
+from X.deepbird.sparse import sparse_dense_matmul  # noqa: F401
 
 from .util import dynamic_partition, feature_id, limit_bits, limit_sparse_tensor_size  # noqa: F401
 from .util import write_file, fixed_length_tensor, setup_tf_logging_formatter  # noqa: F401

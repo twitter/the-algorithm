@@ -1,0 +1,22 @@
+java_library(
+    sources = ["*.java"],
+    platform = "java8",
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "3rdparty/jvm/com/google/inject:guice",
+        "decider/src/main/scala",
+        "finatra-internal/thrift/src/main/thrift:thrift-java",
+        "finatra/thrift/src/main/scala/com/X/finatra/thrift",
+        "finatra/thrift/src/main/scala/com/X/finatra/thrift:controller",
+        "finatra/thrift/src/main/scala/com/X/finatra/thrift/exceptions",
+        "finatra/thrift/src/main/scala/com/X/finatra/thrift/filters",
+        "finatra/thrift/src/main/scala/com/X/finatra/thrift/modules",
+        "finatra/thrift/src/main/scala/com/X/finatra/thrift/response",
+        "finatra/thrift/src/main/scala/com/X/finatra/thrift/routing",
+        "src/java/com/X/search/common/metrics",
+        "src/java/com/X/search/common/util/io/periodic",
+        "src/java/com/X/search/common/util/thrift:text-protocol",
+        "src/java/com/X/search/feature_update_service/whitelist",
+        "src/thrift/com/X/search/feature_update_service/thrift:thrift-java",
+    ],
+)

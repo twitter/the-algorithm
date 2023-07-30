@@ -1,20 +1,20 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.scalding
+package com.X.timelines.data_processing.ml_util.aggregation_framework.scalding
 
-import com.twitter.gizmoduck.snapshot.DeletedUserScalaDataset
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.Feature
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding.DateOps
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Days
-import com.twitter.scalding.RichDate
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
-import com.twitter.scalding_internal.job.RequiredBinaryComparators.ordSer
-import com.twitter.scalding_internal.pruner.Pruner
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregationKey
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup
-import com.twitter.scalding.serialization.macros.impl.ordered_serialization.runtime_helpers.MacroEqualityOrderedSerialization
+import com.X.gizmoduck.snapshot.DeletedUserScalaDataset
+import com.X.ml.api.DataRecord
+import com.X.ml.api.Feature
+import com.X.scalding.typed.TypedPipe
+import com.X.scalding.DateOps
+import com.X.scalding.DateRange
+import com.X.scalding.Days
+import com.X.scalding.RichDate
+import com.X.scalding_internal.dalv2.DAL
+import com.X.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
+import com.X.scalding_internal.job.RequiredBinaryComparators.ordSer
+import com.X.scalding_internal.pruner.Pruner
+import com.X.timelines.data_processing.ml_util.aggregation_framework.AggregationKey
+import com.X.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup
+import com.X.scalding.serialization.macros.impl.ordered_serialization.runtime_helpers.MacroEqualityOrderedSerialization
 import java.{util => ju}
 
 object DeletedUserSeqPruner extends Pruner[Seq[Long]] {
@@ -69,7 +69,7 @@ object AggregationKeyPruner {
    * "userIdFeatures" set in the aggregation key correspond to a
    * user who has deleted their account. Here, "userIdFeatures" is
    * intended as a catch-all term for all features corresponding to
-   * a Twitter user in the input data record -- the feature itself
+   * a X user in the input data record -- the feature itself
    * could represent an authorId, retweeterId, engagerId, etc.
    */
   def mkDeletedUsersPruner(

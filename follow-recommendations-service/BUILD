@@ -7,15 +7,15 @@ alias(
 target(
     name = "follow-recommendations-service_lib",
     dependencies = [
-        "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations",
-        "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/models",
+        "follow-recommendations-service/server/src/main/scala/com/X/follow_recommendations",
+        "follow-recommendations-service/server/src/main/scala/com/X/follow_recommendations/models",
     ],
 )
 
 jvm_binary(
     name = "bin",
     basename = "follow-recommendations-service",
-    main = "com.twitter.follow_recommendations.FollowRecommendationsServiceThriftServerMain",
+    main = "com.X.follow_recommendations.FollowRecommendationsServiceThriftServerMain",
     runtime_platform = "java11",
     tags = ["bazel-compatible"],
     dependencies = [
@@ -23,9 +23,9 @@ jvm_binary(
         "3rdparty/jvm/ch/qos/logback:logback-classic",
         "finagle/finagle-zipkin-scribe/src/main/scala",
         "finatra/inject/inject-logback/src/main/scala",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
-        "twitter-server-internal/src/main/scala",
-        "twitter-server/logback-classic/src/main/scala",
+        "loglens/loglens-logback/src/main/scala/com/X/loglens/logback",
+        "X-server-internal/src/main/scala",
+        "X-server/logback-classic/src/main/scala",
     ],
 )
 

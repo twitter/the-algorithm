@@ -1,6 +1,6 @@
 # Unified User Actions (UUA)
 
-**Unified User Actions** (UUA) is a centralized, real-time stream of user actions on Twitter, consumed by various product, ML, and marketing teams. UUA reads client-side and server-side event streams that contain the user's actions and generates a unified real-time user actions Kafka stream. The Kafka stream is replicated to HDFS, GCP Pubsub, GCP GCS, GCP BigQuery.  The user actions include public actions such as favorites, retweets, replies and implicit actions like bookmark, impression, video view.
+**Unified User Actions** (UUA) is a centralized, real-time stream of user actions on X, consumed by various product, ML, and marketing teams. UUA reads client-side and server-side event streams that contain the user's actions and generates a unified real-time user actions Kafka stream. The Kafka stream is replicated to HDFS, GCP Pubsub, GCP GCS, GCP BigQuery.  The user actions include public actions such as favorites, retweets, replies and implicit actions like bookmark, impression, video view.
 
 ## Components 
 

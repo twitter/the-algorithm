@@ -1,0 +1,20 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "3rdparty/jvm/com/X/storehaus:core",
+        "3rdparty/jvm/javax/inject:javax.inject",
+        "3rdparty/src/jvm/com/X/storehaus:core",
+        "configapi/configapi-core",
+        "content-recommender/thrift/src/main/thrift:thrift-scala",
+        "cr-mixer/server/src/main/scala/com/X/cr_mixer/model",
+        "cr-mixer/server/src/main/scala/com/X/cr_mixer/param",
+        "cr-mixer/server/src/main/scala/com/X/cr_mixer/util",
+        "cr-mixer/thrift/src/main/thrift:thrift-scala",
+        "snowflake/src/main/scala/com/X/snowflake/id",
+        "src/scala/com/X/simclusters_v2/common",
+        "src/thrift/com/X/core_workflows/user_model:user_model-scala",
+    ],
+)

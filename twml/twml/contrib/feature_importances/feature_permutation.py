@@ -2,11 +2,11 @@ from copy import deepcopy
 import random
 import types
 
-from twitter.deepbird.util.thrift.simple_converters import (
+from X.deepbird.util.thrift.simple_converters import (
   bytes_to_thrift_object, thrift_object_to_bytes)
 
 from tensorflow.compat.v1 import logging
-from com.twitter.ml.api.ttypes import DataRecord  # pylint: disable=import-error
+from com.X.ml.api.ttypes import DataRecord  # pylint: disable=import-error
 import tensorflow.compat.v1 as tf
 import twml
 
@@ -20,7 +20,7 @@ class PermutedInputFnFactory(object):
       record_count (int): The number of records to process
       file_list (list<str>, default=None): The list of data files on HDFS. If provided, use this instead
         of data_dir
-      datarecord_filter_fn (function): a function takes a single data sample in com.twitter.ml.api.ttypes.DataRecord format
+      datarecord_filter_fn (function): a function takes a single data sample in com.X.ml.api.ttypes.DataRecord format
         and return a boolean value, to indicate if this data record should be kept in feature importance module or not.
     """
     if not (data_dir is None) ^ (file_list is None):

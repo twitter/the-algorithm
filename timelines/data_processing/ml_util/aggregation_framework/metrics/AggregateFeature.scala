@@ -1,7 +1,7 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics
+package com.X.timelines.data_processing.ml_util.aggregation_framework.metrics
 
-import com.twitter.util.Duration
-import com.twitter.ml.api._
+import com.X.util.Duration
+import com.X.ml.api._
 import java.lang.{Boolean => JBoolean}
 
 /**

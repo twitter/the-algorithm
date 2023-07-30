@@ -1,0 +1,23 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    platform = "java8",
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "src/thrift/com/X/convosvc:convosvc-scala",
+        "src/thrift/com/X/convosvc/internal:internal-scala",
+        "src/thrift/com/X/spam/rtf:safety-level-scala",
+        "stitch/stitch-core",
+        "stitch/stitch-core/src/main/scala/com/X/stitch",
+        "visibility/common/src/main/scala/com/X/visibility/common",
+        "visibility/common/src/main/scala/com/X/visibility/common/dm_sources",
+        "visibility/lib/src/main/resources/config",
+        "visibility/lib/src/main/scala/com/X/visibility",
+        "visibility/lib/src/main/scala/com/X/visibility/builder",
+        "visibility/lib/src/main/scala/com/X/visibility/builder/users",
+        "visibility/lib/src/main/scala/com/X/visibility/features",
+        "visibility/lib/src/main/scala/com/X/visibility/util",
+        "visibility/lib/src/main/thrift/com/X/visibility/safety_label_store:safety-label-store-scala",
+    ],
+)

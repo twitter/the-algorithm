@@ -1,6 +1,6 @@
 # Pushservice
 
-Pushservice is the main push recommendation service at Twitter used to generate recommendation-based notifications for users. It currently powers two functionalities:
+Pushservice is the main push recommendation service at X used to generate recommendation-based notifications for users. It currently powers two functionalities:
 
 - RefreshForPushHandler: This handler determines whether to send a recommendation push to a user based on their ID. It generates the best push recommendation item and coordinates with downstream services to deliver it
 - SendHandler: This handler determines and manage whether send the push to users based on the given target user details and the provided push recommendation item

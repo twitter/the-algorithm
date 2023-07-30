@@ -1,6 +1,6 @@
-package com.twitter.timelines.data_processing.ml_util
+package com.X.timelines.data_processing.ml_util
 
-import com.twitter.ml.api.DataRecord
+import com.X.ml.api.DataRecord
 
 package object aggregation_framework {
   object AggregateType extends Enumeration {

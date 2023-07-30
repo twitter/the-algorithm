@@ -1,9 +1,9 @@
-namespace java com.twitter.cr_mixer.thriftjava
-#@namespace scala com.twitter.cr_mixer.thriftscala
-#@namespace strato com.twitter.cr_mixer
+namespace java com.X.cr_mixer.thriftjava
+#@namespace scala com.X.cr_mixer.thriftscala
+#@namespace strato com.X.cr_mixer
 
 include "source_type.thrift"
-include "com/twitter/simclusters_v2/identifier.thrift"
+include "com/X/simclusters_v2/identifier.thrift"
 
 struct SimilarityEngine {
  1: required source_type.SimilarityEngineType similarityEngineType

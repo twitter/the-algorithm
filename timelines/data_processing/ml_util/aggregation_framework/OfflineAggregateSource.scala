@@ -1,8 +1,8 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework
+package com.X.timelines.data_processing.ml_util.aggregation_framework
 
-import com.twitter.dal.client.dataset.TimePartitionedDALDataset
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.Feature
+import com.X.dal.client.dataset.TimePartitionedDALDataset
+import com.X.ml.api.DataRecord
+import com.X.ml.api.Feature
 import java.lang.{Long => JLong}
 
 case class OfflineAggregateSource(
@@ -11,7 +11,7 @@ case class OfflineAggregateSource(
   scaldingHdfsPath: Option[String] = None,
   scaldingSuffixType: Option[String] = None,
   dalDataSet: Option[TimePartitionedDALDataset[DataRecord]] = None,
-  withValidation: Boolean = true) // context: https://jira.twitter.biz/browse/TQ-10618
+  withValidation: Boolean = true) // context: https://jira.X.biz/browse/TQ-10618
     extends AggregateSource {
   /*
    * Th help transition callers to use DAL.read, we check that either the HDFS

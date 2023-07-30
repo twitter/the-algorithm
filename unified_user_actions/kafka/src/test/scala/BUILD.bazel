@@ -8,8 +8,8 @@ junit_tests(
         "3rdparty/jvm/org/scalatestplus:junit",
         "finatra/inject/inject-core/src/test/scala:test-deps",
         "kafka/finagle-kafka/finatra-kafka/src/test/scala:test-deps",
-        "unified_user_actions/kafka/src/main/scala/com/twitter/unified_user_actions/kafka",
+        "unified_user_actions/kafka/src/main/scala/com/X/unified_user_actions/kafka",
         "unified_user_actions/kafka/src/test/resources",
-        "unified_user_actions/thrift/src/test/thrift/com/twitter/unified_user_actions:unified_user_actions_spec-scala",
+        "unified_user_actions/thrift/src/test/thrift/com/X/unified_user_actions:unified_user_actions_spec-scala",
     ],
 )

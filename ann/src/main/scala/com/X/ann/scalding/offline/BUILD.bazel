@@ -1,0 +1,44 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    platform = "java8",
+    tags = [
+        "bazel-compatible",
+        "bazel-only",
+    ],
+    dependencies = [
+        "3rdparty/jvm/com/X/bijection:scrooge",
+        "3rdparty/src/jvm/com/X/scalding:args",
+        "3rdparty/src/jvm/com/X/scalding:commons",
+        "3rdparty/src/jvm/com/X/scalding:core",
+        "ann/src/main/scala/com/X/ann/brute_force",
+        "ann/src/main/scala/com/X/ann/common",
+        "ann/src/main/scala/com/X/ann/hnsw",
+        "ann/src/main/scala/com/X/ann/util",
+        "cortex-core/entity-embeddings/src/thrift/com/X/entityembeddings/neighbors:embeddings-knn-thrift-scala",
+        "src/scala/com/X/cortex/ml/embeddings/common:Helpers-deploy",
+        "src/scala/com/X/pluck/source/core_workflows/user_model:condensed_user_state-scala",
+        "src/scala/com/X/scalding_internal/dalv2",
+        "src/scala/com/X/scalding_internal/job",
+        "src/scala/com/X/scalding_internal/multiformat/format",
+        "src/scala/com/X/scalding_internal/parquet_thrift",
+        "usersource/snapshot/src/main/scala/com/X/usersource/snapshot/flat:usersource_flat-scala",
+        "usersource/snapshot/src/main/thrift/com/X/usersource/snapshot/flat:flat-scala",
+    ],
+)
+
+hadoop_binary(
+    name = "ann-offline-deploy",
+    main = "com.X.scalding.Tool",
+    platform = "java8",
+    runtime_platform = "java8",
+    tags = [
+        "bazel-compatible",
+        "bazel-compatible:migrated",
+        "bazel-only",
+    ],
+    dependencies = [
+        ":offline",
+        "3rdparty/jvm/org/slf4j:slf4j-jdk14",
+    ],
+)

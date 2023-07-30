@@ -1,41 +1,41 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.heron
+package com.X.timelines.data_processing.ml_util.aggregation_framework.heron
 
-import com.twitter.algebird.Monoid
-import com.twitter.bijection.Injection
-import com.twitter.bijection.thrift.CompactThriftCodec
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mtls.authentication.EmptyServiceIdentifier
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.heron.util.CommonMetric
-import com.twitter.ml.api.DataRecord
-import com.twitter.scalding.Args
-import com.twitter.storehaus.algebra.MergeableStore
-import com.twitter.storehaus.algebra.StoreAlgebra._
-import com.twitter.storehaus_internal.memcache.Memcache
-import com.twitter.storehaus_internal.store.CombinedStore
-import com.twitter.storehaus_internal.store.ReplicatingWritableStore
-import com.twitter.summingbird.batch.BatchID
-import com.twitter.summingbird.batch.Batcher
-import com.twitter.summingbird.online.MergeableStoreFactory
-import com.twitter.summingbird.online.option._
-import com.twitter.summingbird.option.CacheSize
-import com.twitter.summingbird.option.JobId
-import com.twitter.summingbird.storm.option.FlatMapStormMetrics
-import com.twitter.summingbird.storm.option.SummerStormMetrics
-import com.twitter.summingbird.storm.Storm
-import com.twitter.summingbird.storm.StormMetric
-import com.twitter.summingbird.Options
-import com.twitter.summingbird._
-import com.twitter.summingbird_internal.runner.common.CapTicket
-import com.twitter.summingbird_internal.runner.common.JobName
-import com.twitter.summingbird_internal.runner.common.TeamEmail
-import com.twitter.summingbird_internal.runner.common.TeamName
-import com.twitter.summingbird_internal.runner.storm.ProductionStormConfig
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework._
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.job.AggregatesV2Job
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.job.AggregatesV2Job
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.job.DataRecordFeatureCounter
+import com.X.algebird.Monoid
+import com.X.bijection.Injection
+import com.X.bijection.thrift.CompactThriftCodec
+import com.X.conversions.DurationOps._
+import com.X.finagle.mtls.authentication.EmptyServiceIdentifier
+import com.X.finagle.mtls.authentication.ServiceIdentifier
+import com.X.finagle.stats.StatsReceiver
+import com.X.heron.util.CommonMetric
+import com.X.ml.api.DataRecord
+import com.X.scalding.Args
+import com.X.storehaus.algebra.MergeableStore
+import com.X.storehaus.algebra.StoreAlgebra._
+import com.X.storehaus_internal.memcache.Memcache
+import com.X.storehaus_internal.store.CombinedStore
+import com.X.storehaus_internal.store.ReplicatingWritableStore
+import com.X.summingbird.batch.BatchID
+import com.X.summingbird.batch.Batcher
+import com.X.summingbird.online.MergeableStoreFactory
+import com.X.summingbird.online.option._
+import com.X.summingbird.option.CacheSize
+import com.X.summingbird.option.JobId
+import com.X.summingbird.storm.option.FlatMapStormMetrics
+import com.X.summingbird.storm.option.SummerStormMetrics
+import com.X.summingbird.storm.Storm
+import com.X.summingbird.storm.StormMetric
+import com.X.summingbird.Options
+import com.X.summingbird._
+import com.X.summingbird_internal.runner.common.CapTicket
+import com.X.summingbird_internal.runner.common.JobName
+import com.X.summingbird_internal.runner.common.TeamEmail
+import com.X.summingbird_internal.runner.common.TeamName
+import com.X.summingbird_internal.runner.storm.ProductionStormConfig
+import com.X.timelines.data_processing.ml_util.aggregation_framework._
+import com.X.timelines.data_processing.ml_util.aggregation_framework.job.AggregatesV2Job
+import com.X.timelines.data_processing.ml_util.aggregation_framework.job.AggregatesV2Job
+import com.X.timelines.data_processing.ml_util.aggregation_framework.job.DataRecordFeatureCounter
 import org.apache.heron.api.{Config => HeronConfig}
 import org.apache.heron.common.basics.ByteAmount
 import org.apache.storm.Config
@@ -50,7 +50,7 @@ object RealTimeAggregatesJobBase {
 
 trait RealTimeAggregatesJobBase extends Serializable {
   import RealTimeAggregatesJobBase._
-  import com.twitter.summingbird_internal.bijection.BatchPairImplicits._
+  import com.X.summingbird_internal.bijection.BatchPairImplicits._
 
   def statsReceiver: StatsReceiver
 
@@ -255,8 +255,8 @@ trait RealTimeAggregatesJobBase extends Serializable {
           HeronConfig.TOPOLOGY_DROPTUPLES_UPON_BACKPRESSURE -> java.lang.Boolean.valueOf(true),
           HeronConfig.TOPOLOGY_WORKER_CHILDOPTS -> List(
             JaasConfigString,
-            s"-Dcom.twitter.eventbus.client.zoneName=${cluster}",
-            "-Dcom.twitter.eventbus.client.EnableKafkaSaslTls=true"
+            s"-Dcom.X.eventbus.client.zoneName=${cluster}",
+            "-Dcom.X.eventbus.client.EnableKafkaSaslTls=true"
           ).mkString(" "),
           "storm.job.uniqueId" -> jobId.get
         ) ++ configureHeronJvmSettings

@@ -1,7 +1,7 @@
-package com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.common
+package com.X.timelines.data_processing.ad_hoc.earlybird_ranking.common
 
-import com.twitter.ml.api.Feature
-import com.twitter.timelines.prediction.features.recap.RecapFeatures
+import com.X.ml.api.Feature
+import com.X.timelines.prediction.features.recap.RecapFeatures
 
 class EarlybirdTrainingRecapConfiguration extends EarlybirdTrainingConfiguration {
   override val labels: Map[String, Feature.Binary] = Map(

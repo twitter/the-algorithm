@@ -1,6 +1,6 @@
 resources(
     sources = [
-        "com/twitter/visibility/*.csv",
-        "com/twitter/visibility/*.yml",
+        "com/X/visibility/*.csv",
+        "com/X/visibility/*.yml",
     ],
 )

@@ -1,15 +1,15 @@
-namespace java com.twitter.tsp.thriftjava
-namespace py gen.twitter.tsp
-#@namespace scala com.twitter.tsp.thriftscala
-#@namespace strato com.twitter.tsp.strato
+namespace java com.X.tsp.thriftjava
+namespace py gen.X.tsp
+#@namespace scala com.X.tsp.thriftscala
+#@namespace strato com.X.tsp.strato
 
-include "com/twitter/contentrecommender/common.thrift"
-include "com/twitter/simclusters_v2/identifier.thrift"
-include "com/twitter/simclusters_v2/online_store.thrift"
+include "com/X/contentrecommender/common.thrift"
+include "com/X/simclusters_v2/identifier.thrift"
+include "com/X/simclusters_v2/online_store.thrift"
 include "topic_listing.thrift"
 
 enum TopicListingSetting {
-  All = 0 // All the existing Semantic Core Entity/Topics. ie., All topics on twitter, and may or may not have been launched yet.
+  All = 0 // All the existing Semantic Core Entity/Topics. ie., All topics on X, and may or may not have been launched yet.
   Followable = 1 // All the topics which the user is allowed to follow. ie., topics that have shipped, and user may or may not be following it.
   Following = 2 // Only topics the user is explicitly following
   ImplicitFollow = 3 // The topics user has not followed but implicitly may follow. ie., Only topics that user has not followed.

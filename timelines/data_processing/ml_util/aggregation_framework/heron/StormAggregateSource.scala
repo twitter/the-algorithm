@@ -1,11 +1,11 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.heron
+package com.X.timelines.data_processing.ml_util.aggregation_framework.heron
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.Feature
-import com.twitter.summingbird._
-import com.twitter.summingbird.storm.Storm
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateSource
+import com.X.finagle.stats.StatsReceiver
+import com.X.ml.api.DataRecord
+import com.X.ml.api.Feature
+import com.X.summingbird._
+import com.X.summingbird.storm.Storm
+import com.X.timelines.data_processing.ml_util.aggregation_framework.AggregateSource
 import java.lang.{Long => JLong}
 
 /**

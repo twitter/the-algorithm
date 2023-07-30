@@ -1,14 +1,14 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework
+package com.X.timelines.data_processing.ml_util.aggregation_framework
 
-import com.twitter.ml.api.constant.SharedFeatures
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.FeatureType
+import com.X.ml.api.constant.SharedFeatures
+import com.X.ml.api.Feature
+import com.X.ml.api.FeatureType
 
 /**
  * Convenience class to describe the stores that make up a particular type of aggregate.
  *
  * For example, as of 2018/07, user aggregates are generate by merging the individual
- * "user_aggregates", "rectweet_user_aggregates", and, "twitter_wide_user_aggregates".
+ * "user_aggregates", "rectweet_user_aggregates", and, "X_wide_user_aggregates".
  *
  * @param storeNames Name of the stores.
  * @param aggregateType Type of aggregate, usually differentiated by the aggregation key.

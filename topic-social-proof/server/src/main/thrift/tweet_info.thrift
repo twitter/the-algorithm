@@ -1,7 +1,7 @@
-namespace java com.twitter.tsp.thriftjava
-namespace py gen.twitter.tsp
-#@namespace scala com.twitter.tsp.thriftscala
-#@namespace strato com.twitter.tsp.strato
+namespace java com.X.tsp.thriftjava
+namespace py gen.X.tsp
+#@namespace scala com.X.tsp.thriftscala
+#@namespace strato com.X.tsp.strato
 
 struct TspTweetInfo {
   1: required i64 authorId

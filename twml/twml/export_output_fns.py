@@ -9,7 +9,7 @@ Modelers may also provide a custom implementation of export_output_fn using thes
 '''
 
 # pylint: disable=invalid-name
-from twitter.deepbird.io.legacy.export_output_fns import (
+from X.deepbird.io.legacy.export_output_fns import (
   batch_prediction_continuous_output_fn,  # noqa: F401
   batch_prediction_tensor_output_fn,  # noqa: F401
   default_output_fn,  # noqa: F401

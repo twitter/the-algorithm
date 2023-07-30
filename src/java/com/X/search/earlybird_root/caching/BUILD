@@ -1,0 +1,20 @@
+java_library(
+    sources = ["*.java"],
+    platform = "java8",
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "3rdparty/jvm/com/google/guava",
+        "3rdparty/jvm/com/google/inject:guice",
+        "3rdparty/jvm/org/slf4j:slf4j-api",
+        "finatra/inject/inject-core/src/main/scala",
+        "src/java/com/X/search/common/caching",
+        "src/java/com/X/search/common/decider",
+        "src/java/com/X/search/common/metrics",
+        "src/java/com/X/search/common/root",
+        "src/java/com/X/search/earlybird/common",
+        "src/java/com/X/search/earlybird_root/common",
+        "src/java/com/X/search/queryparser",
+        "src/java/com/X/search/queryparser/query:core-query-nodes",
+        "src/thrift/com/X/search:earlybird-java",
+    ],
+)

@@ -1,15 +1,15 @@
 jvm_binary(
     name = "bin",
     basename = "representation-scorer",
-    main = "com.twitter.representationscorer.RepresentationScorerFedServerMain",
+    main = "com.X.representationscorer.RepresentationScorerFedServerMain",
     platform = "java8",
     tags = ["bazel-compatible"],
     dependencies = [
         "finatra/inject/inject-logback/src/main/scala",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
+        "loglens/loglens-logback/src/main/scala/com/X/loglens/logback",
         "representation-scorer/server/src/main/resources",
-        "representation-scorer/server/src/main/scala/com/twitter/representationscorer",
-        "twitter-server/logback-classic/src/main/scala",
+        "representation-scorer/server/src/main/scala/com/X/representationscorer",
+        "X-server/logback-classic/src/main/scala",
     ],
 )
 

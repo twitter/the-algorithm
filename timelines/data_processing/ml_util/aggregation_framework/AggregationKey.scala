@@ -1,7 +1,7 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework
+package com.X.timelines.data_processing.ml_util.aggregation_framework
 
-import com.twitter.bijection.Bufferable
-import com.twitter.bijection.Injection
+import com.X.bijection.Bufferable
+import com.X.bijection.Injection
 import scala.util.Try
 
 /**

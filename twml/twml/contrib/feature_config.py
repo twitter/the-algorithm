@@ -1,7 +1,7 @@
 """
 Feature configuration for DeepBird jobs returns dictionary of sparse and dense Features
 """
-from twitter.deepbird.io.legacy.contrib import feature_config
+from X.deepbird.io.legacy.contrib import feature_config
 import twml
 
 

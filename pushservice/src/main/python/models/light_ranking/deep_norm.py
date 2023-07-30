@@ -2,7 +2,7 @@ from datetime import datetime
 from functools import partial
 import os
 
-from twitter.cortex.ml.embeddings.common.helpers import decode_str_or_unicode
+from X.cortex.ml.embeddings.common.helpers import decode_str_or_unicode
 import twml
 from twml.trainers import DataRecordTrainer
 

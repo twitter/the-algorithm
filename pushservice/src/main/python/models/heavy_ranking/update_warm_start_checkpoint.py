@@ -5,8 +5,8 @@ of continuous and binary features.
 
 import os
 
-from twitter.deepbird.projects.magic_recs.libs.get_feat_config import FEATURE_LIST_DEFAULT_PATH
-from twitter.deepbird.projects.magic_recs.libs.warm_start_utils_v11 import (
+from X.deepbird.projects.magic_recs.libs.get_feat_config import FEATURE_LIST_DEFAULT_PATH
+from X.deepbird.projects.magic_recs.libs.warm_start_utils_v11 import (
   get_feature_list_for_heavy_ranking,
   mkdirp,
   rename_dir,

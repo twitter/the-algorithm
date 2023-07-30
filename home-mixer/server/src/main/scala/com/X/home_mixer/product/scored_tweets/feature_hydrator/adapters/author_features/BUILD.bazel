@@ -1,0 +1,18 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "home-mixer/server/src/main/scala/com/X/home_mixer/util",
+        "src/java/com/X/ml/api:api-base",
+        "src/java/com/X/ml/api/util",
+        "src/scala/com/X/ml/api/util",
+        "src/scala/com/X/timelines/prediction/common/adapters:base",
+        "src/scala/com/X/timelines/prediction/common/aggregates",
+        "src/scala/com/X/timelines/prediction/features/user_health",
+        "src/thrift/com/X/ml/api:data-java",
+        "src/thrift/com/X/timelines/author_features:thrift-java",
+        "timelines/data_processing/ml_util/aggregation_framework",
+    ],
+)

@@ -60,7 +60,7 @@
     </appender>
 
     <!--LogLens -->
-    <appender name="LOGLENS" class="com.twitter.loglens.logback.LoglensAppender">
+    <appender name="LOGLENS" class="com.X.loglens.logback.LoglensAppender">
         <mdcAdditionalContext>true</mdcAdditionalContext>
         <category>${log.lens.category}</category>
         <index>${log.lens.index}</index>
@@ -71,7 +71,7 @@
     </appender>
 
     <!-- LogLens Access -->
-    <appender name="LOGLENS-ACCESS" class="com.twitter.loglens.logback.LoglensAppender">
+    <appender name="LOGLENS-ACCESS" class="com.X.loglens.logback.LoglensAppender">
         <mdcAdditionalContext>true</mdcAdditionalContext>
         <category>${log.lens.category}</category>
         <index>${log.lens.index}</index>
@@ -105,31 +105,31 @@
     <property name="async_queue_size" value="${queue.size:-50000}"/>
     <property name="async_max_flush_time" value="${max.flush.time:-0}"/>
 
-    <appender name="ASYNC-SERVICE" class="com.twitter.inject.logback.AsyncAppender">
+    <appender name="ASYNC-SERVICE" class="com.X.inject.logback.AsyncAppender">
         <queueSize>${async_queue_size}</queueSize>
         <maxFlushTime>${async_max_flush_time}</maxFlushTime>
         <appender-ref ref="SERVICE"/>
     </appender>
 
-    <appender name="ASYNC-ACCESS" class="com.twitter.inject.logback.AsyncAppender">
+    <appender name="ASYNC-ACCESS" class="com.X.inject.logback.AsyncAppender">
         <queueSize>${async_queue_size}</queueSize>
         <maxFlushTime>${async_max_flush_time}</maxFlushTime>
         <appender-ref ref="ACCESS"/>
     </appender>
 
-    <appender name="ASYNC-ALLOW-LISTED-PIPELINE-EXECUTIONS" class="com.twitter.inject.logback.AsyncAppender">
+    <appender name="ASYNC-ALLOW-LISTED-PIPELINE-EXECUTIONS" class="com.X.inject.logback.AsyncAppender">
         <queueSize>${async_queue_size}</queueSize>
         <maxFlushTime>${async_max_flush_time}</maxFlushTime>
         <appender-ref ref="ALLOW-LISTED-PIPELINE-EXECUTIONS"/>
     </appender>
 
-    <appender name="ASYNC-LOGLENS" class="com.twitter.inject.logback.AsyncAppender">
+    <appender name="ASYNC-LOGLENS" class="com.X.inject.logback.AsyncAppender">
         <queueSize>${async_queue_size}</queueSize>
         <maxFlushTime>${async_max_flush_time}</maxFlushTime>
         <appender-ref ref="LOGLENS"/>
     </appender>
 
-    <appender name="ASYNC-LOGLENS-ACCESS" class="com.twitter.inject.logback.AsyncAppender">
+    <appender name="ASYNC-LOGLENS-ACCESS" class="com.X.inject.logback.AsyncAppender">
         <queueSize>${async_queue_size}</queueSize>
         <maxFlushTime>${async_max_flush_time}</maxFlushTime>
         <appender-ref ref="LOGLENS-ACCESS"/>
@@ -140,15 +140,15 @@
     <!-- ===================================================== -->
 
     <!-- Per-Package Config -->
-    <logger name="com.twitter" level="INHERITED"/>
-    <logger name="com.twitter.wilyns" level="INHERITED"/>
-    <logger name="com.twitter.configbus.client.file" level="INHERITED"/>
-    <logger name="com.twitter.finagle.mux" level="INHERITED"/>
-    <logger name="com.twitter.finagle.serverset2" level="INHERITED"/>
-    <logger name="com.twitter.logging.ScribeHandler" level="INHERITED"/>
-    <logger name="com.twitter.zookeeper.client.internal" level="INHERITED"/>
+    <logger name="com.X" level="INHERITED"/>
+    <logger name="com.X.wilyns" level="INHERITED"/>
+    <logger name="com.X.configbus.client.file" level="INHERITED"/>
+    <logger name="com.X.finagle.mux" level="INHERITED"/>
+    <logger name="com.X.finagle.serverset2" level="INHERITED"/>
+    <logger name="com.X.logging.ScribeHandler" level="INHERITED"/>
+    <logger name="com.X.zookeeper.client.internal" level="INHERITED"/>
     <!-- Disable deadline exceeded logs by default. This can be overriden dynamically in the admin panel of individual instances. -->
-    <logger name="com.twitter.relevance_platform.common.exceptions.DeadlineExceededExceptionMapper" level="OFF"/>
+    <logger name="com.X.relevance_platform.common.exceptions.DeadlineExceededExceptionMapper" level="OFF"/>
 
     <!-- Root Config -->
     <!-- For all logs except access logs, disable logging below log_level level by default. This can be overriden in the per-package loggers, and dynamically in the admin panel of individual instances. -->
@@ -159,7 +159,7 @@
 
     <!-- Access Logging -->
    <!-- Access logs are turned off by default -->
-    <logger name="com.twitter.finatra.thrift.filters.AccessLoggingFilter" level="OFF" additivity="false">
+    <logger name="com.X.finatra.thrift.filters.AccessLoggingFilter" level="OFF" additivity="false">
         <appender-ref ref="ASYNC-ACCESS"/>
         <appender-ref ref="ASYNC-LOGLENS-ACCESS"/>
     </logger>

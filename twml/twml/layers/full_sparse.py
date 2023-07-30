@@ -5,7 +5,7 @@ Implementing Full Sparse Layer
 
 import math
 
-from twitter.deepbird.sparse import sparse_dense_matmul
+from X.deepbird.sparse import sparse_dense_matmul
 
 from .layer import Layer
 

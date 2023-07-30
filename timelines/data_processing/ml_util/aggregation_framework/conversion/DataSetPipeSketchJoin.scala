@@ -1,9 +1,9 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.conversion
+package com.X.timelines.data_processing.ml_util.aggregation_framework.conversion
 
-import com.twitter.bijection.Injection
-import com.twitter.ml.api._
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.scalding.TypedPipe
+import com.X.bijection.Injection
+import com.X.ml.api._
+import com.X.ml.api.util.SRichDataRecord
+import com.X.scalding.TypedPipe
 
 object DataSetPipeSketchJoin {
   val DefaultSketchNumReducers = 500

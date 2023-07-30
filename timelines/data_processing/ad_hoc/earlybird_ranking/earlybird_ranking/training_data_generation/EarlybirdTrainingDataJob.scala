@@ -1,21 +1,21 @@
-package com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.training_data_generation
+package com.X.timelines.data_processing.ad_hoc.earlybird_ranking.training_data_generation
 
-import com.twitter.ml.api.HourlySuffixFeatureSource
-import com.twitter.ml.api.IRecord
-import com.twitter.scalding.Args
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Days
-import com.twitter.scalding.Execution
-import com.twitter.scalding.ExecutionUtil
-import com.twitter.scalding_internal.dalv2.DALWrite.D
-import com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.common.EarlybirdTrainingRecapConfiguration
-import com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.common.EarlybirdTrainingRectweetConfiguration
-import com.twitter.timelines.data_processing.ad_hoc.recap.offline_execution.OfflineAdhocExecution
-import com.twitter.timelines.data_processing.ad_hoc.recap.offline_execution.OfflineAnalyticsBatchExecution
-import com.twitter.timelines.data_processing.ad_hoc.recap.offline_execution.OfflineExecution
+import com.X.ml.api.HourlySuffixFeatureSource
+import com.X.ml.api.IRecord
+import com.X.scalding.Args
+import com.X.scalding.DateRange
+import com.X.scalding.Days
+import com.X.scalding.Execution
+import com.X.scalding.ExecutionUtil
+import com.X.scalding_internal.dalv2.DALWrite.D
+import com.X.timelines.data_processing.ad_hoc.earlybird_ranking.common.EarlybirdTrainingRecapConfiguration
+import com.X.timelines.data_processing.ad_hoc.earlybird_ranking.common.EarlybirdTrainingRectweetConfiguration
+import com.X.timelines.data_processing.ad_hoc.recap.offline_execution.OfflineAdhocExecution
+import com.X.timelines.data_processing.ad_hoc.recap.offline_execution.OfflineAnalyticsBatchExecution
+import com.X.timelines.data_processing.ad_hoc.recap.offline_execution.OfflineExecution
 import scala.util.Random
-import com.twitter.scalding_internal.dalv2.dataset.DALWrite._
-import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures
+import com.X.scalding_internal.dalv2.dataset.DALWrite._
+import com.X.timelines.prediction.features.common.TimelinesSharedFeatures
 import timelines.data_processing.ad_hoc.earlybird_ranking.training_data_generation._
 
 /**

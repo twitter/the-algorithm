@@ -1,0 +1,37 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    platform = "java11",
+    tags = [
+        "bazel-compatible",
+        "bazel-only",
+    ],
+    dependencies = [
+        "3rdparty/src/jvm/com/X/scalding:args",
+        "3rdparty/src/jvm/com/X/scalding:core",
+        "ann/src/main/scala/com/X/ann/annoy",
+        "ann/src/main/scala/com/X/ann/brute_force",
+        "ann/src/main/scala/com/X/ann/common",
+        "ann/src/main/scala/com/X/ann/faiss",
+        "ann/src/main/scala/com/X/ann/serialization",
+        "ann/src/main/scala/com/X/ann/util",
+        "src/scala/com/X/cortex/ml/embeddings/common:Helpers",
+        "src/scala/com/X/scalding_internal/job",
+    ],
+)
+
+hadoop_binary(
+    name = "faissindexbuilder-deploy",
+    main = "com.X.ann.scalding.offline.faissindexbuilder.IndexBuilderApp",
+    platform = "java11",
+    runtime_platform = "java11",
+    tags = [
+        "bazel-compatible",
+        "bazel-compatible:migrated",
+        "bazel-only",
+    ],
+    dependencies = [
+        ":faissindexbuilder",
+        "3rdparty/jvm/org/slf4j:slf4j-jdk14",
+    ],
+)

@@ -1,4 +1,4 @@
-package com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.model_evaluation
+package com.X.timelines.data_processing.ad_hoc.earlybird_ranking.model_evaluation
 
 import scala.collection.GenTraversableOnce
 

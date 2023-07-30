@@ -1,19 +1,19 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework
+package com.X.timelines.data_processing.ml_util.aggregation_framework
 
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.ml.api.DataRecord
-import com.twitter.scalding.DateParser
-import com.twitter.scalding.RichDate
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.storehaus_internal.manhattan._
-import com.twitter.storehaus_internal.util.ApplicationID
-import com.twitter.storehaus_internal.util.DatasetName
-import com.twitter.storehaus_internal.util.HDFSPath
-import com.twitter.summingbird.batch.BatchID
-import com.twitter.summingbird.batch.Batcher
-import com.twitter.summingbird_internal.runner.store_config._
+import com.X.dal.client.dataset.KeyValDALDataset
+import com.X.ml.api.DataRecord
+import com.X.scalding.DateParser
+import com.X.scalding.RichDate
+import com.X.scalding_internal.multiformat.format.keyval.KeyVal
+import com.X.storehaus_internal.manhattan._
+import com.X.storehaus_internal.util.ApplicationID
+import com.X.storehaus_internal.util.DatasetName
+import com.X.storehaus_internal.util.HDFSPath
+import com.X.summingbird.batch.BatchID
+import com.X.summingbird.batch.Batcher
+import com.X.summingbird_internal.runner.store_config._
 import java.util.TimeZone
-import com.twitter.summingbird.batch.MillisecondBatcher
+import com.X.summingbird.batch.MillisecondBatcher
 
 /*
  * Configuration common to all offline aggregate stores
@@ -65,7 +65,7 @@ abstract class OfflineAggregateStoreBase
     HDFSPath(s"${datedCommonConfig.outputHdfsPathPrefix}/${name}"),
     ApplicationID(datedCommonConfig.dummyAppId),
     DatasetName(s"${datedCommonConfig.dummyDatasetPrefix}_${name}_1"),
-    com.twitter.storehaus_internal.manhattan.Adama
+    com.X.storehaus_internal.manhattan.Adama
   )
 
   val batcherSize = 24

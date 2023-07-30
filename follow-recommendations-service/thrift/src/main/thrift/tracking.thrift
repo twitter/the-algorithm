@@ -1,8 +1,8 @@
-namespace java com.twitter.follow_recommendations.thriftjava
-#@namespace scala com.twitter.follow_recommendations.thriftscala
-#@namespace strato com.twitter.follow_recommendations
+namespace java com.X.follow_recommendations.thriftjava
+#@namespace scala com.X.follow_recommendations.thriftscala
+#@namespace strato com.X.follow_recommendations
 
-include "com/twitter/suggests/controller_data/controller_data.thrift"
+include "com/X/suggests/controller_data/controller_data.thrift"
 include "display_location.thrift"
 
 // struct used for tracking/attribution purposes in our offline pipelines

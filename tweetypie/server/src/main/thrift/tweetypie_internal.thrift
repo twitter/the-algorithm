@@ -1,22 +1,22 @@
-namespace java com.twitter.tweetypie.thriftjava
-#@namespace scala com.twitter.tweetypie.thriftscala
+namespace java com.X.tweetypie.thriftjava
+#@namespace scala com.X.tweetypie.thriftscala
 
-include "com/twitter/context/feature_context.thrift"
-include "com/twitter/expandodo/cards.thrift"
-include "com/twitter/gizmoduck/user.thrift"
-include "com/twitter/mediaservices/commons/MediaCommon.thrift"
-include "com/twitter/mediaservices/commons/MediaInformation.thrift"
-include "com/twitter/mediaservices/commons/TweetMedia.thrift"
-include "com/twitter/servo/exceptions.thrift"
-include "com/twitter/servo/cache/servo_repo.thrift"
-include "com/twitter/tseng/withholding/withholding.thrift"
-include "com/twitter/tweetypie/delete_location_data.thrift"
-include "com/twitter/tweetypie/transient_context.thrift"
-include "com/twitter/tweetypie/media_entity.thrift"
-include "com/twitter/tweetypie/tweet.thrift"
-include "com/twitter/tweetypie/tweet_audit.thrift"
-include "com/twitter/tweetypie/stored_tweet_info.thrift"
-include "com/twitter/tweetypie/tweet_service.thrift"
+include "com/X/context/feature_context.thrift"
+include "com/X/expandodo/cards.thrift"
+include "com/X/gizmoduck/user.thrift"
+include "com/X/mediaservices/commons/MediaCommon.thrift"
+include "com/X/mediaservices/commons/MediaInformation.thrift"
+include "com/X/mediaservices/commons/TweetMedia.thrift"
+include "com/X/servo/exceptions.thrift"
+include "com/X/servo/cache/servo_repo.thrift"
+include "com/X/tseng/withholding/withholding.thrift"
+include "com/X/tweetypie/delete_location_data.thrift"
+include "com/X/tweetypie/transient_context.thrift"
+include "com/X/tweetypie/media_entity.thrift"
+include "com/X/tweetypie/tweet.thrift"
+include "com/X/tweetypie/tweet_audit.thrift"
+include "com/X/tweetypie/stored_tweet_info.thrift"
+include "com/X/tweetypie/tweet_service.thrift"
 
 typedef i16 FieldId
 
@@ -45,12 +45,12 @@ struct CachedTweet {
   3: set<HydrationType> completed_hydrations = []
 
   // Indicates that a tweet was deleted after being bounced for violating
-  // the Twitter Rules.
+  // the X Rules.
   // When set to true, all other fields in CachedTweet are ignored.
   4: optional bool is_bounce_deleted
 
   // Indicates whether this tweet has safety labels stored in Strato.
-  // See com.twitter.tweetypie.core.TweetData.hasSafetyLabels for more details.
+  // See com.X.tweetypie.core.TweetData.hasSafetyLabels for more details.
   // @obsolete 5: optional bool has_safety_labels
 } (persisted='true', hasPersonalData='true')
 

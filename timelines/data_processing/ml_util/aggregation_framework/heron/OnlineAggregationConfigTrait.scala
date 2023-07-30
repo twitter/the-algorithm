@@ -1,7 +1,7 @@
-package com.twitter.timelines.data_processing.ml_util.aggregation_framework.heron
+package com.X.timelines.data_processing.ml_util.aggregation_framework.heron
 
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup
-import com.twitter.ml.api.Feature
+import com.X.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup
+import com.X.ml.api.Feature
 
 trait OnlineAggregationConfigTrait {
   def ProdAggregates: Set[TypedAggregateGroup[_]]

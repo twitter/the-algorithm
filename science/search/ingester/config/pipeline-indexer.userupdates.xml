@@ -24,7 +24,7 @@
   </driverFactory>
 
   <stage
-    className="com.twitter.search.ingester.pipeline.twitter.userupdates.UserUpdatesPipelineStage"
+    className="com.X.search.ingester.pipeline.X.userupdates.UserUpdatesPipelineStage"
     environment="prod"
     driverFactoryId="pipeline"/>
 </pipeline>

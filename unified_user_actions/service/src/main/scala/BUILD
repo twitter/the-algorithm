@@ -1,16 +1,16 @@
 jvm_binary(
     name = "uua-tls-favs-bin",
     basename = "uua-tls-favs-bin",
-    main = "com.twitter.unified_user_actions.service.TlsFavsServiceMain",
+    main = "com.X.unified_user_actions.service.TlsFavsServiceMain",
     runtime_platform = "java11",
     tags = ["bazel-compatible"],
     dependencies = [
         "3rdparty/jvm/ch/qos/logback:logback-classic",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
-        "twitter-server-internal/src/main/scala",
-        "twitter-server/logback-classic/src/main/scala",
+        "loglens/loglens-logback/src/main/scala/com/X/loglens/logback",
+        "X-server-internal/src/main/scala",
+        "X-server/logback-classic/src/main/scala",
         "unified_user_actions/service/src/main/resources",
-        "unified_user_actions/service/src/main/scala/com/twitter/unified_user_actions/service:tls-favs",
+        "unified_user_actions/service/src/main/scala/com/X/unified_user_actions/service:tls-favs",
     ],
 )
 
@@ -31,16 +31,16 @@ jvm_app(
 jvm_binary(
     name = "uua-client-event-bin",
     basename = "uua-client-event-bin",
-    main = "com.twitter.unified_user_actions.service.ClientEventServiceMain",
+    main = "com.X.unified_user_actions.service.ClientEventServiceMain",
     runtime_platform = "java11",
     tags = ["bazel-compatible"],
     dependencies = [
         "3rdparty/jvm/ch/qos/logback:logback-classic",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
-        "twitter-server-internal/src/main/scala",
-        "twitter-server/logback-classic/src/main/scala",
+        "loglens/loglens-logback/src/main/scala/com/X/loglens/logback",
+        "X-server-internal/src/main/scala",
+        "X-server/logback-classic/src/main/scala",
         "unified_user_actions/service/src/main/resources",
-        "unified_user_actions/service/src/main/scala/com/twitter/unified_user_actions/service:client-event",
+        "unified_user_actions/service/src/main/scala/com/X/unified_user_actions/service:client-event",
     ],
 )
 
@@ -62,16 +62,16 @@ jvm_app(
 jvm_binary(
     name = "uua-tweetypie-event-bin",
     basename = "uua-tweetypie-event-bin",
-    main = "com.twitter.unified_user_actions.service.TweetypieEventServiceMain",
+    main = "com.X.unified_user_actions.service.TweetypieEventServiceMain",
     runtime_platform = "java11",
     tags = ["bazel-compatible"],
     dependencies = [
         "3rdparty/jvm/ch/qos/logback:logback-classic",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
-        "twitter-server-internal/src/main/scala",
-        "twitter-server/logback-classic/src/main/scala",
+        "loglens/loglens-logback/src/main/scala/com/X/loglens/logback",
+        "X-server-internal/src/main/scala",
+        "X-server/logback-classic/src/main/scala",
         "unified_user_actions/service/src/main/resources",
-        "unified_user_actions/service/src/main/scala/com/twitter/unified_user_actions/service:tweetypie-event",
+        "unified_user_actions/service/src/main/scala/com/X/unified_user_actions/service:tweetypie-event",
     ],
 )
 
@@ -92,16 +92,16 @@ jvm_app(
 jvm_binary(
     name = "uua-social-graph-bin",
     basename = "uua-social-graph-bin",
-    main = "com.twitter.unified_user_actions.service.SocialGraphServiceMain",
+    main = "com.X.unified_user_actions.service.SocialGraphServiceMain",
     runtime_platform = "java11",
     tags = ["bazel-compatible"],
     dependencies = [
         "3rdparty/jvm/ch/qos/logback:logback-classic",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
-        "twitter-server-internal/src/main/scala",
-        "twitter-server/logback-classic/src/main/scala",
+        "loglens/loglens-logback/src/main/scala/com/X/loglens/logback",
+        "X-server-internal/src/main/scala",
+        "X-server/logback-classic/src/main/scala",
         "unified_user_actions/service/src/main/resources",
-        "unified_user_actions/service/src/main/scala/com/twitter/unified_user_actions/service:social-graph-event",
+        "unified_user_actions/service/src/main/scala/com/X/unified_user_actions/service:social-graph-event",
     ],
 )
 
@@ -122,16 +122,16 @@ jvm_app(
 jvm_binary(
     name = "uua-email-notification-event-bin",
     basename = "uua-email-notification-event-bin",
-    main = "com.twitter.unified_user_actions.service.EmailNotificationEventServiceMain",
+    main = "com.X.unified_user_actions.service.EmailNotificationEventServiceMain",
     runtime_platform = "java11",
     tags = ["bazel-compatible"],
     dependencies = [
         "3rdparty/jvm/ch/qos/logback:logback-classic",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
-        "twitter-server-internal/src/main/scala",
-        "twitter-server/logback-classic/src/main/scala",
+        "loglens/loglens-logback/src/main/scala/com/X/loglens/logback",
+        "X-server-internal/src/main/scala",
+        "X-server/logback-classic/src/main/scala",
         "unified_user_actions/service/src/main/resources",
-        "unified_user_actions/service/src/main/scala/com/twitter/unified_user_actions/service:email-notification-event",
+        "unified_user_actions/service/src/main/scala/com/X/unified_user_actions/service:email-notification-event",
     ],
 )
 
@@ -152,16 +152,16 @@ jvm_app(
 jvm_binary(
     name = "uua-user-modification-bin",
     basename = "uua-user-modification-bin",
-    main = "com.twitter.unified_user_actions.service.UserModificationServiceMain",
+    main = "com.X.unified_user_actions.service.UserModificationServiceMain",
     runtime_platform = "java11",
     tags = ["bazel-compatible"],
     dependencies = [
         "3rdparty/jvm/ch/qos/logback:logback-classic",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
-        "twitter-server-internal/src/main/scala",
-        "twitter-server/logback-classic/src/main/scala",
+        "loglens/loglens-logback/src/main/scala/com/X/loglens/logback",
+        "X-server-internal/src/main/scala",
+        "X-server/logback-classic/src/main/scala",
         "unified_user_actions/service/src/main/resources",
-        "unified_user_actions/service/src/main/scala/com/twitter/unified_user_actions/service:user-modification-event",
+        "unified_user_actions/service/src/main/scala/com/X/unified_user_actions/service:user-modification-event",
     ],
 )
 
@@ -182,16 +182,16 @@ jvm_app(
 jvm_binary(
     name = "uua-ads-callback-engagements-bin",
     basename = "uua-ads-callback-engagements-bin",
-    main = "com.twitter.unified_user_actions.service.AdsCallbackEngagementsServiceMain",
+    main = "com.X.unified_user_actions.service.AdsCallbackEngagementsServiceMain",
     runtime_platform = "java11",
     tags = ["bazel-compatible"],
     dependencies = [
         "3rdparty/jvm/ch/qos/logback:logback-classic",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
-        "twitter-server-internal/src/main/scala",
-        "twitter-server/logback-classic/src/main/scala",
+        "loglens/loglens-logback/src/main/scala/com/X/loglens/logback",
+        "X-server-internal/src/main/scala",
+        "X-server/logback-classic/src/main/scala",
         "unified_user_actions/service/src/main/resources",
-        "unified_user_actions/service/src/main/scala/com/twitter/unified_user_actions/service:ads-callback-engagements",
+        "unified_user_actions/service/src/main/scala/com/X/unified_user_actions/service:ads-callback-engagements",
     ],
 )
 
@@ -212,16 +212,16 @@ jvm_app(
 jvm_binary(
     name = "uua-favorite-archival-events-bin",
     basename = "uua-favorite-archival-events-bin",
-    main = "com.twitter.unified_user_actions.service.FavoriteArchivalEventsServiceMain",
+    main = "com.X.unified_user_actions.service.FavoriteArchivalEventsServiceMain",
     runtime_platform = "java11",
     tags = ["bazel-compatible"],
     dependencies = [
         "3rdparty/jvm/ch/qos/logback:logback-classic",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
-        "twitter-server-internal/src/main/scala",
-        "twitter-server/logback-classic/src/main/scala",
+        "loglens/loglens-logback/src/main/scala/com/X/loglens/logback",
+        "X-server-internal/src/main/scala",
+        "X-server/logback-classic/src/main/scala",
         "unified_user_actions/service/src/main/resources",
-        "unified_user_actions/service/src/main/scala/com/twitter/unified_user_actions/service:favorite-archival-events",
+        "unified_user_actions/service/src/main/scala/com/X/unified_user_actions/service:favorite-archival-events",
     ],
 )
 
@@ -242,16 +242,16 @@ jvm_app(
 jvm_binary(
     name = "uua-retweet-archival-events-bin",
     basename = "uua-retweet-archival-events-bin",
-    main = "com.twitter.unified_user_actions.service.RetweetArchivalEventsServiceMain",
+    main = "com.X.unified_user_actions.service.RetweetArchivalEventsServiceMain",
     runtime_platform = "java11",
     tags = ["bazel-compatible"],
     dependencies = [
         "3rdparty/jvm/ch/qos/logback:logback-classic",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
-        "twitter-server-internal/src/main/scala",
-        "twitter-server/logback-classic/src/main/scala",
+        "loglens/loglens-logback/src/main/scala/com/X/loglens/logback",
+        "X-server-internal/src/main/scala",
+        "X-server/logback-classic/src/main/scala",
         "unified_user_actions/service/src/main/resources",
-        "unified_user_actions/service/src/main/scala/com/twitter/unified_user_actions/service:retweet-archival-events",
+        "unified_user_actions/service/src/main/scala/com/X/unified_user_actions/service:retweet-archival-events",
     ],
 )
 
@@ -272,16 +272,16 @@ jvm_app(
 jvm_binary(
     name = "rekey-uua-bin",
     basename = "rekey-uua-bin",
-    main = "com.twitter.unified_user_actions.service.RekeyUuaServiceMain",
+    main = "com.X.unified_user_actions.service.RekeyUuaServiceMain",
     runtime_platform = "java11",
     tags = ["bazel-compatible"],
     dependencies = [
         "3rdparty/jvm/ch/qos/logback:logback-classic",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
-        "twitter-server-internal/src/main/scala",
-        "twitter-server/logback-classic/src/main/scala",
+        "loglens/loglens-logback/src/main/scala/com/X/loglens/logback",
+        "X-server-internal/src/main/scala",
+        "X-server/logback-classic/src/main/scala",
         "unified_user_actions/service/src/main/resources",
-        "unified_user_actions/service/src/main/scala/com/twitter/unified_user_actions/service:rekey-uua",
+        "unified_user_actions/service/src/main/scala/com/X/unified_user_actions/service:rekey-uua",
     ],
 )
 
@@ -302,16 +302,16 @@ jvm_app(
 jvm_binary(
     name = "rekey-uua-iesource-bin",
     basename = "rekey-uua-iesource-bin",
-    main = "com.twitter.unified_user_actions.service.RekeyUuaIesourceServiceMain",
+    main = "com.X.unified_user_actions.service.RekeyUuaIesourceServiceMain",
     runtime_platform = "java11",
     tags = ["bazel-compatible"],
     dependencies = [
         "3rdparty/jvm/ch/qos/logback:logback-classic",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
-        "twitter-server-internal/src/main/scala",
-        "twitter-server/logback-classic/src/main/scala",
+        "loglens/loglens-logback/src/main/scala/com/X/loglens/logback",
+        "X-server-internal/src/main/scala",
+        "X-server/logback-classic/src/main/scala",
         "unified_user_actions/service/src/main/resources",
-        "unified_user_actions/service/src/main/scala/com/twitter/unified_user_actions/service:rekey-uua-iesource",
+        "unified_user_actions/service/src/main/scala/com/X/unified_user_actions/service:rekey-uua-iesource",
     ],
 )
 
@@ -332,16 +332,16 @@ jvm_app(
 jvm_binary(
     name = "uua-enrichment-planner-bin",
     basename = "uua-enrichment-planner-bin",
-    main = "com.twitter.unified_user_actions.service.EnrichmentPlannerServiceMain",
+    main = "com.X.unified_user_actions.service.EnrichmentPlannerServiceMain",
     runtime_platform = "java11",
     tags = ["bazel-compatible"],
     dependencies = [
         "3rdparty/jvm/ch/qos/logback:logback-classic",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
-        "twitter-server-internal/src/main/scala",
-        "twitter-server/logback-classic/src/main/scala",
+        "loglens/loglens-logback/src/main/scala/com/X/loglens/logback",
+        "X-server-internal/src/main/scala",
+        "X-server/logback-classic/src/main/scala",
         "unified_user_actions/service/src/main/resources",
-        "unified_user_actions/service/src/main/scala/com/twitter/unified_user_actions/service:enrichment-planner",
+        "unified_user_actions/service/src/main/scala/com/X/unified_user_actions/service:enrichment-planner",
     ],
 )
 
@@ -362,16 +362,16 @@ jvm_app(
 jvm_binary(
     name = "uua-enricher-bin",
     basename = "uua-enricher-bin",
-    main = "com.twitter.unified_user_actions.service.EnricherServiceMain",
+    main = "com.X.unified_user_actions.service.EnricherServiceMain",
     runtime_platform = "java11",
     tags = ["bazel-compatible"],
     dependencies = [
         "3rdparty/jvm/ch/qos/logback:logback-classic",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
-        "twitter-server-internal/src/main/scala",
-        "twitter-server/logback-classic/src/main/scala",
+        "loglens/loglens-logback/src/main/scala/com/X/loglens/logback",
+        "X-server-internal/src/main/scala",
+        "X-server/logback-classic/src/main/scala",
         "unified_user_actions/service/src/main/resources",
-        "unified_user_actions/service/src/main/scala/com/twitter/unified_user_actions/service:enricher",
+        "unified_user_actions/service/src/main/scala/com/X/unified_user_actions/service:enricher",
     ],
 )
 

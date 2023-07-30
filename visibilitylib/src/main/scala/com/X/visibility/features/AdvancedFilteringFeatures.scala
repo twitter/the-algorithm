@@ -1,0 +1,24 @@
+package com.X.visibility.features
+
+import com.X.gizmoduck.thriftscala.MentionFilter
+import com.X.util.Duration
+
+case object ViewerFiltersNoConfirmedEmail extends Feature[Boolean]
+
+case object ViewerFiltersNoConfirmedPhone extends Feature[Boolean]
+
+case object ViewerFiltersDefaultProfileImage extends Feature[Boolean]
+
+case object ViewerFiltersNewUsers extends Feature[Boolean]
+
+case object ViewerFiltersNotFollowedBy extends Feature[Boolean]
+
+case object ViewerMentionFilter extends Feature[MentionFilter]
+
+case object AuthorHasConfirmedEmail extends Feature[Boolean]
+
+case object AuthorHasVerifiedPhone extends Feature[Boolean]
+
+case object AuthorHasDefaultProfileImage extends Feature[Boolean]
+
+case object AuthorAccountAge extends Feature[Duration]

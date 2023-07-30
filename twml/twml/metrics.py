@@ -1,5 +1,5 @@
 """
-This module contains custom tensorflow metrics used at Twitter.
+This module contains custom tensorflow metrics used at X.
 Its components conform to conventions used by the ``tf.metrics`` module.
 
 """
@@ -272,7 +272,7 @@ def rce(labels, predictions,
     weights:
       optional weights, whose shape must match labels . Weight is 1 if not set.
     normalize:
-      if set to true, produce NRCEs used at Twitter. (normalize preds by weights first)
+      if set to true, produce NRCEs used at X. (normalize preds by weights first)
       NOTE: if you don't understand what NRCE is, please don't use it.
     arce:
       if set to true, produces `ARCE <http://go/arce>`_.
