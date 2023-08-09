@@ -17,9 +17,13 @@ import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.G
 import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.TopCursor
 import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
 import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twitter.product_mixer.core.pipeline.pipeline_failure.BadRequest
+import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
 import com.twitter.search.common.util.lang.ThriftLanguageUtil
 import com.twitter.snowflake.id.SnowflakeId
 import com.twitter.stitch.Stitch
+import com.twitter.timelines.prediction.adapters.request_context.RequestContextAdapter.dowFromTimestamp
+import com.twitter.timelines.prediction.adapters.request_context.RequestContextAdapter.hourFromTimestamp
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -45,6 +49,9 @@ class RequestQueryFeatureHydrator[
     PullToRefreshFeature,
     RequestJoinIdFeature,
     ServedRequestIdFeature,
+    TimestampFeature,
+    TimestampGMTDowFeature,
+    TimestampGMTHourFeature,
     ViewerIdFeature
   )
 
@@ -67,6 +74,7 @@ class RequestQueryFeatureHydrator[
   override def hydrate(query: Query): Stitch[FeatureMap] = {
     val requestContext = query.deviceContext.flatMap(_.requestContextValue)
     val servedRequestId = UUID.randomUUID.getMostSignificantBits
+    val timestamp = query.queryTime.inMilliseconds
 
     val featureMap = FeatureMapBuilder()
       .add(AccountAgeFeature, query.getOptionalUserId.flatMap(SnowflakeId.timeFromIdOpt))
@@ -97,8 +105,15 @@ class RequestQueryFeatureHydrator[
       .add(PullToRefreshFeature, requestContext.contains(RequestContext.PullToRefresh))
       .add(ServedRequestIdFeature, Some(servedRequestId))
       .add(RequestJoinIdFeature, getRequestJoinId(servedRequestId))
+      .add(TimestampFeature, timestamp)
+      .add(TimestampGMTDowFeature, dowFromTimestamp(timestamp))
+      .add(TimestampGMTHourFeature, hourFromTimestamp(timestamp))
       .add(HasDarkRequestFeature, hasDarkRequest)
-      .add(ViewerIdFeature, query.getRequiredUserId)
+      .add(
+        ViewerIdFeature,
+        query.getOptionalUserId
+          .orElse(query.getGuestId).getOrElse(
+            throw PipelineFailure(BadRequest, "Missing viewer id")))
       .build()
 
     Stitch.value(featureMap)

@@ -47,4 +47,5 @@ case class FollowingQuery(
   override val isEmptyState: Option[Boolean] = None
   override val isFirstRequestAfterSignup: Option[Boolean] = None
   override val isEndOfTimeline: Option[Boolean] = None
+  override val timelineId: Option[Long] = None
 }

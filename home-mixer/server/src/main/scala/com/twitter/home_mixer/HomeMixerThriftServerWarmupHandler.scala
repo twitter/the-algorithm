@@ -3,7 +3,7 @@ package com.twitter.home_mixer
 import com.twitter.finagle.thrift.ClientId
 import com.twitter.finatra.thrift.routing.ThriftWarmup
 import com.twitter.home_mixer.{thriftscala => st}
-import com.twitter.inject.Logging
+import com.twitter.util.logging.Logging
 import com.twitter.inject.utils.Handler
 import com.twitter.product_mixer.core.{thriftscala => pt}
 import com.twitter.scrooge.Request

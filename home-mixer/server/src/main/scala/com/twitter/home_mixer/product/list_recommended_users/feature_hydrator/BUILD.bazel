@@ -12,5 +12,4 @@ scala_library(
         "stitch/stitch-gizmoduck",
         "stitch/stitch-socialgraph",
     ],
-    exports = [],
 )

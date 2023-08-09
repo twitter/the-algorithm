@@ -26,7 +26,8 @@ case class ForYouQuery(
   override val features: Option[FeatureMap],
   override val deviceContext: Option[DeviceContext],
   override val seenTweetIds: Option[Seq[Long]],
-  override val dspClientContext: Option[dsp.DspClientContext])
+  override val dspClientContext: Option[dsp.DspClientContext],
+  pushToHomeTweetId: Option[Long])
     extends PipelineQuery
     with HasPipelineCursor[UrtOrderedCursor]
     with HasDeviceContext
@@ -47,4 +48,5 @@ case class ForYouQuery(
   override val isEmptyState: Option[Boolean] = None
   override val isFirstRequestAfterSignup: Option[Boolean] = None
   override val isEndOfTimeline: Option[Boolean] = None
+  override val timelineId: Option[Long] = None
 }

@@ -24,7 +24,7 @@ class CachedScoredTweetsCandidatePipelineConfig @Inject() (
     extends CandidatePipelineConfig[
       ScoredTweetsQuery,
       ScoredTweetsQuery,
-      hmt.CachedScoredTweet,
+      hmt.ScoredTweet,
       TweetCandidate
     ] {
 
@@ -35,15 +35,15 @@ class CachedScoredTweetsCandidatePipelineConfig @Inject() (
     ScoredTweetsQuery
   ] = identity
 
-  override val candidateSource: BaseCandidateSource[ScoredTweetsQuery, hmt.CachedScoredTweet] =
+  override val candidateSource: BaseCandidateSource[ScoredTweetsQuery, hmt.ScoredTweet] =
     cachedScoredTweetsCandidateSource
 
   override val featuresFromCandidateSourceTransformers: Seq[
-    CandidateFeatureTransformer[hmt.CachedScoredTweet]
+    CandidateFeatureTransformer[hmt.ScoredTweet]
   ] = Seq(CachedScoredTweetsResponseFeatureTransformer)
 
   override val resultTransformer: CandidatePipelineResultsTransformer[
-    hmt.CachedScoredTweet,
+    hmt.ScoredTweet,
     TweetCandidate
   ] = { sourceResult => TweetCandidate(id = sourceResult.tweetId) }
 }

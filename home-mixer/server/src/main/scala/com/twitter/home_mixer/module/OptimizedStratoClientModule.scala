@@ -17,7 +17,7 @@ import javax.inject.Singleton
 
 object OptimizedStratoClientModule extends TwitterModule {
 
-  private val ModerateStratoServerClientRequestTimeout = 150.millis
+  private val ModerateStratoServerClientRequestTimeout = 500.millis
 
   private val DefaultRetryPartialFunction: PartialFunction[Try[Nothing], Boolean] =
     RetryPolicy.TimeoutAndWriteExceptionsOnly
@@ -35,7 +35,7 @@ object OptimizedStratoClientModule extends TwitterModule {
   ): Client = {
     Strato.client
       .withMutualTls(serviceIdentifier, opportunisticLevel = OpportunisticTls.Required)
-      .withSession.acquisitionTimeout(150.milliseconds)
+      .withSession.acquisitionTimeout(500.milliseconds)
       .withRequestTimeout(ModerateStratoServerClientRequestTimeout)
       .withPerRequestTimeout(ModerateStratoServerClientRequestTimeout)
       .withRpcBatchSize(5)

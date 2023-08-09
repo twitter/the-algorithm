@@ -6,12 +6,8 @@ scala_library(
     dependencies = [
         "3rdparty/jvm/com/twitter/bijection:scrooge",
         "3rdparty/jvm/com/twitter/storehaus:core",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/util",
-        "src/thrift/com/twitter/service/metastore/gen:thrift-java",
-        "src/thrift/com/twitter/service/metastore/gen:thrift-scala",
         "src/thrift/com/twitter/wtf/candidate:wtf-candidate-scala",
         "stitch/stitch-core",
         "storage/clients/manhattan/client/src/main/scala",
-        "timelinemixer/server/src/main/scala/com/twitter/timelinemixer/injection/repository/uss",
     ],
 )

@@ -39,6 +39,7 @@ object TweetypieStaticEntitiesCacheClientModule extends TwitterModule {
     val memCacheClient = MemcachedClientBuilder.buildMemcachedClient(
       destName = ProdDest,
       numTries = 1,
+      numConnections = 1,
       requestTimeout = 50.milliseconds,
       globalTimeout = 100.milliseconds,
       connectTimeout = 100.milliseconds,

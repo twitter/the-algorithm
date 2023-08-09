@@ -6,7 +6,6 @@ scala_library(
     dependencies = [
         "dspbidder/thrift/src/main/thrift/com/twitter/dspbidder/commons:thrift-scala",
         "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common/identifier",
         "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/marshalling/request",
         "timelineservice/common:model",
     ],
