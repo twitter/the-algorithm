@@ -68,7 +68,7 @@ class ComponentRegistrySnapshot() extends Logging {
    *                                          these 2 components would be indistinguishable.
    *
    * @throws ComponentIdentifierCollisionException if a [[Component]] with the same [[ComponentIdentifier]] is registered
-   *                                               but it's type is not the same as a previously registered [[Component]]
+   *                                               but its type is not the same as a previously registered [[Component]]
    *                                               with the same [[ComponentIdentifier]]
    *                                               e.g. if you register 2 [[Component]]s with the same [[ComponentIdentifier]]
    *                                               such as `new Component` and an instance of
