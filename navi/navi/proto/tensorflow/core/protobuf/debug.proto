@@ -46,7 +46,7 @@ message DebugTensorWatch {
   // are to be debugged, the callers of Session::Run() must use distinct
   // debug_urls to make sure that the streamed or dumped events do not overlap
   // among the invocations.
-  // TODO: More visible documentation of this in g3docs.
+  // TODO(cais): More visible documentation of this in g3docs.
   repeated string debug_urls = 4;
 
   // Do not error out if debug op creation fails (e.g., due to dtype

@@ -14,14 +14,13 @@ class HomeGlobalParamConfig @Inject() () extends GlobalParamConfig {
 
   override val booleanFSOverrides = Seq(
     AdsDisableInjectionBasedOnUserRoleParam,
-    EnableSendScoresToClient,
+    EnableAdvertiserBrandSafetySettingsFeatureHydratorParam,
+    EnableImpressionBloomFilter,
     EnableNahFeedbackInfoParam,
     EnableNewTweetsPillAvatarsParam,
-    EnableServedCandidateKafkaPublishingParam,
+    EnableScribeServedCandidatesParam,
+    EnableSendScoresToClient,
     EnableSocialContextParam,
-    EnableGizmoduckAuthorSafetyFeatureHydratorParam,
-    EnableAdvertiserBrandSafetySettingsFeatureHydratorParam,
-    EnableFeedbackFatigueParam
   )
 
   override val boundedIntFSOverrides = Seq(
@@ -30,11 +29,6 @@ class HomeGlobalParamConfig @Inject() () extends GlobalParamConfig {
   )
 
   override val boundedDoubleFSOverrides = Seq(
-    BlueVerifiedAuthorInNetworkMultiplierParam,
-    BlueVerifiedAuthorOutOfNetworkMultiplierParam
-  )
-
-  override val longSetFSOverrides = Seq(
-    AuthorListForStatsParam
+    ImpressionBloomFilterFalsePositiveRateParam
   )
 }

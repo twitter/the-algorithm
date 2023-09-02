@@ -3,6 +3,7 @@ package com.twitter.home_mixer.util
 import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
 import com.twitter.home_mixer.model.HomeFeatures.FavoritedByUserIdsFeature
 import com.twitter.home_mixer.model.HomeFeatures.HasImageFeature
+import com.twitter.home_mixer.model.HomeFeatures.InReplyToTweetIdFeature
 import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
 import com.twitter.home_mixer.model.HomeFeatures.MediaUnderstandingAnnotationIdsFeature
 import com.twitter.home_mixer.model.HomeFeatures.RepliedByEngagerIdsFeature
@@ -21,7 +22,6 @@ import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateW
 import com.twitter.product_mixer.core.pipeline.PipelineQuery
 import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
 import com.twitter.product_mixer.core.pipeline.pipeline_failure.UnexpectedCandidateResult
-
 import scala.reflect.ClassTag
 
 object CandidatesUtil {
@@ -52,10 +52,21 @@ object CandidatesUtil {
     case _ => false
   }
 
+  def getOriginalTweetId(candidate: CandidateWithFeatures[TweetCandidate]): Long = {
+    if (candidate.features.getOrElse(IsRetweetFeature, false))
+      candidate.features.getOrElse(SourceTweetIdFeature, None).getOrElse(candidate.candidate.id)
+    else
+      candidate.candidate.id
+  }
+
   def getOriginalAuthorId(candidateFeatures: FeatureMap): Option[Long] =
     if (candidateFeatures.getOrElse(IsRetweetFeature, false))
       candidateFeatures.getOrElse(SourceUserIdFeature, None)
     else candidateFeatures.getOrElse(AuthorIdFeature, None)
+
+  def isOriginalTweet(candidate: CandidateWithFeatures[TweetCandidate]): Boolean =
+    !candidate.features.getOrElse(IsRetweetFeature, false) &&
+      candidate.features.getOrElse(InReplyToTweetIdFeature, None).isEmpty
 
   def getEngagerUserIds(
     candidateFeatures: FeatureMap

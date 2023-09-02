@@ -7,6 +7,7 @@ import com.twitter.finagle.thrift.ClientId
 import com.twitter.finagle.thriftmux.MethodBuilder
 import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
 import com.twitter.inject.Injector
+import com.twitter.inject.annotations.Flags
 import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
 import com.twitter.stitch.tweetypie.TweetyPie
 import com.twitter.tweetypie.thriftscala.TweetService
@@ -14,14 +15,21 @@ import com.twitter.util.Duration
 import javax.inject.Singleton
 
 /**
- * Idempotent TweetyPie Thrift and Stitch client.
+ * Idempotent Tweetypie Thrift and Stitch client.
  */
-object TweetyPieClientModule
+object TweetypieClientModule
     extends ThriftMethodBuilderClientModule[
       TweetService.ServicePerEndpoint,
       TweetService.MethodPerEndpoint
     ]
     with MtlsClient {
+
+  private val TimeoutRequest = "tweetypie.timeout_request"
+  private val TimeoutTotal = "tweetypie.timeout_total"
+
+  flag[Duration](TimeoutRequest, 1000.millis, "Timeout per request")
+  flag[Duration](TimeoutTotal, 1000.millis, "Total timeout")
+
   override val label: String = "tweetypie"
   override val dest: String = "/s/tweetypie/tweetypie"
 
@@ -42,10 +50,14 @@ object TweetyPieClientModule
   override protected def configureMethodBuilder(
     injector: Injector,
     methodBuilder: MethodBuilder
-  ): MethodBuilder =
-    methodBuilder
-      .withTimeoutPerRequest(500.milliseconds)
-      .withTimeoutTotal(500.milliseconds)
+  ): MethodBuilder = {
+    val timeoutRequest = injector.instance[Duration](Flags.named(TimeoutRequest))
+    val timeoutTotal = injector.instance[Duration](Flags.named(TimeoutTotal))
 
-  override protected def sessionAcquisitionTimeout: Duration = 250.milliseconds
+    methodBuilder
+      .withTimeoutPerRequest(timeoutRequest)
+      .withTimeoutTotal(timeoutTotal)
+  }
+
+  override protected def sessionAcquisitionTimeout: Duration = 500.millis
 }

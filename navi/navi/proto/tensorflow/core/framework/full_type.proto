@@ -122,7 +122,7 @@ enum FullTypeId {
   //   TFT_TENSOR[TFT_INT32, TFT_UNKNOWN]
   //     is a Tensor of int32 element type and unknown shape.
   //
-  // TODO: Define TFT_SHAPE and add more examples.
+  // TODO(mdan): Define TFT_SHAPE and add more examples.
   TFT_TENSOR = 1000;
 
   // Array (or tensorflow::TensorList in the variant type registry).
@@ -178,7 +178,7 @@ enum FullTypeId {
   // object (for now).
 
   // The bool element type.
-  // TODO
+  // TODO(mdan): Quantized types, legacy representations (e.g. ref)
   TFT_BOOL = 200;
   // Integer element types.
   TFT_UINT8 = 201;
@@ -195,7 +195,7 @@ enum FullTypeId {
   TFT_DOUBLE = 211;
   TFT_BFLOAT16 = 215;
   // Complex element types.
-  // TODO: Represent as TFT_COMPLEX[TFT_DOUBLE] instead?
+  // TODO(mdan): Represent as TFT_COMPLEX[TFT_DOUBLE] instead?
   TFT_COMPLEX64 = 212;
   TFT_COMPLEX128 = 213;
   // The string element type.
@@ -240,7 +240,7 @@ enum FullTypeId {
   // ownership is in the true sense: "the op argument representing the lock is
   // available".
   // Mutex locks are the dynamic counterpart of control dependencies.
-  // TODO: Properly document this thing.
+  // TODO(mdan): Properly document this thing.
   //
   // Parametrization: TFT_MUTEX_LOCK[].
   TFT_MUTEX_LOCK = 10202;
@@ -271,6 +271,6 @@ message FullTypeDef {
   oneof attr {
     string s = 3;
     int64 i = 4;
-    // TODO: list/tensor, map? Need to reconcile with TFT_RECORD, etc.
+    // TODO(mdan): list/tensor, map? Need to reconcile with TFT_RECORD, etc.
   }
 }

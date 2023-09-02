@@ -87,13 +87,11 @@ pub struct Args {
     pub intra_op_parallelism: Vec<String>,
     #[clap(
         long,
-        default_value = "14",
         help = "number of threads to parallelize computations of the graph"
     )]
     pub inter_op_parallelism: Vec<String>,
     #[clap(
         long,
-        default_value = "serving_default",
         help = "signature of a serving. only TF"
     )]
     pub serving_sig: Vec<String>,
@@ -107,10 +105,12 @@ pub struct Args {
         help = "max warmup records to use. warmup only implemented for TF"
     )]
     pub max_warmup_records: usize,
+    #[clap(long, value_parser = Args::parse_key_val::<String, String>, value_delimiter=',')]
+    pub onnx_global_thread_pool_options: Vec<(String, String)>,
     #[clap(
-        long,
-        default_value = "true",
-        help = "when to use graph parallelization. only for ONNX"
+    long,
+    default_value = "true",
+    help = "when to use graph parallelization. only for ONNX"
     )]
     pub onnx_use_parallel_mode: String,
     // #[clap(long, default_value = "false")]

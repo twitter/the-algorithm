@@ -7,6 +7,7 @@ import com.twitter.home_mixer.service.ScoredTweetsService
 import com.twitter.home_mixer.{thriftscala => t}
 import com.twitter.product_mixer.core.controllers.DebugTwitterContext
 import com.twitter.product_mixer.core.functional_component.configapi.ParamsBuilder
+import com.twitter.product_mixer.core.service.debug_query.DebugQueryService
 import com.twitter.product_mixer.core.service.urt.UrtService
 import com.twitter.snowflake.id.SnowflakeId
 import com.twitter.stitch.Stitch

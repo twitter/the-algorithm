@@ -6,13 +6,11 @@ scala_library(
     dependencies = [
         "finagle/finagle-core/src/main",
         "home-mixer/server/src/main/scala/com/twitter/home_mixer/functional_component/decorator/builder",
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/functional_component/decorator/urt/builder",
         "home-mixer/server/src/main/scala/com/twitter/home_mixer/model",
         "home-mixer/server/src/main/scala/com/twitter/home_mixer/model/request",
         "home-mixer/server/src/main/scala/com/twitter/home_mixer/param",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/product/following/model",
         "home-mixer/server/src/main/scala/com/twitter/home_mixer/util",
-        "joinkey/src/main/scala/com/twitter/joinkey/context",
-        "joinkey/src/main/thrift/com/twitter/joinkey/context:joinkey-context-scala",
         "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/decorator/urt",
         "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
         "product-mixer/core/src/main/java/com/twitter/product_mixer/core/product/guice/scope",
@@ -25,8 +23,6 @@ scala_library(
         "src/thrift/com/twitter/timelineservice/server/suggests/logging:thrift-scala",
         "stringcenter/client",
         "stringcenter/client/src/main/java",
-        "timelinemixer/server/src/main/scala/com/twitter/timelinemixer/injection/model/candidate",
-        "timelinemixer/server/src/main/scala/com/twitter/timelinemixer/translation",
         "timelines/src/main/scala/com/twitter/timelines/injection/scribe",
     ],
 )

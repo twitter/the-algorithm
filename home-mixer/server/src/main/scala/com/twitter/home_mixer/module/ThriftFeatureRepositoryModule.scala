@@ -69,8 +69,8 @@ object ThriftFeatureRepositoryModule extends TwitterModule {
         label = "interests",
         statsReceiver = statsReceiver,
         idempotency = Idempotent(1.percent),
-        timeoutPerRequest = 100.milliseconds,
-        timeoutTotal = 100.milliseconds
+        timeoutPerRequest = 350.milliseconds,
+        timeoutTotal = 350.milliseconds
       )
   }
 
@@ -166,8 +166,8 @@ object ThriftFeatureRepositoryModule extends TwitterModule {
         label = "tweetypie-content-repo",
         statsReceiver = statsReceiver,
         idempotency = Idempotent(1.percent),
-        timeoutPerRequest = 150.milliseconds,
-        timeoutTotal = 250.milliseconds
+        timeoutPerRequest = 300.milliseconds,
+        timeoutTotal = 500.milliseconds
       )
 
     def lookup(tweetIds: Seq[Long]): Future[Seq[Option[tp.Tweet]]] = {
@@ -176,15 +176,12 @@ object ThriftFeatureRepositoryModule extends TwitterModule {
         includeRetweetedTweet = false,
         includeQuotedTweet = false,
         forUserId = None,
-        // Service needs to be whitelisted
-        // We rely on the VF at the end of serving. No need to filter now.
         safetyLevel = Some(sp.SafetyLevel.FilterNone),
         visibilityPolicy = tp.TweetVisibilityPolicy.NoFiltering
       )
-      val request = tp.GetTweetFieldsRequest(
-        tweetIds = tweetIds,
-        options = getTweetFieldsOptions
-      )
+
+      val request = tp.GetTweetFieldsRequest(tweetIds = tweetIds, options = getTweetFieldsOptions)
+
       client.getTweetFields(request).map { results =>
         results.map {
           case tp.GetTweetFieldsResult(_, tp.TweetFieldsResultState.Found(found), _, _) =>
@@ -196,16 +193,17 @@ object ThriftFeatureRepositoryModule extends TwitterModule {
 
     val keyValueRepository = toRepositoryBatch(lookup, chunkSize = 20)
 
-    // Cache
     val cacheClient = MemcachedClientBuilder.buildRawMemcachedClient(
       numTries = 1,
-      requestTimeout = 100.milliseconds,
-      globalTimeout = 100.milliseconds,
+      numConnections = 1,
+      requestTimeout = 200.milliseconds,
+      globalTimeout = 200.milliseconds,
       connectTimeout = 200.milliseconds,
       acquisitionTimeout = 200.milliseconds,
       serviceIdentifier = serviceIdentifier,
       statsReceiver = statsReceiver
     )
+
     val finagleMemcacheFactory =
       FinagleMemcacheFactory(cacheClient, "/s/cache/home_content_features:twemcaches")
     val cacheValueTransformer =
@@ -281,10 +279,12 @@ object ThriftFeatureRepositoryModule extends TwitterModule {
       tweetIds: Seq[Long],
       viewerId: Long
     ): Future[Seq[Option[eb.ThriftSearchResult]]] = {
-      val request = EarlybirdRequestUtil.getTweetsEBFeaturesRequest(
+      val request = EarlybirdRequestUtil.getTweetsFeaturesRequest(
         userId = Some(viewerId),
         tweetIds = Some(tweetIds),
-        clientId = Some(clientId.name)
+        clientId = Some(clientId.name),
+        authorScoreMap = None,
+        tensorflowModel = Some("timelines_rectweet_replica")
       )
 
       client

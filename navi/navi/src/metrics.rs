@@ -171,6 +171,9 @@ lazy_static! {
         &["model_name"]
     )
     .expect("metric can be created");
+    pub static ref CERT_EXPIRY_EPOCH: IntGauge =
+        IntGauge::new(":navi:cert_expiry_epoch", "Timestamp when the current cert expires")
+            .expect("metric can be created");
 }
 
 pub fn register_custom_metrics() {
@@ -249,6 +252,10 @@ pub fn register_custom_metrics() {
     REGISTRY
         .register(Box::new(CONVERTER_TIME_COLLECTOR.clone()))
         .expect("collector can be registered");
+    REGISTRY
+    .register(Box::new(CERT_EXPIRY_EPOCH.clone()))
+    .expect("collector can be registered");
+
 }
 
 pub fn register_dynamic_metrics(c: &HistogramVec) {

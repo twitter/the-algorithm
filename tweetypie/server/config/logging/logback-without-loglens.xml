@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="false">
+    <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+      <resetJUL>true</resetJUL>
+    </contextListener>
+
+    <include resource="logging/logback-all-include.xml" />
+
+    <root level="INFO">
+        <appender-ref ref="ALL" />
+    </root>
+</configuration>

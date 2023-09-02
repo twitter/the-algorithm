@@ -10,7 +10,6 @@ import com.twitter.product_mixer.shared_library.memcached_client.MemcachedClient
 import com.twitter.servo.cache.FinagleMemcache
 import com.twitter.servo.cache.KeyTransformer
 import com.twitter.servo.cache.KeyValueTransformingTtlCache
-import com.twitter.servo.cache.ObservableTtlCache
 import com.twitter.servo.cache.Serializer
 import com.twitter.servo.cache.ThriftSerializer
 import com.twitter.servo.cache.TtlCache
@@ -24,8 +23,10 @@ object ScoredTweetsMemcacheModule extends TwitterModule {
   private val ScopeName = "ScoredTweetsCache"
   private val ProdDestName = "/srv#/prod/local/cache/home_scored_tweets:twemcaches"
   private val StagingDestName = "/srv#/test/local/cache/twemcache_home_scored_tweets:twemcaches"
-  private val cachedScoredTweetsSerializer: Serializer[t.CachedScoredTweets] =
-    new ThriftSerializer[t.CachedScoredTweets](t.CachedScoredTweets, new TCompactProtocol.Factory())
+  private val scoredTweetsSerializer: Serializer[t.ScoredTweetsResponse] =
+    new ThriftSerializer[t.ScoredTweetsResponse](
+      t.ScoredTweetsResponse,
+      new TCompactProtocol.Factory())
   private val userIdKeyTransformer: KeyTransformer[UserId] = (userId: UserId) => userId.toString
 
   @Singleton
@@ -33,7 +34,7 @@ object ScoredTweetsMemcacheModule extends TwitterModule {
   def providesScoredTweetsCache(
     serviceIdentifier: ServiceIdentifier,
     statsReceiver: StatsReceiver
-  ): TtlCache[UserId, t.CachedScoredTweets] = {
+  ): TtlCache[UserId, t.ScoredTweetsResponse] = {
     val destName = serviceIdentifier.environment.toLowerCase match {
       case "prod" => ProdDestName
       case _ => StagingDestName
@@ -41,6 +42,7 @@ object ScoredTweetsMemcacheModule extends TwitterModule {
     val client = MemcachedClientBuilder.buildMemcachedClient(
       destName = destName,
       numTries = 2,
+      numConnections = 1,
       requestTimeout = 200.milliseconds,
       globalTimeout = 400.milliseconds,
       connectTimeout = 100.milliseconds,
@@ -49,17 +51,11 @@ object ScoredTweetsMemcacheModule extends TwitterModule {
       statsReceiver = statsReceiver.scope(ScopeName)
     )
     val underlyingCache = new FinagleMemcache(client)
-    val baseCache: KeyValueTransformingTtlCache[UserId, String, t.CachedScoredTweets, Array[Byte]] =
-      new KeyValueTransformingTtlCache(
-        underlyingCache = underlyingCache,
-        transformer = cachedScoredTweetsSerializer,
-        underlyingKey = userIdKeyTransformer
-      )
-    ObservableTtlCache(
-      underlyingCache = baseCache,
-      statsReceiver = statsReceiver,
-      windowSize = 1000L,
-      name = ScopeName
+
+    new KeyValueTransformingTtlCache(
+      underlyingCache = underlyingCache,
+      transformer = scoredTweetsSerializer,
+      underlyingKey = userIdKeyTransformer
     )
   }
 }

@@ -17,27 +17,44 @@ class ForYouParamConfig @Inject() () extends ProductParamConfig {
   )
 
   override val booleanFSOverrides = Seq(
-    EnableFlipInjectionModuleCandidatePipelineParam,
-    EnableWhoToFollowCandidatePipelineParam,
-    EnableScoredTweetsMixerPipelineParam,
     ClearCacheOnPtr.EnableParam,
-    EnableTimelineScorerCandidatePipelineParam
+    EnableFlipInjectionModuleCandidatePipelineParam,
+    EnablePushToHomeMixerPipelineParam,
+    EnableScoredTweetsMixerPipelineParam,
+    EnableServedCandidateKafkaPublishingParam,
+    EnableTimelineScorerCandidatePipelineParam,
+    EnableTopicSocialContextFilterParam,
+    EnableVerifiedAuthorSocialContextBypassParam,
+    EnableWhoToFollowCandidatePipelineParam,
+    EnableWhoToSubscribeCandidatePipelineParam,
+    EnableTweetPreviewsCandidatePipelineParam,
+    EnableClearCacheOnPushToHome
   )
 
   override val boundedIntFSOverrides = Seq(
+    AdsNumOrganicItemsParam,
+    ClearCacheOnPtr.MinEntriesParam,
+    FlipInlineInjectionModulePosition,
     ServerMaxResultsParam,
     WhoToFollowPositionParam,
-    FlipInlineInjectionModulePosition,
-    TimelineServiceMaxResultsParam,
-    AdsNumOrganicItemsParam,
-    ClearCacheOnPtr.MinEntriesParam
+    WhoToSubscribePositionParam,
+    TweetPreviewsPositionParam,
+    TweetPreviewsMaxCandidatesParam
+  )
+
+  override val stringFSOverrides = Seq(
+    WhoToFollowDisplayLocationParam,
+    ExperimentStatsParam
   )
 
   override val boundedDurationFSOverrides = Seq(
-    WhoToFollowMinInjectionIntervalParam
+    WhoToFollowMinInjectionIntervalParam,
+    WhoToSubscribeMinInjectionIntervalParam,
+    TweetPreviewsMinInjectionIntervalParam
   )
 
   override val enumFSOverrides = Seq(
-    WhoToFollowDisplayTypeIdParam
+    WhoToFollowDisplayTypeIdParam,
+    WhoToSubscribeDisplayTypeIdParam
   )
 }

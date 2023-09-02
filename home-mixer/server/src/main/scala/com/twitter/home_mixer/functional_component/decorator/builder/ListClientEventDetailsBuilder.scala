@@ -8,7 +8,7 @@ import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Ti
 import com.twitter.product_mixer.core.pipeline.PipelineQuery
 import com.twitter.timelineservice.suggests.{thriftscala => st}
 
-object ListClientEventDetailsBuilder
+case class ListClientEventDetailsBuilder(suggestType: st.SuggestType)
     extends BaseClientEventDetailsBuilder[PipelineQuery, UniversalNoun[Any]] {
 
   override def apply(
@@ -20,7 +20,7 @@ object ListClientEventDetailsBuilder
       conversationDetails = None,
       timelinesDetails = Some(
         TimelinesDetails(
-          injectionType = Some(st.SuggestType.OrganicListTweet.name),
+          injectionType = Some(suggestType.name),
           controllerData = None,
           sourceData = None)),
       articleDetails = None,
