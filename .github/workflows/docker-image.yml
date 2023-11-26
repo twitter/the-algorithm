@@ -1,0 +1,18 @@
+nama :   Foto Docker CI
+
+pada:
+ push :
+ cabang  :  [ "utama" ]
+ pull_request  :
+ cabang  :  [ "utama" ]
+
+pekerjaan:
+
+  build:
+
+ run-on  :  ubuntu-terbaru
+
+ langkah  :
+     -  uses:  tindakan/checkout@v3
+     -  nama:  Membangun gambar Docker
+ jalankan  :  docker build . --file Dockerfile --tag nama-image-name:$(tanggal +%s)
