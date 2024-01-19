@@ -7,15 +7,14 @@
 
 from os.path import abspath, dirname, isfile, join
 
-
 extensions = [
-  "sphinx.ext.autodoc",
-  "sphinx.ext.intersphinx",
-  "sphinx.ext.ifconfig",
-  "sphinx.ext.graphviz",
-  "twitter.docbird.ext.thriftlexer",
-  "twitter.docbird.ext.toctree_default_caption",
-  "sphinxcontrib.httpdomain",
+    "sphinx.ext.autodoc",
+    "sphinx.ext.intersphinx",
+    "sphinx.ext.ifconfig",
+    "sphinx.ext.graphviz",
+    "twitter.docbird.ext.thriftlexer",
+    "twitter.docbird.ext.toctree_default_caption",
+    "sphinxcontrib.httpdomain",
 ]
 
 
@@ -29,13 +28,13 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = u"""Aggregation Framework"""
-description = u""""""
+project = """Aggregation Framework"""
+description = """"""
 
 # The short X.Y version.
-version = u"""1.0"""
+version = """1.0"""
 # The full version, including alpha/beta/rc tags.
-release = u"""1.0"""
+release = """1.0"""
 
 exclude_patterns = ["_build"]
 
@@ -45,15 +44,20 @@ html_theme = "default"
 
 html_static_path = ["_static"]
 
-html_logo = u""""""
+html_logo = """"""
 
 # Automagically add project logo, if it exists
 # (checks on any build, not just init)
 # Scan for some common defaults (png or svg format,
 # called "logo" or project name, in docs folder)
 if not html_logo:
-  location = dirname(abspath(__file__))
-  for logo_file in ["logo.png", "logo.svg", ("%s.png" % project), ("%s.svg" % project)]:
-    html_logo = logo_file if isfile(join(location, logo_file)) else html_logo
+    location = dirname(abspath(__file__))
+    for logo_file in [
+        "logo.png",
+        "logo.svg",
+        ("%s.png" % project),
+        ("%s.svg" % project),
+    ]:
+        html_logo = logo_file if isfile(join(location, logo_file)) else html_logo
 
 graphviz_output_format = "svg"
