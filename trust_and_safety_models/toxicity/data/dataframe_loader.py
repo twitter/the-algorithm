@@ -1,24 +1,16 @@
+import pickle
 from abc import ABC, abstractmethod
 from datetime import date
 from importlib import import_module
-import pickle
-
-from toxicity_ml_pipeline.settings.default_settings_tox import (
-  CLIENT,
-  EXISTING_TASK_VERSIONS,
-  GCS_ADDRESS,
-  TRAINING_DATA_LOCATION,
-)
-from toxicity_ml_pipeline.utils.helpers import execute_command, execute_query
-from toxicity_ml_pipeline.utils.queries import (
-  FULL_QUERY,
-  FULL_QUERY_W_TWEET_TYPES,
-  PARSER_UDF,
-  QUERY_SETTINGS,
-)
 
 import numpy as np
 import pandas
+from toxicity_ml_pipeline.settings.default_settings_tox import (
+    CLIENT, EXISTING_TASK_VERSIONS, GCS_ADDRESS, TRAINING_DATA_LOCATION)
+from toxicity_ml_pipeline.utils.helpers import execute_command, execute_query
+from toxicity_ml_pipeline.utils.queries import (FULL_QUERY,
+                                                FULL_QUERY_W_TWEET_TYPES,
+                                                PARSER_UDF, QUERY_SETTINGS)
 
 
 class DataframeLoader(ABC):
