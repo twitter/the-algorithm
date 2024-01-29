@@ -1,4 +1,4 @@
-resources(
+<{bndrs211}>(
     sources = [
         "*.xml",
         "config/*.yml",
