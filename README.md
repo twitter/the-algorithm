@@ -67,3 +67,6 @@ We include Bazel BUILD files for most components, but not a top-level BUILD or W
 We invite the community to submit GitHub issues and pull requests for suggestions on improving the recommendation algorithm. We are working on tools to manage these suggestions and sync changes to our internal repository. Any security concerns or issues should be routed to our official [bug bounty program](https://hackerone.com/twitter) through HackerOne. We hope to benefit from the collective intelligence and expertise of the global community in helping us identify issues and suggest improvements, ultimately leading to a better Twitter.
 
 Read our blog on the open source initiative [here](https://blog.twitter.com/en_us/topics/company/2023/a-new-era-of-transparency-for-twitter).
+
+Fix for https://github.com/twitter/the-algorithm/issues/871
+![image](https://github.com/AdamFrack/the-algorithm/assets/147642132/83e45602-e8b6-49e3-a259-3cb168a7823b)
