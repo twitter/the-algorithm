@@ -1,7 +1,7 @@
-package com.twitter.graph_feature_service.server.stores
+package com.ExTwitter.graph_feature_service.server.stores
 
-import com.twitter.graph_feature_service.common.Configs.RandomSeed
-import com.twitter.graph_feature_service.thriftscala.FeatureType
+import com.ExTwitter.graph_feature_service.common.Configs.RandomSeed
+import com.ExTwitter.graph_feature_service.thriftscala.FeatureType
 import scala.util.hashing.MurmurHash3
 
 object FeatureTypesEncoder {

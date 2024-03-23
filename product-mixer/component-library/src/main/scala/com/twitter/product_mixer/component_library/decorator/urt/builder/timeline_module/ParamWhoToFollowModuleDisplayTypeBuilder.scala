@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.timeline_module
 
-import com.twitter.product_mixer.core.functional_component.configapi.StaticParam
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleDisplayTypeBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.Carousel
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.CompactCarousel
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ConversationTree
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.GridCarousel
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.Vertical
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.VerticalConversation
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.VerticalGrid
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.VerticalWithContextLine
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Param
+import com.ExTwitter.product_mixer.core.functional_component.configapi.StaticParam
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleDisplayTypeBuilder
+import com.ExTwitter.product_mixer.core.model.common.CandidateWithFeatures
+import com.ExTwitter.product_mixer.core.model.common.UniversalNoun
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.timeline_module.Carousel
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.timeline_module.CompactCarousel
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ConversationTree
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.timeline_module.GridCarousel
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleDisplayType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.timeline_module.Vertical
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.timeline_module.VerticalConversation
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.timeline_module.VerticalGrid
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.timeline_module.VerticalWithContextLine
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.timelines.configapi.Param
 
 object WhoToFollowModuleDisplayType extends Enumeration {
   type ModuleDisplayType = Value

@@ -1,13 +1,13 @@
-package com.twitter.cr_mixer.ranker
+package com.ExTwitter.cr_mixer.ranker
 
-import com.twitter.cr_mixer.model.BlendedCandidate
-import com.twitter.cr_mixer.model.CrCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.RankedCandidate
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.Future
-import com.twitter.util.JavaTimer
-import com.twitter.util.Time
-import com.twitter.util.Timer
+import com.ExTwitter.cr_mixer.model.BlendedCandidate
+import com.ExTwitter.cr_mixer.model.CrCandidateGeneratorQuery
+import com.ExTwitter.cr_mixer.model.RankedCandidate
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.util.Future
+import com.ExTwitter.util.JavaTimer
+import com.ExTwitter.util.Time
+import com.ExTwitter.util.Timer
 import javax.inject.Inject
 import javax.inject.Singleton
 

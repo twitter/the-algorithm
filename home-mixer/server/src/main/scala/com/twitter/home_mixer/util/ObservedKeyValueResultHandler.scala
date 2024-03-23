@@ -1,10 +1,10 @@
-package com.twitter.home_mixer.util
+package com.ExTwitter.home_mixer.util
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.keyvalue.KeyValueResult
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.servo.keyvalue.KeyValueResult
+import com.ExTwitter.util.Return
+import com.ExTwitter.util.Throw
+import com.ExTwitter.util.Try
 
 trait ObservedKeyValueResultHandler {
   val statsReceiver: StatsReceiver

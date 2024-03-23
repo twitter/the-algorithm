@@ -1,13 +1,13 @@
-package com.twitter.home_mixer.product.scored_tweets.scorer
+package com.ExTwitter.home_mixer.product.scored_tweets.scorer
 
-import com.twitter.dal.personal_data.{thriftjava => pd}
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.Scoring.ModelWeights
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordOptionalFeature
-import com.twitter.product_mixer.core.feature.datarecord.DoubleDataRecordCompatible
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.prediction.features.recap.RecapFeatures
+import com.ExTwitter.dal.personal_data.{thriftjava => pd}
+import com.ExTwitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.Scoring.ModelWeights
+import com.ExTwitter.product_mixer.component_library.model.candidate.TweetCandidate
+import com.ExTwitter.product_mixer.core.feature.datarecord.DataRecordOptionalFeature
+import com.ExTwitter.product_mixer.core.feature.datarecord.DoubleDataRecordCompatible
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.timelines.configapi.FSBoundedParam
+import com.ExTwitter.timelines.prediction.features.recap.RecapFeatures
 
 sealed trait PredictedScoreFeature
     extends DataRecordOptionalFeature[TweetCandidate, Double]

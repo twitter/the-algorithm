@@ -1,15 +1,15 @@
-package com.twitter.home_mixer.product.subscribed.model
+package com.ExTwitter.home_mixer.product.subscribed.model
 
-import com.twitter.home_mixer.model.request.DeviceContext
-import com.twitter.home_mixer.model.request.HasDeviceContext
-import com.twitter.home_mixer.model.request.HasSeenTweetIds
-import com.twitter.home_mixer.model.request.SubscribedProduct
-import com.twitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.marshalling.request._
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Params
+import com.ExTwitter.home_mixer.model.request.DeviceContext
+import com.ExTwitter.home_mixer.model.request.HasDeviceContext
+import com.ExTwitter.home_mixer.model.request.HasSeenTweetIds
+import com.ExTwitter.home_mixer.model.request.SubscribedProduct
+import com.ExTwitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.model.marshalling.request._
+import com.ExTwitter.product_mixer.core.pipeline.HasPipelineCursor
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.timelines.configapi.Params
 
 case class SubscribedQuery(
   override val params: Params,

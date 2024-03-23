@@ -1,8 +1,8 @@
-package com.twitter.follow_recommendations.common.rankers.utils
+package com.ExTwitter.follow_recommendations.common.rankers.utils
 
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.Score
-import com.twitter.follow_recommendations.common.rankers.common.RankerId.RankerId
+import com.ExTwitter.follow_recommendations.common.models.CandidateUser
+import com.ExTwitter.follow_recommendations.common.models.Score
+import com.ExTwitter.follow_recommendations.common.rankers.common.RankerId.RankerId
 
 object Utils {
 

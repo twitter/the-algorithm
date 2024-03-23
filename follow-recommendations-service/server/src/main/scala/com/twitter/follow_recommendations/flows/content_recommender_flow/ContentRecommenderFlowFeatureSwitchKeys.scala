@@ -1,4 +1,4 @@
-package com.twitter.follow_recommendations.flows.content_recommender_flow
+package com.ExTwitter.follow_recommendations.flows.content_recommender_flow
 
 object ContentRecommenderFlowFeatureSwitchKeys {
   val TargetUserEligible = "content_recommender_flow_target_eligible"

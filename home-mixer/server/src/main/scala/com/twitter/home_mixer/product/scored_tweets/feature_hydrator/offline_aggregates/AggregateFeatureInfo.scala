@@ -1,9 +1,9 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates
+package com.ExTwitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates
 
-import com.twitter.ml.api.FeatureContext
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateGroup
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateType.AggregateType
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup
+import com.ExTwitter.ml.api.FeatureContext
+import com.ExTwitter.timelines.data_processing.ml_util.aggregation_framework.AggregateGroup
+import com.ExTwitter.timelines.data_processing.ml_util.aggregation_framework.AggregateType.AggregateType
+import com.ExTwitter.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup
 import scala.jdk.CollectionConverters.asJavaIterableConverter
 
 // A helper class deriving aggregate feature info from the given configuration parameters.

@@ -1,12 +1,12 @@
-package com.twitter.follow_recommendations.flows.ads
-import com.twitter.follow_recommendations.common.clients.adserver.AdRequest
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.follow_recommendations.common.models.HasDisplayLocation
-import com.twitter.follow_recommendations.common.models.HasExcludedUserIds
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.timelines.configapi.Params
+package com.ExTwitter.follow_recommendations.flows.ads
+import com.ExTwitter.follow_recommendations.common.clients.adserver.AdRequest
+import com.ExTwitter.follow_recommendations.common.models.DisplayLocation
+import com.ExTwitter.follow_recommendations.common.models.HasDisplayLocation
+import com.ExTwitter.follow_recommendations.common.models.HasExcludedUserIds
+import com.ExTwitter.product_mixer.core.model.marshalling.request.ClientContext
+import com.ExTwitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.ExTwitter.timelines.configapi.HasParams
+import com.ExTwitter.timelines.configapi.Params
 
 case class PromotedAccountsFlowRequest(
   override val clientContext: ClientContext,

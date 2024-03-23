@@ -1,18 +1,18 @@
-package com.twitter.follow_recommendations.common.clients.cache
+package com.ExTwitter.follow_recommendations.common.clients.cache
 
 import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.Memcached
-import com.twitter.finagle.Memcached.Client
-import com.twitter.finagle.mtls.client.MtlsStackClient._
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.service.Retries
-import com.twitter.finagle.service.RetryPolicy
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.finagle.Memcached
+import com.ExTwitter.finagle.Memcached.Client
+import com.ExTwitter.finagle.mtls.client.MtlsStackClient._
+import com.ExTwitter.finagle.mtls.authentication.ServiceIdentifier
+import com.ExTwitter.finagle.service.Retries
+import com.ExTwitter.finagle.service.RetryPolicy
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.inject.ExTwitterModule
 import javax.inject.Singleton
 
-object MemcacheModule extends TwitterModule {
+object MemcacheModule extends ExTwitterModule {
   @Provides
   @Singleton
   def provideMemcacheClient(

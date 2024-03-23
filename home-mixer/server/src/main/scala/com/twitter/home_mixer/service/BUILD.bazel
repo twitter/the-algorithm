@@ -7,9 +7,9 @@ scala_library(
         "3rdparty/jvm/javax/inject:javax.inject",
         "configapi/configapi-core",
         "home-mixer/thrift/src/main/thrift:thrift-scala",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline/product",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/product",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/product/registry",
+        "product-mixer/core/src/main/scala/com/ExTwitter/product_mixer/core/pipeline/product",
+        "product-mixer/core/src/main/scala/com/ExTwitter/product_mixer/core/product",
+        "product-mixer/core/src/main/scala/com/ExTwitter/product_mixer/core/product/registry",
         "stitch/stitch-core",
     ],
 )

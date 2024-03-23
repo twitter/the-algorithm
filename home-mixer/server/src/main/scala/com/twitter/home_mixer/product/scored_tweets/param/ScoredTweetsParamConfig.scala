@@ -1,9 +1,9 @@
-package com.twitter.home_mixer.product.scored_tweets.param
+package com.ExTwitter.home_mixer.product.scored_tweets.param
 
-import com.twitter.home_mixer.param.decider.DeciderKey
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam._
-import com.twitter.product_mixer.core.product.ProductParamConfig
-import com.twitter.servo.decider.DeciderKeyName
+import com.ExTwitter.home_mixer.param.decider.DeciderKey
+import com.ExTwitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam._
+import com.ExTwitter.product_mixer.core.product.ProductParamConfig
+import com.ExTwitter.servo.decider.DeciderKeyName
 import javax.inject.Inject
 import javax.inject.Singleton
 

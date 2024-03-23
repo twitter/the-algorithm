@@ -1,12 +1,12 @@
-package com.twitter.follow_recommendations.common.clients.dismiss_store
+package com.ExTwitter.follow_recommendations.common.clients.dismiss_store
 
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.onboarding.relevance.store.thriftscala.WhoToFollowDismissEventDetails
-import com.twitter.stitch.Stitch
-import com.twitter.strato.catalog.Scan.Slice
-import com.twitter.strato.client.Scanner
-import com.twitter.util.logging.Logging
+import com.ExTwitter.follow_recommendations.common.constants.GuiceNamedConstants
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.onboarding.relevance.store.thriftscala.WhoToFollowDismissEventDetails
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.strato.catalog.Scan.Slice
+import com.ExTwitter.strato.client.Scanner
+import com.ExTwitter.util.logging.Logging
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton

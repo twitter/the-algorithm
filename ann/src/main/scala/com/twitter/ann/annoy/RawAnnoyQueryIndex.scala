@@ -1,12 +1,12 @@
-package com.twitter.ann.annoy
+package com.ExTwitter.ann.annoy
 
 import com.spotify.annoy.{ANNIndex, IndexType}
-import com.twitter.ann.annoy.AnnoyCommon._
-import com.twitter.ann.common._
-import com.twitter.ann.common.EmbeddingType._
-import com.twitter.mediaservices.commons.codec.ArrayByteBufferCodec
-import com.twitter.search.common.file.{AbstractFile, LocalFile}
-import com.twitter.util.{Future, FuturePool}
+import com.ExTwitter.ann.annoy.AnnoyCommon._
+import com.ExTwitter.ann.common._
+import com.ExTwitter.ann.common.EmbeddingType._
+import com.ExTwitter.mediaservices.commons.codec.ArrayByteBufferCodec
+import com.ExTwitter.search.common.file.{AbstractFile, LocalFile}
+import com.ExTwitter.util.{Future, FuturePool}
 import java.io.File
 import scala.collection.JavaConverters._
 

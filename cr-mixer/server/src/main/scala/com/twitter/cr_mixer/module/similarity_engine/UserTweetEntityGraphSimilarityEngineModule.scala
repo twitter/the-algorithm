@@ -1,24 +1,24 @@
-package com.twitter.cr_mixer.module.similarity_engine
+package com.ExTwitter.cr_mixer.module.similarity_engine
 
 import com.google.inject.Provides
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.model.TweetWithScoreAndSocialProof
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.param.decider.CrMixerDecider
-import com.twitter.cr_mixer.param.decider.DeciderConstants
-import com.twitter.cr_mixer.similarity_engine.UserTweetEntityGraphSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.DeciderConfig
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.GatingConfig
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.SimilarityEngineConfig
-import com.twitter.cr_mixer.similarity_engine.StandardSimilarityEngine
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.UserTweetEntityGraph
+import com.ExTwitter.cr_mixer.model.ModuleNames
+import com.ExTwitter.cr_mixer.model.TweetWithScoreAndSocialProof
+import com.ExTwitter.cr_mixer.config.TimeoutConfig
+import com.ExTwitter.cr_mixer.param.decider.CrMixerDecider
+import com.ExTwitter.cr_mixer.param.decider.DeciderConstants
+import com.ExTwitter.cr_mixer.similarity_engine.UserTweetEntityGraphSimilarityEngine
+import com.ExTwitter.cr_mixer.similarity_engine.SimilarityEngine.DeciderConfig
+import com.ExTwitter.cr_mixer.similarity_engine.SimilarityEngine.GatingConfig
+import com.ExTwitter.cr_mixer.similarity_engine.SimilarityEngine.SimilarityEngineConfig
+import com.ExTwitter.cr_mixer.similarity_engine.StandardSimilarityEngine
+import com.ExTwitter.cr_mixer.thriftscala.SimilarityEngineType
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.recos.user_tweet_entity_graph.thriftscala.UserTweetEntityGraph
 import javax.inject.Named
 import javax.inject.Singleton
 
-object UserTweetEntityGraphSimilarityEngineModule extends TwitterModule {
+object UserTweetEntityGraphSimilarityEngineModule extends ExTwitterModule {
 
   @Provides
   @Singleton

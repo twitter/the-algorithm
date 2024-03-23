@@ -1,19 +1,19 @@
-package com.twitter.follow_recommendations.products.sidebar
+package com.ExTwitter.follow_recommendations.products.sidebar
 
-import com.twitter.follow_recommendations.common.base.BaseRecommendationFlow
-import com.twitter.follow_recommendations.common.base.IdentityTransform
-import com.twitter.follow_recommendations.common.base.Transform
-import com.twitter.follow_recommendations.flows.ads.PromotedAccountsFlow
-import com.twitter.follow_recommendations.flows.ads.PromotedAccountsFlowRequest
-import com.twitter.follow_recommendations.blenders.PromotedAccountsBlender
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.follow_recommendations.common.models.Recommendation
-import com.twitter.follow_recommendations.flows.post_nux_ml.PostNuxMlFlow
-import com.twitter.follow_recommendations.flows.post_nux_ml.PostNuxMlRequestBuilder
-import com.twitter.follow_recommendations.products.common.Product
-import com.twitter.follow_recommendations.products.common.ProductRequest
-import com.twitter.follow_recommendations.products.sidebar.configapi.SidebarParams
-import com.twitter.stitch.Stitch
+import com.ExTwitter.follow_recommendations.common.base.BaseRecommendationFlow
+import com.ExTwitter.follow_recommendations.common.base.IdentityTransform
+import com.ExTwitter.follow_recommendations.common.base.Transform
+import com.ExTwitter.follow_recommendations.flows.ads.PromotedAccountsFlow
+import com.ExTwitter.follow_recommendations.flows.ads.PromotedAccountsFlowRequest
+import com.ExTwitter.follow_recommendations.blenders.PromotedAccountsBlender
+import com.ExTwitter.follow_recommendations.common.models.DisplayLocation
+import com.ExTwitter.follow_recommendations.common.models.Recommendation
+import com.ExTwitter.follow_recommendations.flows.post_nux_ml.PostNuxMlFlow
+import com.ExTwitter.follow_recommendations.flows.post_nux_ml.PostNuxMlRequestBuilder
+import com.ExTwitter.follow_recommendations.products.common.Product
+import com.ExTwitter.follow_recommendations.products.common.ProductRequest
+import com.ExTwitter.follow_recommendations.products.sidebar.configapi.SidebarParams
+import com.ExTwitter.stitch.Stitch
 import javax.inject.Inject
 import javax.inject.Singleton
 

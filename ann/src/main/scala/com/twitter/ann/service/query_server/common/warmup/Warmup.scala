@@ -1,14 +1,14 @@
-package com.twitter.ann.service.query_server.common.warmup
+package com.ExTwitter.ann.service.query_server.common.warmup
 
-import com.twitter.ann.common.EmbeddingType.EmbeddingVector
-import com.twitter.ml.api.embedding.Embedding
-import com.twitter.util.Await
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
-import com.twitter.util.logging.Logging
+import com.ExTwitter.ann.common.EmbeddingType.EmbeddingVector
+import com.ExTwitter.ml.api.embedding.Embedding
+import com.ExTwitter.util.Await
+import com.ExTwitter.util.Duration
+import com.ExTwitter.util.Future
+import com.ExTwitter.util.Return
+import com.ExTwitter.util.Throw
+import com.ExTwitter.util.Try
+import com.ExTwitter.util.logging.Logging
 import scala.annotation.tailrec
 import scala.util.Random
 

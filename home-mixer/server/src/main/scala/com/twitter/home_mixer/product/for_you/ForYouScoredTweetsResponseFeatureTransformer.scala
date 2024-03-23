@@ -1,17 +1,17 @@
-package com.twitter.home_mixer.product.for_you
+package com.ExTwitter.home_mixer.product.for_you
 
-import com.twitter.home_mixer.model.HomeFeatures._
-import com.twitter.home_mixer.product.for_you.candidate_source.ScoredTweetWithConversationMetadata
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.BasicTopicContextFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RecWithEducationTopicContextFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RecommendationTopicContextFunctionalityType
-import com.twitter.timelines.render.{thriftscala => tl}
-import com.twitter.timelineservice.suggests.{thriftscala => tls}
+import com.ExTwitter.home_mixer.model.HomeFeatures._
+import com.ExTwitter.home_mixer.product.for_you.candidate_source.ScoredTweetWithConversationMetadata
+import com.ExTwitter.product_mixer.core.feature.Feature
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
+import com.ExTwitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
+import com.ExTwitter.product_mixer.core.model.common.identifier.TransformerIdentifier
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.BasicTopicContextFunctionalityType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.RecWithEducationTopicContextFunctionalityType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.RecommendationTopicContextFunctionalityType
+import com.ExTwitter.timelines.render.{thriftscala => tl}
+import com.ExTwitter.timelineservice.suggests.{thriftscala => tls}
 
 object ForYouScoredTweetsResponseFeatureTransformer
     extends CandidateFeatureTransformer[ScoredTweetWithConversationMetadata] {

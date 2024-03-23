@@ -1,12 +1,12 @@
-package com.twitter.ann.hnsw
+package com.ExTwitter.ann.hnsw
 
-import com.twitter.ann.common.RuntimeParams
-import com.twitter.ann.common.thriftscala.HnswIndexMetadata
-import com.twitter.ann.common.thriftscala.HnswRuntimeParam
-import com.twitter.ann.common.thriftscala.{RuntimeParams => ServiceRuntimeParams}
-import com.twitter.bijection.Injection
-import com.twitter.mediaservices.commons.codec.ThriftByteBufferCodec
-import com.twitter.search.common.file.AbstractFile
+import com.ExTwitter.ann.common.RuntimeParams
+import com.ExTwitter.ann.common.thriftscala.HnswIndexMetadata
+import com.ExTwitter.ann.common.thriftscala.HnswRuntimeParam
+import com.ExTwitter.ann.common.thriftscala.{RuntimeParams => ServiceRuntimeParams}
+import com.ExTwitter.bijection.Injection
+import com.ExTwitter.mediaservices.commons.codec.ThriftByteBufferCodec
+import com.ExTwitter.search.common.file.AbstractFile
 import scala.util.Failure
 import scala.util.Success
 import scala.util.Try

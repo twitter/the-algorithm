@@ -1,21 +1,21 @@
-package com.twitter.follow_recommendations.common.feature_hydration.sources
+package com.ExTwitter.follow_recommendations.common.feature_hydration.sources
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.ml.featurestore.catalog.datasets.core.UserMobileSdkDataset
-import com.twitter.ml.featurestore.catalog.datasets.core.UsersourceEntityDataset
-import com.twitter.ml.featurestore.catalog.datasets.customer_journey.PostNuxAlgorithmIdAggregateDataset
-import com.twitter.ml.featurestore.catalog.datasets.customer_journey.PostNuxAlgorithmTypeAggregateDataset
-import com.twitter.ml.featurestore.catalog.datasets.magicrecs.NotificationSummariesEntityDataset
-import com.twitter.ml.featurestore.catalog.datasets.onboarding.MetricCenterUserCountingFeaturesDataset
-import com.twitter.ml.featurestore.catalog.datasets.onboarding.UserWtfAlgorithmAggregateFeaturesDataset
-import com.twitter.ml.featurestore.catalog.datasets.onboarding.WhoToFollowPostNuxFeaturesDataset
-import com.twitter.ml.featurestore.catalog.datasets.rux.UserRecentReactivationTimeDataset
-import com.twitter.ml.featurestore.catalog.datasets.timelines.AuthorFeaturesEntityDataset
-import com.twitter.ml.featurestore.lib.dataset.DatasetParams
-import com.twitter.ml.featurestore.lib.dataset.online.BatchingPolicy
-import com.twitter.ml.featurestore.lib.params.FeatureStoreParams
-import com.twitter.strato.opcontext.Attribution.ManhattanAppId
-import com.twitter.strato.opcontext.ServeWithin
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.ml.featurestore.catalog.datasets.core.UserMobileSdkDataset
+import com.ExTwitter.ml.featurestore.catalog.datasets.core.UsersourceEntityDataset
+import com.ExTwitter.ml.featurestore.catalog.datasets.customer_journey.PostNuxAlgorithmIdAggregateDataset
+import com.ExTwitter.ml.featurestore.catalog.datasets.customer_journey.PostNuxAlgorithmTypeAggregateDataset
+import com.ExTwitter.ml.featurestore.catalog.datasets.magicrecs.NotificationSummariesEntityDataset
+import com.ExTwitter.ml.featurestore.catalog.datasets.onboarding.MetricCenterUserCountingFeaturesDataset
+import com.ExTwitter.ml.featurestore.catalog.datasets.onboarding.UserWtfAlgorithmAggregateFeaturesDataset
+import com.ExTwitter.ml.featurestore.catalog.datasets.onboarding.WhoToFollowPostNuxFeaturesDataset
+import com.ExTwitter.ml.featurestore.catalog.datasets.rux.UserRecentReactivationTimeDataset
+import com.ExTwitter.ml.featurestore.catalog.datasets.timelines.AuthorFeaturesEntityDataset
+import com.ExTwitter.ml.featurestore.lib.dataset.DatasetParams
+import com.ExTwitter.ml.featurestore.lib.dataset.online.BatchingPolicy
+import com.ExTwitter.ml.featurestore.lib.params.FeatureStoreParams
+import com.ExTwitter.strato.opcontext.Attribution.ManhattanAppId
+import com.ExTwitter.strato.opcontext.ServeWithin
 
 object FeatureStoreParameters {
 

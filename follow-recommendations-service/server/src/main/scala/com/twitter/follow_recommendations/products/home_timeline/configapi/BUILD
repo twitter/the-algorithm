@@ -4,6 +4,6 @@ scala_library(
     tags = ["bazel-compatible"],
     dependencies = [
         "configapi/configapi-core",
-        "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/configapi/common",
+        "follow-recommendations-service/server/src/main/scala/com/ExTwitter/follow_recommendations/configapi/common",
     ],
 )

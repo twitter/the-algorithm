@@ -1,4 +1,4 @@
-package com.twitter.follow_recommendations.flows.post_nux_ml
+package com.ExTwitter.follow_recommendations.flows.post_nux_ml
 
 object PostNuxMlFlowCandidateSourceWeightsFeatureSwitchKeys {
   val CandidateWeightCrowdSearch = "post_nux_ml_flow_candidate_source_weights_user_crowd_search"

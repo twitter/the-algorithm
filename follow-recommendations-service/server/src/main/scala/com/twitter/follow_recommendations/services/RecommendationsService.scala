@@ -1,11 +1,11 @@
-package com.twitter.follow_recommendations.services
+package com.ExTwitter.follow_recommendations.services
 
-import com.twitter.follow_recommendations.configapi.deciders.DeciderParams
-import com.twitter.follow_recommendations.logging.FrsLogger
-import com.twitter.follow_recommendations.models.RecommendationRequest
-import com.twitter.follow_recommendations.models.RecommendationResponse
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Params
+import com.ExTwitter.follow_recommendations.configapi.deciders.DeciderParams
+import com.ExTwitter.follow_recommendations.logging.FrsLogger
+import com.ExTwitter.follow_recommendations.models.RecommendationRequest
+import com.ExTwitter.follow_recommendations.models.RecommendationResponse
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.timelines.configapi.Params
 import javax.inject.Inject
 import javax.inject.Singleton
 

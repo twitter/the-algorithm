@@ -5,10 +5,10 @@ scala_library(
     tags = ["bazel-compatible"],
     dependencies = [
         "3rdparty/jvm/javax/inject:javax.inject",
-        "configapi/configapi-core/src/main/scala/com/twitter/timelines/configapi",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/param/decider",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/decorator/urt",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/product",
-        "util/util-core/src/main/scala/com/twitter/conversions",
+        "configapi/configapi-core/src/main/scala/com/ExTwitter/timelines/configapi",
+        "home-mixer/server/src/main/scala/com/ExTwitter/home_mixer/param/decider",
+        "product-mixer/component-library/src/main/scala/com/ExTwitter/product_mixer/component_library/decorator/urt",
+        "product-mixer/core/src/main/scala/com/ExTwitter/product_mixer/core/product",
+        "util/util-core/src/main/scala/com/ExTwitter/conversions",
     ],
 )

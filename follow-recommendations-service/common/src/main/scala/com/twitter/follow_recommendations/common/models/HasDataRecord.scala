@@ -1,10 +1,10 @@
-package com.twitter.follow_recommendations.common.models
+package com.ExTwitter.follow_recommendations.common.models
 
-import com.twitter.follow_recommendations.thriftscala.DebugDataRecord
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FeatureContext
-import com.twitter.util.Try
-import com.twitter.util.logging.Logging
+import com.ExTwitter.follow_recommendations.thriftscala.DebugDataRecord
+import com.ExTwitter.ml.api.DataRecord
+import com.ExTwitter.ml.api.FeatureContext
+import com.ExTwitter.util.Try
+import com.ExTwitter.util.logging.Logging
 import scala.collection.convert.ImplicitConversions._
 
 // contains the standard dataRecord struct, and the debug version if required

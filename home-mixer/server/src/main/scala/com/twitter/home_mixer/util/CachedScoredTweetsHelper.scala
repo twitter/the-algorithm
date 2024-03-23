@@ -1,11 +1,11 @@
-package com.twitter.home_mixer.util
+package com.ExTwitter.home_mixer.util
 
-import com.twitter.home_mixer.model.HomeFeatures.CachedScoredTweetsFeature
-import com.twitter.home_mixer.{thriftscala => hmt}
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.util.Time
+import com.ExTwitter.home_mixer.model.HomeFeatures.CachedScoredTweetsFeature
+import com.ExTwitter.home_mixer.{thriftscala => hmt}
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
+import com.ExTwitter.snowflake.id.SnowflakeId
+import com.ExTwitter.util.Time
 
 object CachedScoredTweetsHelper {
 

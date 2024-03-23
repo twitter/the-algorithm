@@ -1,12 +1,12 @@
-package com.twitter.home_mixer.util.earlybird
+package com.ExTwitter.home_mixer.util.earlybird
 
-import com.twitter.search.common.constants.{thriftscala => scc}
-import com.twitter.search.common.features.{thriftscala => sc}
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant._
-import com.twitter.search.common.util.lang.ThriftLanguageUtil
-import com.twitter.search.earlybird.{thriftscala => eb}
-import com.twitter.timelines.earlybird.common.utils.InNetworkEngagement
+import com.ExTwitter.search.common.constants.{thriftscala => scc}
+import com.ExTwitter.search.common.features.{thriftscala => sc}
+import com.ExTwitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant
+import com.ExTwitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant._
+import com.ExTwitter.search.common.util.lang.ThriftLanguageUtil
+import com.ExTwitter.search.earlybird.{thriftscala => eb}
+import com.ExTwitter.timelines.earlybird.common.utils.InNetworkEngagement
 
 object EarlybirdResponseUtil {
 

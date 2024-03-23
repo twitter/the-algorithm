@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.event_summary
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.event_summary
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.event_summary.EventCandidateUrtItemBuilder.EventClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.EventDisplayType
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.EventImage
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.EventTimeString
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.EventTitleFeature
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.EventUrl
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.UnifiedEventCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.event.EventSummaryItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.event_summary.EventCandidateUrtItemBuilder.EventClientEventInfoElement
+import com.ExTwitter.product_mixer.component_library.model.candidate.trends_events.EventDisplayType
+import com.ExTwitter.product_mixer.component_library.model.candidate.trends_events.EventImage
+import com.ExTwitter.product_mixer.component_library.model.candidate.trends_events.EventTimeString
+import com.ExTwitter.product_mixer.component_library.model.candidate.trends_events.EventTitleFeature
+import com.ExTwitter.product_mixer.component_library.model.candidate.trends_events.EventUrl
+import com.ExTwitter.product_mixer.component_library.model.candidate.trends_events.UnifiedEventCandidate
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.event.EventSummaryItem
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
 
 object EventCandidateUrtItemBuilder {
   val EventClientEventInfoElement = "event"

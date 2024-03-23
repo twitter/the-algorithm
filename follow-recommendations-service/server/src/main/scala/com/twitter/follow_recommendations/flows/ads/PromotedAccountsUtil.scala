@@ -1,10 +1,10 @@
-package com.twitter.follow_recommendations.flows.ads
-import com.twitter.follow_recommendations.common.candidate_sources.promoted_accounts.PromotedCandidateUser
-import com.twitter.follow_recommendations.common.models.AccountProof
-import com.twitter.follow_recommendations.common.models.AdMetadata
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.Reason
-import com.twitter.follow_recommendations.common.models.UserCandidateSourceDetails
+package com.ExTwitter.follow_recommendations.flows.ads
+import com.ExTwitter.follow_recommendations.common.candidate_sources.promoted_accounts.PromotedCandidateUser
+import com.ExTwitter.follow_recommendations.common.models.AccountProof
+import com.ExTwitter.follow_recommendations.common.models.AdMetadata
+import com.ExTwitter.follow_recommendations.common.models.CandidateUser
+import com.ExTwitter.follow_recommendations.common.models.Reason
+import com.ExTwitter.follow_recommendations.common.models.UserCandidateSourceDetails
 
 object PromotedAccountsUtil {
   def toCandidateUser(promotedCandidateUser: PromotedCandidateUser): CandidateUser = {

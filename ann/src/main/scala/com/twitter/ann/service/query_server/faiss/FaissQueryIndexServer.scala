@@ -1,24 +1,24 @@
-package com.twitter.ann.service.query_server.faiss
+package com.ExTwitter.ann.service.query_server.faiss
 
-import com.twitter.ann.common.Distance
-import com.twitter.ann.common.QueryableOperations.Map
-import com.twitter.ann.common._
-import com.twitter.ann.common.thriftscala.{RuntimeParams => ServiceRuntimeParams}
-import com.twitter.ann.faiss.FaissCommon
-import com.twitter.ann.faiss.FaissIndex
-import com.twitter.ann.faiss.FaissParams
-import com.twitter.ann.faiss.HourlyShardedIndex
-import com.twitter.ann.service.query_server.common.QueryableProvider
-import com.twitter.ann.service.query_server.common.RefreshableQueryable
-import com.twitter.ann.service.query_server.common.UnsafeQueryIndexServer
-import com.twitter.ann.service.query_server.common.FaissIndexPathProvider
-import com.twitter.ann.service.query_server.common.throttling.ThrottlingBasedQualityTask
-import com.twitter.ann.service.query_server.common.warmup.Warmup
-import com.twitter.bijection.Injection
-import com.twitter.conversions.DurationOps.richDurationFromInt
-import com.twitter.search.common.file.AbstractFile
-import com.twitter.search.common.file.FileUtils
-import com.twitter.util.Duration
+import com.ExTwitter.ann.common.Distance
+import com.ExTwitter.ann.common.QueryableOperations.Map
+import com.ExTwitter.ann.common._
+import com.ExTwitter.ann.common.thriftscala.{RuntimeParams => ServiceRuntimeParams}
+import com.ExTwitter.ann.faiss.FaissCommon
+import com.ExTwitter.ann.faiss.FaissIndex
+import com.ExTwitter.ann.faiss.FaissParams
+import com.ExTwitter.ann.faiss.HourlyShardedIndex
+import com.ExTwitter.ann.service.query_server.common.QueryableProvider
+import com.ExTwitter.ann.service.query_server.common.RefreshableQueryable
+import com.ExTwitter.ann.service.query_server.common.UnsafeQueryIndexServer
+import com.ExTwitter.ann.service.query_server.common.FaissIndexPathProvider
+import com.ExTwitter.ann.service.query_server.common.throttling.ThrottlingBasedQualityTask
+import com.ExTwitter.ann.service.query_server.common.warmup.Warmup
+import com.ExTwitter.bijection.Injection
+import com.ExTwitter.conversions.DurationOps.richDurationFromInt
+import com.ExTwitter.search.common.file.AbstractFile
+import com.ExTwitter.search.common.file.FileUtils
+import com.ExTwitter.util.Duration
 import java.util.concurrent.TimeUnit
 
 object FaissQueryIndexServer extends FaissQueryableServer

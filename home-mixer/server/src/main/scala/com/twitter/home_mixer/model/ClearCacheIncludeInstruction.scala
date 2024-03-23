@@ -1,14 +1,14 @@
-package com.twitter.home_mixer.model
+package com.ExTwitter.home_mixer.model
 
-import com.twitter.home_mixer.model.request.DeviceContext.RequestContext
-import com.twitter.home_mixer.model.request.HasDeviceContext
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.IncludeInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineModule
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
+import com.ExTwitter.home_mixer.model.request.DeviceContext.RequestContext
+import com.ExTwitter.home_mixer.model.request.HasDeviceContext
+import com.ExTwitter.product_mixer.component_library.premarshaller.urt.builder.IncludeInstruction
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.TimelineModule
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.timelines.configapi.FSBoundedParam
+import com.ExTwitter.timelines.configapi.FSParam
 
 /**
  * Include a clear cache timeline instruction when we satisfy these criteria:

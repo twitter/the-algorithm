@@ -1,20 +1,20 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.ExTwitter.home_mixer.product.scored_tweets.feature_hydrator
 
-import com.twitter.home_mixer.model.HomeFeatures.UserStateFeature
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.user_health.v1.{thriftscala => uhv1}
-import com.twitter.timelines.user_health.{thriftscala => uh}
-import com.twitter.user_session_store.ReadOnlyUserSessionStore
-import com.twitter.user_session_store.ReadRequest
-import com.twitter.user_session_store.UserSessionDataset
-import com.twitter.user_session_store.UserSessionDataset.UserSessionDataset
+import com.ExTwitter.home_mixer.model.HomeFeatures.UserStateFeature
+import com.ExTwitter.home_mixer.service.HomeMixerAlertConfig
+import com.ExTwitter.product_mixer.core.feature.Feature
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
+import com.ExTwitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
+import com.ExTwitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.timelines.user_health.v1.{thriftscala => uhv1}
+import com.ExTwitter.timelines.user_health.{thriftscala => uh}
+import com.ExTwitter.user_session_store.ReadOnlyUserSessionStore
+import com.ExTwitter.user_session_store.ReadRequest
+import com.ExTwitter.user_session_store.UserSessionDataset
+import com.ExTwitter.user_session_store.UserSessionDataset.UserSessionDataset
 import javax.inject.Inject
 import javax.inject.Singleton
 

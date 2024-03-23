@@ -1,11 +1,11 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims
+package com.ExTwitter.follow_recommendations.common.candidate_sources.sims
 
 import com.google.inject.Singleton
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.generated.client.recommendations.similarity.SimilarUsersBySimsExperimentalOnUserClientColumn
-import com.twitter.util.Duration
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.hermit.model.Algorithm
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.strato.generated.client.recommendations.similarity.SimilarUsersBySimsExperimentalOnUserClientColumn
+import com.ExTwitter.util.Duration
 
 import javax.inject.Inject
 

@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.component_library.gate.any_candidates_without_feature
+package com.ExTwitter.product_mixer.component_library.gate.any_candidates_without_feature
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.gate.QueryAndCandidateGate
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+import com.ExTwitter.product_mixer.core.feature.Feature
+import com.ExTwitter.product_mixer.core.functional_component.common.CandidateScope
+import com.ExTwitter.product_mixer.core.functional_component.gate.QueryAndCandidateGate
+import com.ExTwitter.product_mixer.core.model.common.identifier.GateIdentifier
+import com.ExTwitter.product_mixer.core.model.common.presentation.CandidateWithDetails
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.stitch.Stitch
 
 /**
  * A gate that enables a component only if any candidates are missing a specific feature.

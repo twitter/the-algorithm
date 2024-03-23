@@ -1,18 +1,18 @@
-package com.twitter.follow_recommendations.configapi
+package com.ExTwitter.follow_recommendations.configapi
 
 import com.google.common.annotations.VisibleForTesting
 import com.google.inject.Inject
-import com.twitter.decider.Decider
-import com.twitter.featureswitches.v2.FeatureSwitches
-import com.twitter.featureswitches.{Recipient => FeatureSwitchRecipient}
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.timelines.configapi.FeatureContext
-import com.twitter.timelines.configapi.FeatureValue
-import com.twitter.timelines.configapi.ForcedFeatureContext
-import com.twitter.timelines.configapi.OrElseFeatureContext
-import com.twitter.timelines.configapi.featureswitches.v2.FeatureSwitchResultsFeatureContext
+import com.ExTwitter.decider.Decider
+import com.ExTwitter.featureswitches.v2.FeatureSwitches
+import com.ExTwitter.featureswitches.{Recipient => FeatureSwitchRecipient}
+import com.ExTwitter.follow_recommendations.common.models.DisplayLocation
+import com.ExTwitter.product_mixer.core.model.marshalling.request.ClientContext
+import com.ExTwitter.snowflake.id.SnowflakeId
+import com.ExTwitter.timelines.configapi.FeatureContext
+import com.ExTwitter.timelines.configapi.FeatureValue
+import com.ExTwitter.timelines.configapi.ForcedFeatureContext
+import com.ExTwitter.timelines.configapi.OrElseFeatureContext
+import com.ExTwitter.timelines.configapi.featureswitches.v2.FeatureSwitchResultsFeatureContext
 import javax.inject.Singleton
 
 /*

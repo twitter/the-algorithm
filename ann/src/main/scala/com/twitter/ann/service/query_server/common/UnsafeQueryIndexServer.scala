@@ -1,14 +1,14 @@
-package com.twitter.ann.service.query_server.common
+package com.ExTwitter.ann.service.query_server.common
 
 import com.google.common.util.concurrent.MoreExecutors
 import com.google.inject.Module
-import com.twitter.ann.common._
-import com.twitter.ann.common.thriftscala.{Distance => ServiceDistance}
-import com.twitter.ann.common.thriftscala.{RuntimeParams => ServiceRuntimeParams}
-import com.twitter.app.Flag
-import com.twitter.bijection.Injection
-import com.twitter.cortex.ml.embeddings.common.EntityKind
-import com.twitter.finatra.thrift.routing.ThriftRouter
+import com.ExTwitter.ann.common._
+import com.ExTwitter.ann.common.thriftscala.{Distance => ServiceDistance}
+import com.ExTwitter.ann.common.thriftscala.{RuntimeParams => ServiceRuntimeParams}
+import com.ExTwitter.app.Flag
+import com.ExTwitter.bijection.Injection
+import com.ExTwitter.cortex.ml.embeddings.common.EntityKind
+import com.ExTwitter.finatra.thrift.routing.ThriftRouter
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.ThreadPoolExecutor

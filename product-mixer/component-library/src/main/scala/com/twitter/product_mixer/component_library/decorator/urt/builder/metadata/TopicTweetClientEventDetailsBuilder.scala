@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.metadata
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.metadata
 
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.bijection.Base64String
-import com.twitter.bijection.{Injection => Serializer}
-import com.twitter.interests_mixer.model.request.{HasTopicId => InterestsMixerHasTopicId}
-import com.twitter.explore_mixer.model.request.{HasTopicId => ExploreMixerHasTopicId}
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventDetailsBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.TimelinesDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.suggests.controller_data.home_tweets.thriftscala.HomeTweetsControllerData
-import com.twitter.suggests.controller_data.home_tweets.v1.thriftscala.{
+import com.ExTwitter.bijection.scrooge.BinaryScalaCodec
+import com.ExTwitter.bijection.Base64String
+import com.ExTwitter.bijection.{Injection => Serializer}
+import com.ExTwitter.interests_mixer.model.request.{HasTopicId => InterestsMixerHasTopicId}
+import com.ExTwitter.explore_mixer.model.request.{HasTopicId => ExploreMixerHasTopicId}
+import com.ExTwitter.product_mixer.component_library.model.candidate.TweetCandidate
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventDetailsBuilder
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventDetails
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.TimelinesDetails
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.suggests.controller_data.home_tweets.thriftscala.HomeTweetsControllerData
+import com.ExTwitter.suggests.controller_data.home_tweets.v1.thriftscala.{
   HomeTweetsControllerData => HomeTweetsControllerDataV1
 }
-import com.twitter.suggests.controller_data.thriftscala.ControllerData
-import com.twitter.suggests.controller_data.v2.thriftscala.{ControllerData => ControllerDataV2}
+import com.ExTwitter.suggests.controller_data.thriftscala.ControllerData
+import com.ExTwitter.suggests.controller_data.v2.thriftscala.{ControllerData => ControllerDataV2}
 
 object TopicTweetClientEventDetailsBuilder {
   implicit val ByteSerializer: Serializer[ControllerData, Array[Byte]] =

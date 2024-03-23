@@ -1,26 +1,26 @@
-package com.twitter.cr_mixer.similarity_engine
+package com.ExTwitter.cr_mixer.similarity_engine
 
-import com.twitter.cr_mixer.model.SimilarityEngineInfo
-import com.twitter.cr_mixer.model.TweetWithScore
-import com.twitter.cr_mixer.param.GlobalParams
-import com.twitter.cr_mixer.param.TweetBasedUserVideoGraphParams
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.recos.user_video_graph.thriftscala.RelatedTweetResponse
-import com.twitter.recos.user_video_graph.thriftscala.ConsumersBasedRelatedTweetRequest
-import com.twitter.recos.user_video_graph.thriftscala.TweetBasedRelatedTweetRequest
-import com.twitter.recos.user_video_graph.thriftscala.UserVideoGraph
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.timelines.configapi
-import com.twitter.twistly.thriftscala.TweetRecentEngagedUsers
-import com.twitter.util.Duration
+import com.ExTwitter.cr_mixer.model.SimilarityEngineInfo
+import com.ExTwitter.cr_mixer.model.TweetWithScore
+import com.ExTwitter.cr_mixer.param.GlobalParams
+import com.ExTwitter.cr_mixer.param.TweetBasedUserVideoGraphParams
+import com.ExTwitter.cr_mixer.thriftscala.SimilarityEngineType
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.frigate.common.util.StatsUtil
+import com.ExTwitter.recos.user_video_graph.thriftscala.RelatedTweetResponse
+import com.ExTwitter.recos.user_video_graph.thriftscala.ConsumersBasedRelatedTweetRequest
+import com.ExTwitter.recos.user_video_graph.thriftscala.TweetBasedRelatedTweetRequest
+import com.ExTwitter.recos.user_video_graph.thriftscala.UserVideoGraph
+import com.ExTwitter.simclusters_v2.common.TweetId
+import com.ExTwitter.simclusters_v2.thriftscala.InternalId
+import com.ExTwitter.storehaus.ReadableStore
+import com.ExTwitter.snowflake.id.SnowflakeId
+import com.ExTwitter.timelines.configapi
+import com.ExTwitter.twistly.thriftscala.TweetRecentEngagedUsers
+import com.ExTwitter.util.Duration
 import javax.inject.Singleton
-import com.twitter.util.Future
-import com.twitter.util.Time
+import com.ExTwitter.util.Future
+import com.ExTwitter.util.Time
 import scala.concurrent.duration.HOURS
 
 /**

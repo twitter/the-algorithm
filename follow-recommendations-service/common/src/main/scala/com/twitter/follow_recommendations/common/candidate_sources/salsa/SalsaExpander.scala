@@ -1,14 +1,14 @@
-package com.twitter.follow_recommendations.common.candidate_sources.salsa
+package com.ExTwitter.follow_recommendations.common.candidate_sources.salsa
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.strato.generated.client.onboarding.userrecs.SalsaFirstDegreeOnUserClientColumn
-import com.twitter.strato.generated.client.onboarding.userrecs.SalsaSecondDegreeOnUserClientColumn
-import com.twitter.follow_recommendations.common.models.AccountProof
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FollowProof
-import com.twitter.follow_recommendations.common.models.Reason
-import com.twitter.stitch.Stitch
-import com.twitter.wtf.candidate.thriftscala.Candidate
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.strato.generated.client.onboarding.userrecs.SalsaFirstDegreeOnUserClientColumn
+import com.ExTwitter.strato.generated.client.onboarding.userrecs.SalsaSecondDegreeOnUserClientColumn
+import com.ExTwitter.follow_recommendations.common.models.AccountProof
+import com.ExTwitter.follow_recommendations.common.models.CandidateUser
+import com.ExTwitter.follow_recommendations.common.models.FollowProof
+import com.ExTwitter.follow_recommendations.common.models.Reason
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.wtf.candidate.thriftscala.Candidate
 import javax.inject.Inject
 import javax.inject.Singleton
 

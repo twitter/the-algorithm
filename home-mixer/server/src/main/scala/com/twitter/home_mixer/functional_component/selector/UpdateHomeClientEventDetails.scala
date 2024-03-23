@@ -1,29 +1,29 @@
-package com.twitter.home_mixer.functional_component.selector
+package com.ExTwitter.home_mixer.functional_component.selector
 
-import com.twitter.home_mixer.functional_component.decorator.builder.HomeClientEventDetailsBuilder
-import com.twitter.home_mixer.model.HomeFeatures.AncestorsFeature
-import com.twitter.home_mixer.model.HomeFeatures.ConversationModule2DisplayedTweetsFeature
-import com.twitter.home_mixer.model.HomeFeatures.ConversationModuleHasGapFeature
-import com.twitter.home_mixer.model.HomeFeatures.HasRandomTweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRandomTweetAboveFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRandomTweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.PositionFeature
-import com.twitter.home_mixer.model.HomeFeatures.ServedInConversationModuleFeature
-import com.twitter.home_mixer.model.HomeFeatures.ServedSizeFeature
-import com.twitter.product_mixer.component_library.model.presentation.urt.UrtItemPresentation
-import com.twitter.product_mixer.component_library.model.presentation.urt.UrtModulePresentation
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipelines
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.home_mixer.functional_component.decorator.builder.HomeClientEventDetailsBuilder
+import com.ExTwitter.home_mixer.model.HomeFeatures.AncestorsFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.ConversationModule2DisplayedTweetsFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.ConversationModuleHasGapFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.HasRandomTweetFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.IsRandomTweetAboveFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.IsRandomTweetFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.PositionFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.ServedInConversationModuleFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.ServedSizeFeature
+import com.ExTwitter.product_mixer.component_library.model.presentation.urt.UrtItemPresentation
+import com.ExTwitter.product_mixer.component_library.model.presentation.urt.UrtModulePresentation
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
+import com.ExTwitter.product_mixer.core.functional_component.common.CandidateScope
+import com.ExTwitter.product_mixer.core.functional_component.common.SpecificPipelines
+import com.ExTwitter.product_mixer.core.functional_component.selector.Selector
+import com.ExTwitter.product_mixer.core.functional_component.selector.SelectorResult
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
+import com.ExTwitter.product_mixer.core.model.common.presentation.CandidateWithDetails
+import com.ExTwitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
+import com.ExTwitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
 
 /**
  * Builds serialized tweet type metrics controller data and updates Client Event Details

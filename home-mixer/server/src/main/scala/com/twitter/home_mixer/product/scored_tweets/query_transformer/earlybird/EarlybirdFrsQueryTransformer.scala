@@ -1,15 +1,15 @@
-package com.twitter.home_mixer.product.scored_tweets.query_transformer.earlybird
+package com.ExTwitter.home_mixer.product.scored_tweets.query_transformer.earlybird
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.model.request.HasDeviceContext
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.FrsSeedUserIdsFeature
-import com.twitter.home_mixer.product.scored_tweets.query_transformer.earlybird.EarlybirdFrsQueryTransformer._
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.quality_factor.HasQualityFactorStatus
-import com.twitter.search.earlybird.{thriftscala => eb}
-import com.twitter.timelines.common.model.TweetKindOption
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.home_mixer.model.request.HasDeviceContext
+import com.ExTwitter.home_mixer.product.scored_tweets.feature_hydrator.FrsSeedUserIdsFeature
+import com.ExTwitter.home_mixer.product.scored_tweets.query_transformer.earlybird.EarlybirdFrsQueryTransformer._
+import com.ExTwitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.core.quality_factor.HasQualityFactorStatus
+import com.ExTwitter.search.earlybird.{thriftscala => eb}
+import com.ExTwitter.timelines.common.model.TweetKindOption
 
 object EarlybirdFrsQueryTransformer {
   private val SinceDuration = 24.hours

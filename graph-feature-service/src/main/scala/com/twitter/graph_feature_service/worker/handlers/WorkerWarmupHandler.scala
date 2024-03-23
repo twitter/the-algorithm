@@ -1,8 +1,8 @@
-package com.twitter.graph_feature_service.worker.handlers
+package com.ExTwitter.graph_feature_service.worker.handlers
 
-import com.twitter.finatra.thrift.routing.ThriftWarmup
-import com.twitter.inject.Logging
-import com.twitter.inject.utils.Handler
+import com.ExTwitter.finatra.thrift.routing.ThriftWarmup
+import com.ExTwitter.inject.Logging
+import com.ExTwitter.inject.utils.Handler
 import javax.inject.{Inject, Singleton}
 
 @Singleton

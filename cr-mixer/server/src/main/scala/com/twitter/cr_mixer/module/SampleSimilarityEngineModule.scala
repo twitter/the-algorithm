@@ -1,23 +1,23 @@
-package com.twitter.cr_mixer.module
+package com.ExTwitter.cr_mixer.module
 
 import com.google.inject.Provides
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.similarity_engine.StandardSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.LookupSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.GatingConfig
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.SimilarityEngineConfig
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.storehaus.ReadableStore
+import com.ExTwitter.cr_mixer.config.TimeoutConfig
+import com.ExTwitter.cr_mixer.similarity_engine.StandardSimilarityEngine
+import com.ExTwitter.cr_mixer.similarity_engine.LookupSimilarityEngine
+import com.ExTwitter.cr_mixer.similarity_engine.SimilarityEngine.GatingConfig
+import com.ExTwitter.cr_mixer.similarity_engine.SimilarityEngine.SimilarityEngineConfig
+import com.ExTwitter.cr_mixer.thriftscala.SimilarityEngineType
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.simclusters_v2.common.TweetId
+import com.ExTwitter.simclusters_v2.common.UserId
+import com.ExTwitter.storehaus.ReadableStore
 import javax.inject.Singleton
 
 /**
  * In this example we build a [[StandardSimilarityEngine]] to wrap a dummy store
  */
-object SimpleSimilarityEngineModule extends TwitterModule {
+object SimpleSimilarityEngineModule extends ExTwitterModule {
   @Provides
   @Singleton
   def providesSimpleSimilarityEngine(
@@ -50,7 +50,7 @@ object SimpleSimilarityEngineModule extends TwitterModule {
 /**
  * In this example we build a [[LookupSimilarityEngine]] to wrap a dummy store with 2 versions
  */
-object LookupSimilarityEngineModule extends TwitterModule {
+object LookupSimilarityEngineModule extends ExTwitterModule {
   @Provides
   @Singleton
   def providesLookupSimilarityEngine(

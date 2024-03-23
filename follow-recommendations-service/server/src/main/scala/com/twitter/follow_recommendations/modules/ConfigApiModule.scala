@@ -1,14 +1,14 @@
-package com.twitter.follow_recommendations.modules
+package com.ExTwitter.follow_recommendations.modules
 
 import com.google.inject.Provides
-import com.twitter.decider.Decider
-import com.twitter.follow_recommendations.configapi.ConfigBuilder
-import com.twitter.inject.TwitterModule
-import com.twitter.servo.decider.DeciderGateBuilder
-import com.twitter.timelines.configapi.Config
+import com.ExTwitter.decider.Decider
+import com.ExTwitter.follow_recommendations.configapi.ConfigBuilder
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.servo.decider.DeciderGateBuilder
+import com.ExTwitter.timelines.configapi.Config
 import javax.inject.Singleton
 
-object ConfigApiModule extends TwitterModule {
+object ConfigApiModule extends ExTwitterModule {
   @Provides
   @Singleton
   def providesDeciderGateBuilder(decider: Decider): DeciderGateBuilder =

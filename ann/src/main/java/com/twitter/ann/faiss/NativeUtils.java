@@ -1,4 +1,4 @@
-package com.twitter.ann.faiss;
+package com.ExTwitter.ann.faiss;
 
 import java.io.File;
 import java.io.FileNotFoundException;

@@ -1,8 +1,8 @@
-namespace java com.twitter.ann.knn.thriftjava
-#@namespace scala com.twitter.ann.knn.thriftscala
-namespace py gen.twitter.ann.knn
+namespace java com.ExTwitter.ann.knn.thriftjava
+#@namespace scala com.ExTwitter.ann.knn.thriftscala
+namespace py gen.ExTwitter.ann.knn
 
-include "com/twitter/ml/featurestore/entity.thrift"
+include "com/ExTwitter/ml/featurestore/entity.thrift"
 
 struct Neighbor {
   1: required double distance

@@ -1,10 +1,10 @@
-package com.twitter.ann.file_store
+package com.ExTwitter.ann.file_store
 
-import com.twitter.ann.common.thriftscala.FileBasedIndexIdStore
-import com.twitter.bijection.Injection
-import com.twitter.mediaservices.commons.codec.{ArrayByteBufferCodec, ThriftByteBufferCodec}
-import com.twitter.search.common.file.AbstractFile
-import com.twitter.storehaus.ReadableStore
+import com.ExTwitter.ann.common.thriftscala.FileBasedIndexIdStore
+import com.ExTwitter.bijection.Injection
+import com.ExTwitter.mediaservices.commons.codec.{ArrayByteBufferCodec, ThriftByteBufferCodec}
+import com.ExTwitter.search.common.file.AbstractFile
+import com.ExTwitter.storehaus.ReadableStore
 import java.nio.ByteBuffer
 
 object ReadableIndexIdFileStore {

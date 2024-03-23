@@ -1,14 +1,14 @@
-package com.twitter.follow_recommendations.flows.post_nux_ml
+package com.ExTwitter.follow_recommendations.flows.post_nux_ml
 
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.rankers.weighted_candidate_source_ranker.NoShuffle
-import com.twitter.follow_recommendations.common.rankers.weighted_candidate_source_ranker.RandomShuffler
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
+import com.ExTwitter.follow_recommendations.common.models.CandidateUser
+import com.ExTwitter.follow_recommendations.common.rankers.weighted_candidate_source_ranker.NoShuffle
+import com.ExTwitter.follow_recommendations.common.rankers.weighted_candidate_source_ranker.RandomShuffler
+import com.ExTwitter.follow_recommendations.configapi.common.FeatureSwitchConfig
+import com.ExTwitter.timelines.configapi.FSBoundedParam
+import com.ExTwitter.timelines.configapi.FSName
+import com.ExTwitter.timelines.configapi.HasDurationConversion
+import com.ExTwitter.timelines.configapi.Param
+import com.ExTwitter.util.Duration
 import javax.inject.Inject
 import javax.inject.Singleton
 

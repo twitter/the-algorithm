@@ -1,16 +1,16 @@
-package com.twitter.ann.faiss
+package com.ExTwitter.ann.faiss
 
-import com.twitter.ann.common.Cosine
-import com.twitter.ann.common.Distance
-import com.twitter.ann.common.EmbeddingType.EmbeddingVector
-import com.twitter.ann.common.Metric
-import com.twitter.ann.common.NeighborWithDistance
-import com.twitter.ann.common.Queryable
-import com.twitter.ml.api.embedding.EmbeddingMath
-import com.twitter.search.common.file.AbstractFile
-import com.twitter.search.common.file.FileUtils
-import com.twitter.util.Future
-import com.twitter.util.logging.Logging
+import com.ExTwitter.ann.common.Cosine
+import com.ExTwitter.ann.common.Distance
+import com.ExTwitter.ann.common.EmbeddingType.EmbeddingVector
+import com.ExTwitter.ann.common.Metric
+import com.ExTwitter.ann.common.NeighborWithDistance
+import com.ExTwitter.ann.common.Queryable
+import com.ExTwitter.ml.api.embedding.EmbeddingMath
+import com.ExTwitter.search.common.file.AbstractFile
+import com.ExTwitter.search.common.file.FileUtils
+import com.ExTwitter.util.Future
+import com.ExTwitter.util.logging.Logging
 import java.io.File
 import java.util.concurrent.locks.ReentrantReadWriteLock
 

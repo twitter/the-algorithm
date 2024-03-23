@@ -11,6 +11,6 @@ scala_library(
         "finagle/finagle-core/src/main",
         "finagle/finagle-http/src/main/scala",
         "servo/decider",
-        "src/scala/com/twitter/simclusters_v2/common",
+        "src/scala/com/ExTwitter/simclusters_v2/common",
     ],
 )

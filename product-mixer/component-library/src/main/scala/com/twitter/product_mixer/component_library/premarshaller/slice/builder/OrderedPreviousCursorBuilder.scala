@@ -5,9 +5,9 @@ import com.twitter.product_mixer.component_library.premarshaller.cursor.CursorSe
 import com.twitter.product_mixer.core.model.marshalling.response.slice.CursorType
 import com.twitter.product_mixer.core.model.marshalling.response.slice.PreviousCursor
 import com.twitter.product_mixer.core.model.marshalling.response.slice.SliceItem
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineCursorSerializer
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.core.pipeline.HasPipelineCursor
+import com.ExTwitter.product_mixer.core.pipeline.PipelineCursorSerializer
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
 
 /**
  * Builds [[OrderedCursor]] in the Previous position

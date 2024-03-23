@@ -5,8 +5,8 @@ scala_library(
     tags = ["bazel-compatible"],
     dependencies = [
         "cr-mixer/thrift/src/main/thrift:thrift-scala",
-        "finatra/inject/inject-core/src/main/scala/com/twitter/inject",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/candidate_source",
+        "finatra/inject/inject-core/src/main/scala/com/ExTwitter/inject",
+        "product-mixer/core/src/main/scala/com/ExTwitter/product_mixer/core/functional_component/candidate_source",
         "stitch/stitch-core",
     ],
 )

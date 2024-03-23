@@ -1,10 +1,10 @@
-package com.twitter.follow_recommendations.common.base
+package com.ExTwitter.follow_recommendations.common.base
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.models.FilterReason
-import com.twitter.stitch.Arrow
-import com.twitter.stitch.Stitch
+import com.ExTwitter.finagle.stats.NullStatsReceiver
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.follow_recommendations.common.models.FilterReason
+import com.ExTwitter.stitch.Arrow
+import com.ExTwitter.stitch.Stitch
 
 trait Predicate[-Q] {
 

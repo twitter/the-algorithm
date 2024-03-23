@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.trend
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.trend
 
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.PromotedTrendDescriptionFeature
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.PromotedTrendDisclosureTypeFeature
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.PromotedTrendIdFeature
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.PromotedTrendImpressionIdFeature
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.PromotedTrendNameFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.promoted.BasePromotedMetadataBuilder
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.PromotedMetadata
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.component_library.model.candidate.trends_events.PromotedTrendDescriptionFeature
+import com.ExTwitter.product_mixer.component_library.model.candidate.trends_events.PromotedTrendDisclosureTypeFeature
+import com.ExTwitter.product_mixer.component_library.model.candidate.trends_events.PromotedTrendIdFeature
+import com.ExTwitter.product_mixer.component_library.model.candidate.trends_events.PromotedTrendImpressionIdFeature
+import com.ExTwitter.product_mixer.component_library.model.candidate.trends_events.PromotedTrendNameFeature
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.promoted.BasePromotedMetadataBuilder
+import com.ExTwitter.product_mixer.core.model.common.UniversalNoun
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.promoted.PromotedMetadata
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
 
 object TrendPromotedMetadataBuilder
     extends BasePromotedMetadataBuilder[PipelineQuery, UniversalNoun[Any]] {

@@ -1,15 +1,15 @@
-package com.twitter.follow_recommendations.common.clients.cache
+package com.ExTwitter.follow_recommendations.common.clients.cache
 
-import com.twitter.bijection.Bijection
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.Memcached.Client
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.io.Buf
-import com.twitter.stitch.Stitch
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Time
+import com.ExTwitter.bijection.Bijection
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.finagle.Memcached.Client
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.finagle.util.DefaultTimer
+import com.ExTwitter.io.Buf
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.util.Duration
+import com.ExTwitter.util.Future
+import com.ExTwitter.util.Time
 import java.security.MessageDigest
 
 object MemcacheClient {

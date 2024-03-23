@@ -1,17 +1,17 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates
+package com.ExTwitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.timelinemixer.injection.repository.uss.VersionedAggregateFeaturesDecoder
-import com.twitter.ml.api.DataRecord
-import com.twitter.timelines.aggregate_interactions.thriftjava.UserAggregateInteractions
-import com.twitter.timelines.aggregate_interactions.v17.thriftjava.{
+import com.ExTwitter.finagle.stats.NullStatsReceiver
+import com.ExTwitter.timelinemixer.injection.repository.uss.VersionedAggregateFeaturesDecoder
+import com.ExTwitter.ml.api.DataRecord
+import com.ExTwitter.timelines.aggregate_interactions.thriftjava.UserAggregateInteractions
+import com.ExTwitter.timelines.aggregate_interactions.v17.thriftjava.{
   UserAggregateInteractions => V17UserAggregateInteractions
 }
-import com.twitter.timelines.aggregate_interactions.v1.thriftjava.{
+import com.ExTwitter.timelines.aggregate_interactions.v1.thriftjava.{
   UserAggregateInteractions => V1UserAggregateInteractions
 }
-import com.twitter.timelines.suggests.common.dense_data_record.thriftjava.DenseCompactDataRecord
-import com.twitter.timelines.suggests.common.dense_data_record.thriftscala.DenseFeatureMetadata
+import com.ExTwitter.timelines.suggests.common.dense_data_record.thriftjava.DenseCompactDataRecord
+import com.ExTwitter.timelines.suggests.common.dense_data_record.thriftscala.DenseFeatureMetadata
 import java.lang.{Long => JLong}
 import java.util.Collections
 import java.util.{Map => JMap}
@@ -43,7 +43,7 @@ private[offline_aggregates] case class AggregateFeaturesToDecodeWithMetadata(
   def userRequestDowAggregates = extract(_.user_request_dow_aggregates)
   def userRequestHourAggregates = extract(_.user_request_hour_aggregates)
   def rectweetUserSimclustersTweetAggregates = extract(_.rectweet_user_simclusters_tweet_aggregates)
-  def userTwitterListAggregates = extract(_.user_list_aggregates)
+  def userExTwitterListAggregates = extract(_.user_list_aggregates)
   def userTopicAggregates = extract(_.user_topic_aggregates)
   def userInferredTopicAggregates = extract(_.user_inferred_topic_aggregates)
   def userMediaUnderstandingAnnotationAggregates = extract(

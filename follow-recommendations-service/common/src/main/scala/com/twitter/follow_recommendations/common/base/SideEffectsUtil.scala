@@ -1,7 +1,7 @@
-package com.twitter.follow_recommendations.common.base
+package com.ExTwitter.follow_recommendations.common.base
 
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.stitch.Stitch
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidateSource
+import com.ExTwitter.stitch.Stitch
 
 /**
  * SideEffectsUtil applies side effects to the intermediate candidate results from a recommendation flow pipeline.

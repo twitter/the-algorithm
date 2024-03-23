@@ -1,25 +1,25 @@
-package com.twitter.cr_mixer.module
+package com.ExTwitter.cr_mixer.module
 package similarity_engine
 
 import com.google.inject.Provides
-import com.twitter.ann.common.thriftscala.AnnQueryService
-import com.twitter.cr_mixer.model.ModelConfig
-import com.twitter.cr_mixer.module.EmbeddingStoreModule
-import com.twitter.cr_mixer.module.thrift_client.AnnQueryServiceClientModule
-import com.twitter.cr_mixer.similarity_engine.HnswANNSimilarityEngine
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.storehaus.ReadableStore
+import com.ExTwitter.ann.common.thriftscala.AnnQueryService
+import com.ExTwitter.cr_mixer.model.ModelConfig
+import com.ExTwitter.cr_mixer.module.EmbeddingStoreModule
+import com.ExTwitter.cr_mixer.module.thrift_client.AnnQueryServiceClientModule
+import com.ExTwitter.cr_mixer.similarity_engine.HnswANNSimilarityEngine
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.simclusters_v2.thriftscala.InternalId
+import com.ExTwitter.storehaus.ReadableStore
 import javax.inject.Named
-import com.twitter.ml.api.{thriftscala => api}
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.GatingConfig
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.SimilarityEngineConfig
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
+import com.ExTwitter.ml.api.{thriftscala => api}
+import com.ExTwitter.cr_mixer.model.ModuleNames
+import com.ExTwitter.cr_mixer.config.TimeoutConfig
+import com.ExTwitter.cr_mixer.similarity_engine.SimilarityEngine.GatingConfig
+import com.ExTwitter.cr_mixer.similarity_engine.SimilarityEngine.SimilarityEngineConfig
+import com.ExTwitter.cr_mixer.thriftscala.SimilarityEngineType
 
-object ConsumerEmbeddingBasedTwoTowerSimilarityEngineModule extends TwitterModule {
+object ConsumerEmbeddingBasedTwoTowerSimilarityEngineModule extends ExTwitterModule {
   @Provides
   @Named(ModuleNames.ConsumerEmbeddingBasedTwoTowerANNSimilarityEngine)
   def providesConsumerEmbeddingBasedTwoTowerANNSimilarityEngine(

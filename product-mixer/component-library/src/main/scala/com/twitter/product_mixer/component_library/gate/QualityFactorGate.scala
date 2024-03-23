@@ -1,11 +1,11 @@
-package com.twitter.product_mixer.component_library.gate
+package com.ExTwitter.product_mixer.component_library.gate
 
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.quality_factor.HasQualityFactorStatus
-import com.twitter.stitch.Stitch
+import com.ExTwitter.product_mixer.core.functional_component.gate.Gate
+import com.ExTwitter.product_mixer.core.model.common.identifier.ComponentIdentifier
+import com.ExTwitter.product_mixer.core.model.common.identifier.GateIdentifier
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.core.quality_factor.HasQualityFactorStatus
+import com.ExTwitter.stitch.Stitch
 
 /**
  * A Gate that only continues if the quality factor value of the pipeline is above the given

@@ -1,21 +1,21 @@
-package com.twitter.follow_recommendations.common.rankers.fatigue_ranker
+package com.ExTwitter.follow_recommendations.common.rankers.fatigue_ranker
 
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.Ranker
-import com.twitter.follow_recommendations.common.base.StatsUtil
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasDisplayLocation
-import com.twitter.follow_recommendations.common.models.HasWtfImpressions
-import com.twitter.follow_recommendations.common.models.WtfImpression
-import com.twitter.follow_recommendations.common.rankers.common.RankerId.RankerId
-import com.twitter.follow_recommendations.common.rankers.utils.Utils
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.servo.util.MemoizingStatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.util.Time
+import com.ExTwitter.finagle.stats.Counter
+import com.ExTwitter.finagle.stats.Stat
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.follow_recommendations.common.base.Ranker
+import com.ExTwitter.follow_recommendations.common.base.StatsUtil
+import com.ExTwitter.follow_recommendations.common.models.CandidateUser
+import com.ExTwitter.follow_recommendations.common.models.HasDisplayLocation
+import com.ExTwitter.follow_recommendations.common.models.HasWtfImpressions
+import com.ExTwitter.follow_recommendations.common.models.WtfImpression
+import com.ExTwitter.follow_recommendations.common.rankers.common.RankerId.RankerId
+import com.ExTwitter.follow_recommendations.common.rankers.utils.Utils
+import com.ExTwitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.ExTwitter.servo.util.MemoizingStatsReceiver
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.timelines.configapi.HasParams
+import com.ExTwitter.util.Time
 
 /**
  * Ranks candidates based on the given weights for each algorithm while preserving the ranks inside each algorithm.

@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.common.models
+package com.ExTwitter.follow_recommendations.common.models
 
-import com.twitter.hermit.model.Algorithm.Algorithm
-import com.twitter.wtf.scalding.jobs.strong_tie_prediction.FirstDegreeEdge
-import com.twitter.wtf.scalding.jobs.strong_tie_prediction.FirstDegreeEdgeInfo
-import com.twitter.wtf.scalding.jobs.strong_tie_prediction.SecondDegreeEdge
+import com.ExTwitter.hermit.model.Algorithm.Algorithm
+import com.ExTwitter.wtf.scalding.jobs.strong_tie_prediction.FirstDegreeEdge
+import com.ExTwitter.wtf.scalding.jobs.strong_tie_prediction.FirstDegreeEdgeInfo
+import com.ExTwitter.wtf.scalding.jobs.strong_tie_prediction.SecondDegreeEdge
 
 case class PotentialFirstDegreeEdge(
   userId: Long,

@@ -1,10 +1,10 @@
-namespace java com.twitter.ann.common.thriftjava
-#@namespace scala com.twitter.ann.common.thriftscala
-#@namespace strato com.twitter.ann.common
-namespace py gen.twitter.ann.common
+namespace java com.ExTwitter.ann.common.thriftjava
+#@namespace scala com.ExTwitter.ann.common.thriftscala
+#@namespace strato com.ExTwitter.ann.common
+namespace py gen.ExTwitter.ann.common
 
-include "com/twitter/mediaservices/commons/ServerCommon.thrift"
-include "com/twitter/ml/api/embedding.thrift"
+include "com/ExTwitter/mediaservices/commons/ServerCommon.thrift"
+include "com/ExTwitter/ml/api/embedding.thrift"
 
 /**
 * Thrift schema for storing file based Index mapping

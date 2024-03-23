@@ -1,13 +1,13 @@
-package com.twitter.ann.experimental
+package com.ExTwitter.ann.experimental
 
-import com.twitter.ann.annoy.{AnnoyRuntimeParams, TypedAnnoyIndex}
-import com.twitter.ann.brute_force.{BruteForceIndex, BruteForceRuntimeParams}
-import com.twitter.ann.common.{Cosine, CosineDistance, EntityEmbedding, ReadWriteFuturePool}
-import com.twitter.ann.hnsw.{HnswParams, TypedHnswIndex}
-import com.twitter.bijection.Injection
-import com.twitter.ml.api.embedding.Embedding
-import com.twitter.search.common.file.LocalFile
-import com.twitter.util.{Await, Future, FuturePool}
+import com.ExTwitter.ann.annoy.{AnnoyRuntimeParams, TypedAnnoyIndex}
+import com.ExTwitter.ann.brute_force.{BruteForceIndex, BruteForceRuntimeParams}
+import com.ExTwitter.ann.common.{Cosine, CosineDistance, EntityEmbedding, ReadWriteFuturePool}
+import com.ExTwitter.ann.hnsw.{HnswParams, TypedHnswIndex}
+import com.ExTwitter.bijection.Injection
+import com.ExTwitter.ml.api.embedding.Embedding
+import com.ExTwitter.search.common.file.LocalFile
+import com.ExTwitter.util.{Await, Future, FuturePool}
 import java.nio.file.Files
 import java.util
 import java.util.concurrent.Executors

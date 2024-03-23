@@ -1,7 +1,7 @@
-package com.twitter.home_mixer.util.tweetypie.content
+package com.ExTwitter.home_mixer.util.tweetypie.content
 
-import com.twitter.home_mixer.model.ContentFeatures
-import com.twitter.tweetypie.{thriftscala => tp}
+import com.ExTwitter.home_mixer.model.ContentFeatures
+import com.ExTwitter.tweetypie.{thriftscala => tp}
 
 object TweetTextFeaturesExtractor {
 

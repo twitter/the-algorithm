@@ -1,17 +1,17 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims
+package com.ExTwitter.follow_recommendations.common.candidate_sources.sims
 
 import com.google.inject.Singleton
-import com.twitter.follow_recommendations.common.candidate_sources.sims.Follow2vecNearestNeighborsStore.NearestNeighborParamsType
-import com.twitter.hermit.candidate.thriftscala.Candidate
-import com.twitter.hermit.candidate.thriftscala.Candidates
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.strato.catalog.Fetch
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.generated.client.recommendations.follow2vec.LinearRegressionFollow2vecNearestNeighborsClientColumn
-import com.twitter.util.Return
-import com.twitter.util.Throw
+import com.ExTwitter.follow_recommendations.common.candidate_sources.sims.Follow2vecNearestNeighborsStore.NearestNeighborParamsType
+import com.ExTwitter.hermit.candidate.thriftscala.Candidate
+import com.ExTwitter.hermit.candidate.thriftscala.Candidates
+import com.ExTwitter.hermit.model.Algorithm
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.strato.catalog.Fetch
+import com.ExTwitter.strato.client.Fetcher
+import com.ExTwitter.strato.generated.client.recommendations.follow2vec.LinearRegressionFollow2vecNearestNeighborsClientColumn
+import com.ExTwitter.util.Return
+import com.ExTwitter.util.Throw
 import javax.inject.Inject
 
 @Singleton

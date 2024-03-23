@@ -1,10 +1,10 @@
-package com.twitter.follow_recommendations.configapi.candidates
+package com.ExTwitter.follow_recommendations.configapi.candidates
 
-import com.twitter.timelines.configapi.BaseRequestContext
-import com.twitter.timelines.configapi.FeatureContext
-import com.twitter.timelines.configapi.NullFeatureContext
-import com.twitter.timelines.configapi.WithFeatureContext
-import com.twitter.timelines.configapi.WithUserId
+import com.ExTwitter.timelines.configapi.BaseRequestContext
+import com.ExTwitter.timelines.configapi.FeatureContext
+import com.ExTwitter.timelines.configapi.NullFeatureContext
+import com.ExTwitter.timelines.configapi.WithFeatureContext
+import com.ExTwitter.timelines.configapi.WithUserId
 
 /**
  * represent the context for a recommendation candidate (producer side)

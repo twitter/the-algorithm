@@ -1,9 +1,9 @@
-package com.twitter.ann.service.loadtest
+package com.ExTwitter.ann.service.loadtest
 
-import com.twitter.ann.common.EmbeddingType.EmbeddingVector
-import com.twitter.ann.common.{Appendable, Distance, EntityEmbedding, Queryable, RuntimeParams}
-import com.twitter.util.logging.Logger
-import com.twitter.util.{Duration, Future}
+import com.ExTwitter.ann.common.EmbeddingType.EmbeddingVector
+import com.ExTwitter.ann.common.{Appendable, Distance, EntityEmbedding, Queryable, RuntimeParams}
+import com.ExTwitter.util.logging.Logger
+import com.ExTwitter.util.{Duration, Future}
 
 class AnnIndexQueryLoadTest(
   worker: AnnLoadTestWorker = new AnnLoadTestWorker()) {

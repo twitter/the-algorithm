@@ -1,6 +1,6 @@
-package com.twitter.follow_recommendations.assembler.models
+package com.ExTwitter.follow_recommendations.assembler.models
 
-import com.twitter.follow_recommendations.{thriftscala => t}
+import com.ExTwitter.follow_recommendations.{thriftscala => t}
 
 trait WTFPresentation {
   def toThrift: t.WTFPresentation

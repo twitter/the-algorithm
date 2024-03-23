@@ -1,22 +1,22 @@
-package com.twitter.home_mixer.functional_component.side_effect
+package com.ExTwitter.home_mixer.functional_component.side_effect
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.functional_component.decorator.HomeQueryTypePredicates
-import com.twitter.home_mixer.functional_component.decorator.builder.HomeTweetTypePredicates
-import com.twitter.home_mixer.model.HomeFeatures.AccountAgeFeature
-import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
-import com.twitter.home_mixer.model.HomeFeatures.VideoDurationMsFeature
-import com.twitter.home_mixer.model.request.FollowingProduct
-import com.twitter.home_mixer.model.request.ForYouProduct
-import com.twitter.home_mixer.model.request.ListTweetsProduct
-import com.twitter.home_mixer.model.request.SubscribedProduct
-import com.twitter.product_mixer.component_library.side_effect.ScribeClientEventSideEffect.ClientEvent
-import com.twitter.product_mixer.component_library.side_effect.ScribeClientEventSideEffect.EventNamespace
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.injection.scribe.InjectionScribeUtil
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.home_mixer.functional_component.decorator.HomeQueryTypePredicates
+import com.ExTwitter.home_mixer.functional_component.decorator.builder.HomeTweetTypePredicates
+import com.ExTwitter.home_mixer.model.HomeFeatures.AccountAgeFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.VideoDurationMsFeature
+import com.ExTwitter.home_mixer.model.request.FollowingProduct
+import com.ExTwitter.home_mixer.model.request.ForYouProduct
+import com.ExTwitter.home_mixer.model.request.ListTweetsProduct
+import com.ExTwitter.home_mixer.model.request.SubscribedProduct
+import com.ExTwitter.product_mixer.component_library.side_effect.ScribeClientEventSideEffect.ClientEvent
+import com.ExTwitter.product_mixer.component_library.side_effect.ScribeClientEventSideEffect.EventNamespace
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.model.common.presentation.CandidateWithDetails
+import com.ExTwitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.timelines.injection.scribe.InjectionScribeUtil
 
 private[side_effect] sealed trait ClientEventsBuilder {
   private val FollowingSection = Some("latest")

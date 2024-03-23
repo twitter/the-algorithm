@@ -1,24 +1,24 @@
-package com.twitter.home_mixer.module
+package com.ExTwitter.home_mixer.module
 
 import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.{thriftscala => t}
-import com.twitter.inject.TwitterModule
-import com.twitter.product_mixer.shared_library.memcached_client.MemcachedClientBuilder
-import com.twitter.servo.cache.FinagleMemcache
-import com.twitter.servo.cache.KeyTransformer
-import com.twitter.servo.cache.KeyValueTransformingTtlCache
-import com.twitter.servo.cache.Serializer
-import com.twitter.servo.cache.ThriftSerializer
-import com.twitter.servo.cache.TtlCache
-import com.twitter.timelines.model.UserId
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.finagle.mtls.authentication.ServiceIdentifier
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.home_mixer.{thriftscala => t}
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.product_mixer.shared_library.memcached_client.MemcachedClientBuilder
+import com.ExTwitter.servo.cache.FinagleMemcache
+import com.ExTwitter.servo.cache.KeyTransformer
+import com.ExTwitter.servo.cache.KeyValueTransformingTtlCache
+import com.ExTwitter.servo.cache.Serializer
+import com.ExTwitter.servo.cache.ThriftSerializer
+import com.ExTwitter.servo.cache.TtlCache
+import com.ExTwitter.timelines.model.UserId
 import org.apache.thrift.protocol.TCompactProtocol
 
 import javax.inject.Singleton
 
-object ScoredTweetsMemcacheModule extends TwitterModule {
+object ScoredTweetsMemcacheModule extends ExTwitterModule {
 
   private val ScopeName = "ScoredTweetsCache"
   private val ProdDestName = "/srv#/prod/local/cache/home_scored_tweets:twemcaches"

@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.icon_label
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.icon_label
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.icon_label.IconLabelCandidateUrtItemBuilder.IconLabelClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.LabelCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.richtext.BaseRichTextBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.icon.HorizonIcon
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.icon_label.IconLabelItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextEntity
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.icon_label.IconLabelCandidateUrtItemBuilder.IconLabelClientEventInfoElement
+import com.ExTwitter.product_mixer.component_library.model.candidate.LabelCandidate
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.richtext.BaseRichTextBuilder
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.icon.HorizonIcon
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.icon_label.IconLabelItem
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextEntity
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
 
 object IconLabelCandidateUrtItemBuilder {
   val IconLabelClientEventInfoElement: String = "iconlabel"

@@ -1,12 +1,12 @@
-package com.twitter.home_mixer.module
+package com.ExTwitter.home_mixer.module
 
-import com.twitter.adserver.thriftscala.NewAdServer
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.util.Duration
+import com.ExTwitter.adserver.thriftscala.NewAdServer
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.finagle.thriftmux.MethodBuilder
+import com.ExTwitter.finatra.mtls.thriftmux.modules.MtlsClient
+import com.ExTwitter.inject.Injector
+import com.ExTwitter.inject.thrift.modules.ThriftMethodBuilderClientModule
+import com.ExTwitter.util.Duration
 
 object HomeAdsCandidateSourceModule
     extends ThriftMethodBuilderClientModule[

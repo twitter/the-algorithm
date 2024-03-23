@@ -1,4 +1,4 @@
-package com.twitter.ann.hnsw;
+package com.ExTwitter.ann.hnsw;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,11 +20,11 @@ import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TIOStreamTransport;
 import org.apache.thrift.transport.TTransportException;
 
-import com.twitter.ann.common.thriftjava.HnswGraphEntry;
-import com.twitter.ann.common.thriftjava.HnswInternalIndexMetadata;
-import com.twitter.bijection.Injection;
-import com.twitter.mediaservices.commons.codec.ArrayByteBufferCodec;
-import com.twitter.search.common.file.AbstractFile;
+import com.ExTwitter.ann.common.thriftjava.HnswGraphEntry;
+import com.ExTwitter.ann.common.thriftjava.HnswInternalIndexMetadata;
+import com.ExTwitter.bijection.Injection;
+import com.ExTwitter.mediaservices.commons.codec.ArrayByteBufferCodec;
+import com.ExTwitter.search.common.file.AbstractFile;
 
 public final class HnswIndexIOUtil {
   private HnswIndexIOUtil() {

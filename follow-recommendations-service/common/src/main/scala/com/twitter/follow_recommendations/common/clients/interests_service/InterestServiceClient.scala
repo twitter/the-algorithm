@@ -1,20 +1,20 @@
-package com.twitter.follow_recommendations.common.clients.interests_service
+package com.ExTwitter.follow_recommendations.common.clients.interests_service
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.store.InterestedInInterestsFetchKey
-import com.twitter.inject.Logging
-import com.twitter.interests.thriftscala.InterestId
-import com.twitter.interests.thriftscala.InterestRelationship
-import com.twitter.interests.thriftscala.InterestedInInterestModel
-import com.twitter.interests.thriftscala.UserInterest
-import com.twitter.interests.thriftscala.UserInterestData
-import com.twitter.interests.thriftscala.UserInterestsResponse
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Client
-import com.twitter.strato.thrift.ScroogeConvImplicits._
+import com.ExTwitter.finagle.stats.NullStatsReceiver
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.frigate.common.store.InterestedInInterestsFetchKey
+import com.ExTwitter.inject.Logging
+import com.ExTwitter.interests.thriftscala.InterestId
+import com.ExTwitter.interests.thriftscala.InterestRelationship
+import com.ExTwitter.interests.thriftscala.InterestedInInterestModel
+import com.ExTwitter.interests.thriftscala.UserInterest
+import com.ExTwitter.interests.thriftscala.UserInterestData
+import com.ExTwitter.interests.thriftscala.UserInterestsResponse
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.strato.client.Client
+import com.ExTwitter.strato.thrift.ScroogeConvImplicits._
 
 @Singleton
 class InterestServiceClient @Inject() (

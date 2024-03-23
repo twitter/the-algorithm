@@ -1,6 +1,6 @@
-package com.twitter.follow_recommendations.configapi.deciders
+package com.ExTwitter.follow_recommendations.configapi.deciders
 
-import com.twitter.timelines.configapi.Param
+import com.ExTwitter.timelines.configapi.Param
 
 object DeciderParams {
   object EnableRecommendations extends Param[Boolean](false)

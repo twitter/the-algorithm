@@ -1,10 +1,10 @@
-package com.twitter.cr_mixer.model
+package com.ExTwitter.cr_mixer.model
 
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.cr_mixer.thriftscala.SourceType
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.util.Time
+import com.ExTwitter.cr_mixer.thriftscala.SimilarityEngineType
+import com.ExTwitter.cr_mixer.thriftscala.SourceType
+import com.ExTwitter.simclusters_v2.common.UserId
+import com.ExTwitter.simclusters_v2.thriftscala.InternalId
+import com.ExTwitter.util.Time
 
 /***
  * Tweet-level attributes. Represents the source used in candidate generation

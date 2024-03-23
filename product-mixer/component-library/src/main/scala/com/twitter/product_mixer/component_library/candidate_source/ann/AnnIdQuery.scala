@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.component_library.candidate_source.ann
+package com.ExTwitter.product_mixer.component_library.candidate_source.ann
 
-import com.twitter.ann.common._
+import com.ExTwitter.ann.common._
 
 /**
  * A [[AnnIdQuery]] is a query class which defines the ann entities with runtime params and number of neighbors requested

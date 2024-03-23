@@ -1,26 +1,26 @@
-package com.twitter.cr_mixer.candidate_generation
+package com.ExTwitter.cr_mixer.candidate_generation
 
-import com.twitter.contentrecommender.thriftscala.TweetInfo
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.model.FrsTweetCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.model.TweetWithAuthor
-import com.twitter.cr_mixer.param.FrsParams
-import com.twitter.cr_mixer.similarity_engine.EarlybirdSimilarityEngineRouter
-import com.twitter.cr_mixer.source_signal.FrsStore
-import com.twitter.cr_mixer.source_signal.FrsStore.FrsQueryResult
-import com.twitter.cr_mixer.thriftscala.FrsTweet
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.hermit.constants.AlgorithmFeedbackTokens
-import com.twitter.hermit.constants.AlgorithmFeedbackTokens.AlgorithmToFeedbackTokenMap
-import com.twitter.hermit.model.Algorithm
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi.Params
-import com.twitter.util.Future
+import com.ExTwitter.contentrecommender.thriftscala.TweetInfo
+import com.ExTwitter.cr_mixer.config.TimeoutConfig
+import com.ExTwitter.cr_mixer.model.FrsTweetCandidateGeneratorQuery
+import com.ExTwitter.cr_mixer.model.ModuleNames
+import com.ExTwitter.cr_mixer.model.TweetWithAuthor
+import com.ExTwitter.cr_mixer.param.FrsParams
+import com.ExTwitter.cr_mixer.similarity_engine.EarlybirdSimilarityEngineRouter
+import com.ExTwitter.cr_mixer.source_signal.FrsStore
+import com.ExTwitter.cr_mixer.source_signal.FrsStore.FrsQueryResult
+import com.ExTwitter.cr_mixer.thriftscala.FrsTweet
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.finagle.util.DefaultTimer
+import com.ExTwitter.frigate.common.util.StatsUtil
+import com.ExTwitter.hermit.constants.AlgorithmFeedbackTokens
+import com.ExTwitter.hermit.constants.AlgorithmFeedbackTokens.AlgorithmToFeedbackTokenMap
+import com.ExTwitter.hermit.model.Algorithm
+import com.ExTwitter.simclusters_v2.common.TweetId
+import com.ExTwitter.simclusters_v2.common.UserId
+import com.ExTwitter.storehaus.ReadableStore
+import com.ExTwitter.timelines.configapi.Params
+import com.ExTwitter.util.Future
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
@@ -193,8 +193,8 @@ class FrsTweetCandidateGenerator @Inject() (
             frsCandidateSourceScores = frsQueryResult.flatMap { result =>
               result.sourceWithScores.map {
                 _.collect {
-                  // see TokenStrToAlgorithmMap @ https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/hermit/hermit-core/src/main/scala/com/twitter/hermit/constants/AlgorithmFeedbackTokens.scala
-                  // see Algorithm @ https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/hermit/hermit-core/src/main/scala/com/twitter/hermit/model/Algorithm.scala
+                  // see TokenStrToAlgorithmMap @ https://sourcegraph.ExTwitter.biz/git.ExTwitter.biz/source/-/blob/hermit/hermit-core/src/main/scala/com/ExTwitter/hermit/constants/AlgorithmFeedbackTokens.scala
+                  // see Algorithm @ https://sourcegraph.ExTwitter.biz/git.ExTwitter.biz/source/-/blob/hermit/hermit-core/src/main/scala/com/ExTwitter/hermit/model/Algorithm.scala
                   case (candidateSourceAlgoStr, score)
                       if AlgorithmFeedbackTokens.TokenStrToAlgorithmMap.contains(
                         candidateSourceAlgoStr) =>

@@ -1,13 +1,13 @@
-package com.twitter.follow_recommendations.common.feature_hydration.adapters
+package com.ExTwitter.follow_recommendations.common.feature_hydration.adapters
 
-import com.twitter.follow_recommendations.common.feature_hydration.common.HasPreFetchedFeature
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.ml.api.Feature.Continuous
-import com.twitter.ml.api.util.FDsl._
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.IRecordOneToOneAdapter
-import com.twitter.util.Time
+import com.ExTwitter.follow_recommendations.common.feature_hydration.common.HasPreFetchedFeature
+import com.ExTwitter.follow_recommendations.common.models.CandidateUser
+import com.ExTwitter.ml.api.Feature.Continuous
+import com.ExTwitter.ml.api.util.FDsl._
+import com.ExTwitter.ml.api.DataRecord
+import com.ExTwitter.ml.api.FeatureContext
+import com.ExTwitter.ml.api.IRecordOneToOneAdapter
+import com.ExTwitter.util.Time
 
 /**
  * This adapter mimics UserRecentWTFImpressionsAndFollowsAdapter (for user) and

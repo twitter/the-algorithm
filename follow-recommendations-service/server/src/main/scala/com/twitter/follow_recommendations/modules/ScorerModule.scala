@@ -1,16 +1,16 @@
-package com.twitter.follow_recommendations.modules
+package com.ExTwitter.follow_recommendations.modules
 
 import com.google.inject.Provides
 import com.google.inject.Singleton
-import com.twitter.inject.TwitterModule
-import com.twitter.relevance.ep_model.common.CommonConstants
-import com.twitter.relevance.ep_model.scorer.EPScorer
-import com.twitter.relevance.ep_model.scorer.EPScorerBuilder
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.relevance.ep_model.common.CommonConstants
+import com.ExTwitter.relevance.ep_model.scorer.EPScorer
+import com.ExTwitter.relevance.ep_model.scorer.EPScorerBuilder
 import java.io.File
 import java.io.FileOutputStream
 import scala.language.postfixOps
 
-object ScorerModule extends TwitterModule {
+object ScorerModule extends ExTwitterModule {
   private val STPScorerPath = "/quality/stp_models/20141223"
 
   private def fileFromResource(resource: String): File = {

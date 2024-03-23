@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.ads
+package com.ExTwitter.product_mixer.component_library.pipeline.candidate.ads
 
-import com.twitter.adserver.{thriftscala => ads}
-import com.twitter.product_mixer.component_library.model.query.ads.AdsQuery
-import com.twitter.product_mixer.component_library.pipeline.candidate.ads.AdsCandidatePipelineQueryTransformer.buildAdRequestParams
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.adserver.{thriftscala => ads}
+import com.ExTwitter.product_mixer.component_library.model.query.ads.AdsQuery
+import com.ExTwitter.product_mixer.component_library.pipeline.candidate.ads.AdsCandidatePipelineQueryTransformer.buildAdRequestParams
+import com.ExTwitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
 
 /**
  * Transform a PipelineQuery with AdsQuery into an AdsRequestParams

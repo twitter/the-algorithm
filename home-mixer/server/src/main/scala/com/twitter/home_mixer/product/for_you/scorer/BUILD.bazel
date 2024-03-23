@@ -3,8 +3,8 @@ scala_library(
     compiler_option_sets = ["fatal_warnings"],
     strict_deps = True,
     dependencies = [
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/model",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/util",
+        "home-mixer/server/src/main/scala/com/ExTwitter/home_mixer/model",
+        "home-mixer/server/src/main/scala/com/ExTwitter/home_mixer/util",
         "timelineservice/common:model",
     ],
 )

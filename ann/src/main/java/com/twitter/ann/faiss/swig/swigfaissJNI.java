@@ -6,21 +6,21 @@
  * the SWIG interface file instead.
  * ----------------------------------------------------------------------------- */
 
-package com.twitter.ann.faiss;
-import com.twitter.ann.faiss.NativeUtils;
+package com.ExTwitter.ann.faiss;
+import com.ExTwitter.ann.faiss.NativeUtils;
 public class swigfaissJNI {
 
   static {
     try {
       if (NativeUtils.getOperatingSystemType() == NativeUtils.OSType.MacOS) {
-        NativeUtils.loadLibraryFromJar("/com/twitter/ann/faiss/swig/resources/swigfaiss.dylib");
+        NativeUtils.loadLibraryFromJar("/com/ExTwitter/ann/faiss/swig/resources/swigfaiss.dylib");
       } else {
-        NativeUtils.loadLibraryFromJar("/com/twitter/ann/faiss/swig/resources/libstdc++.so.6");
-        NativeUtils.loadLibraryFromJar("/com/twitter/ann/faiss/swig/resources/libgcc_s.so.1");
-        NativeUtils.loadLibraryFromJar("/com/twitter/ann/faiss/swig/resources/libgomp.so.1");
-        NativeUtils.loadLibraryFromJar("/com/twitter/ann/faiss/swig/resources/libquadmath.so.0");
-        NativeUtils.loadLibraryFromJar("/com/twitter/ann/faiss/swig/resources/libgfortran.so.5");
-        NativeUtils.loadLibraryFromJar("/com/twitter/ann/faiss/swig/resources/swigfaiss.so");
+        NativeUtils.loadLibraryFromJar("/com/ExTwitter/ann/faiss/swig/resources/libstdc++.so.6");
+        NativeUtils.loadLibraryFromJar("/com/ExTwitter/ann/faiss/swig/resources/libgcc_s.so.1");
+        NativeUtils.loadLibraryFromJar("/com/ExTwitter/ann/faiss/swig/resources/libgomp.so.1");
+        NativeUtils.loadLibraryFromJar("/com/ExTwitter/ann/faiss/swig/resources/libquadmath.so.0");
+        NativeUtils.loadLibraryFromJar("/com/ExTwitter/ann/faiss/swig/resources/libgfortran.so.5");
+        NativeUtils.loadLibraryFromJar("/com/ExTwitter/ann/faiss/swig/resources/swigfaiss.so");
       }
     } catch (Exception e) {
       System.err.println("Native code library failed to load. \n" + e);

@@ -1,11 +1,11 @@
-package com.twitter.cr_mixer.config
+package com.ExTwitter.cr_mixer.config
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.cr_mixer.exception.InvalidSANNConfigException
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclustersann.thriftscala.ScoringAlgorithm
-import com.twitter.simclustersann.thriftscala.{SimClustersANNConfig => ThriftSimClustersANNConfig}
-import com.twitter.util.Duration
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.cr_mixer.exception.InvalidSANNConfigException
+import com.ExTwitter.simclusters_v2.thriftscala.EmbeddingType
+import com.ExTwitter.simclustersann.thriftscala.ScoringAlgorithm
+import com.ExTwitter.simclustersann.thriftscala.{SimClustersANNConfig => ThriftSimClustersANNConfig}
+import com.ExTwitter.util.Duration
 
 case class SimClustersANNConfig(
   maxNumResults: Int,

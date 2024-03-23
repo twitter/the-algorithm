@@ -1,7 +1,7 @@
-package com.twitter.follow_recommendations.common.clients.real_time_real_graph
+package com.ExTwitter.follow_recommendations.common.clients.real_time_real_graph
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.util.Time
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.util.Time
 
 object EngagementScorer {
   private[real_time_real_graph] val MemoryDecayHalfLife = 24.hour

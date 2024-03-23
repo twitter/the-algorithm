@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.component_library.model.candidate.trends_events
+package com.ExTwitter.product_mixer.component_library.model.candidate.trends_events
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.event.EventSummaryDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.trend.GroupedTrend
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageVariant
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DisclosureType
+import com.ExTwitter.product_mixer.core.feature.Feature
+import com.ExTwitter.product_mixer.core.model.common.UniversalNoun
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.event.EventSummaryDisplayType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.trend.GroupedTrend
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageVariant
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.promoted.DisclosureType
 
 /**
  * An [[UnifiedTrendEventCandidate]] represents a piece of Event or Trend content.

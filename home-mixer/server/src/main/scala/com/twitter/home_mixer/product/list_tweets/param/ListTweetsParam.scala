@@ -1,7 +1,7 @@
-package com.twitter.home_mixer.product.list_tweets.param
+package com.ExTwitter.home_mixer.product.list_tweets.param
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
+import com.ExTwitter.timelines.configapi.FSBoundedParam
+import com.ExTwitter.timelines.configapi.FSParam
 
 object ListTweetsParam {
   val SupportedClientFSName = "list_tweets_supported_client"

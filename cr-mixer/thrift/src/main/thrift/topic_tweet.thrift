@@ -1,8 +1,8 @@
-namespace java com.twitter.cr_mixer.thriftjava
-#@namespace scala com.twitter.cr_mixer.thriftscala
-#@namespace strato com.twitter.cr_mixer
+namespace java com.ExTwitter.cr_mixer.thriftjava
+#@namespace scala com.ExTwitter.cr_mixer.thriftscala
+#@namespace strato com.ExTwitter.cr_mixer
 
-include "com/twitter/product_mixer/core/client_context.thrift"
+include "com/ExTwitter/product_mixer/core/client_context.thrift"
 include "product.thrift"
 include "product_context.thrift"
 include "source_type.thrift"

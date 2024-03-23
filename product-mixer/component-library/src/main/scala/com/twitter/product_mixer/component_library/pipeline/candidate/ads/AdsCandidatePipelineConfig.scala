@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.ads
+package com.ExTwitter.product_mixer.component_library.pipeline.candidate.ads
 
-import com.twitter.adserver.{thriftscala => ads}
-import com.twitter.product_mixer.component_library.model.candidate.ads.AdsCandidate
-import com.twitter.product_mixer.component_library.model.query.ads.AdsQuery
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseCandidateFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.decider.DeciderParam
+import com.ExTwitter.adserver.{thriftscala => ads}
+import com.ExTwitter.product_mixer.component_library.model.candidate.ads.AdsCandidate
+import com.ExTwitter.product_mixer.component_library.model.query.ads.AdsQuery
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidateSource
+import com.ExTwitter.product_mixer.core.functional_component.common.alert.Alert
+import com.ExTwitter.product_mixer.core.functional_component.decorator.CandidateDecorator
+import com.ExTwitter.product_mixer.core.functional_component.feature_hydrator.BaseCandidateFeatureHydrator
+import com.ExTwitter.product_mixer.core.functional_component.filter.Filter
+import com.ExTwitter.product_mixer.core.functional_component.gate.Gate
+import com.ExTwitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
+import com.ExTwitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
+import com.ExTwitter.timelines.configapi.FSParam
+import com.ExTwitter.timelines.configapi.decider.DeciderParam
 import javax.inject.Inject
 
 class AdsCandidatePipelineConfig[Query <: PipelineQuery with AdsQuery] @Inject() (

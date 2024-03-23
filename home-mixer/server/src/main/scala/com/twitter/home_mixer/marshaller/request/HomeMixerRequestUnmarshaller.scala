@@ -1,8 +1,8 @@
-package com.twitter.home_mixer.marshaller.request
+package com.ExTwitter.home_mixer.marshaller.request
 
-import com.twitter.home_mixer.model.request.HomeMixerRequest
-import com.twitter.home_mixer.{thriftscala => t}
-import com.twitter.product_mixer.core.functional_component.marshaller.request.ClientContextUnmarshaller
+import com.ExTwitter.home_mixer.model.request.HomeMixerRequest
+import com.ExTwitter.home_mixer.{thriftscala => t}
+import com.ExTwitter.product_mixer.core.functional_component.marshaller.request.ClientContextUnmarshaller
 import javax.inject.Inject
 import javax.inject.Singleton
 

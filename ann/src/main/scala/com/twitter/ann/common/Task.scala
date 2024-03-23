@@ -1,18 +1,18 @@
-package com.twitter.ann.common
+package com.ExTwitter.ann.common
 
-import com.twitter.finagle.stats.CategorizingExceptionStatsHandler
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.tracing.DefaultTracer
-import com.twitter.finagle.tracing.Trace
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.finagle.util.Rng
-import com.twitter.inject.logging.MDCKeys
-import com.twitter.util.Closable
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Time
-import com.twitter.util.Timer
-import com.twitter.util.logging.Logging
+import com.ExTwitter.finagle.stats.CategorizingExceptionStatsHandler
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.finagle.tracing.DefaultTracer
+import com.ExTwitter.finagle.tracing.Trace
+import com.ExTwitter.finagle.util.DefaultTimer
+import com.ExTwitter.finagle.util.Rng
+import com.ExTwitter.inject.logging.MDCKeys
+import com.ExTwitter.util.Closable
+import com.ExTwitter.util.Duration
+import com.ExTwitter.util.Future
+import com.ExTwitter.util.Time
+import com.ExTwitter.util.Timer
+import com.ExTwitter.util.logging.Logging
 import java.util.concurrent.atomic.AtomicInteger
 import org.slf4j.MDC
 
@@ -46,7 +46,7 @@ trait Task extends Closable { self: Logging =>
     val runningTask =
       // Setup a new trace root for this task. We also want logs to contain
       // the same trace information finatra populates for requests.
-      // See com.twitter.finatra.thrift.filters.TraceIdMDCFilter
+      // See com.ExTwitter.finatra.thrift.filters.TraceIdMDCFilter
       Trace.letTracerAndNextId(DefaultTracer) {
         val trace = Trace()
         MDC.put(MDCKeys.TraceId, trace.id.traceId.toString)

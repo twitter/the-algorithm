@@ -1,6 +1,6 @@
-package com.twitter.graph_feature_service.server.modules
+package com.ExTwitter.graph_feature_service.server.modules
 
-import com.twitter.bijection.Injection
+import com.ExTwitter.bijection.Injection
 import scala.util.Try
 import net.jpountz.lz4.{LZ4CompressorWithLength, LZ4DecompressorWithLength, LZ4Factory}
 

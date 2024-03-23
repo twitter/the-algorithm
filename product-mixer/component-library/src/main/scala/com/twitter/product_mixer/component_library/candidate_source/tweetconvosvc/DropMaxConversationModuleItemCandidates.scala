@@ -1,11 +1,11 @@
-package com.twitter.product_mixer.component_library.candidate_source.tweetconvosvc
+package com.ExTwitter.product_mixer.component_library.candidate_source.tweetconvosvc
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.core.functional_component.common.CandidateScope
+import com.ExTwitter.product_mixer.core.functional_component.selector.Selector
+import com.ExTwitter.product_mixer.core.functional_component.selector.SelectorResult
+import com.ExTwitter.product_mixer.core.model.common.presentation.CandidateWithDetails
+import com.ExTwitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
 
 /**
  * Takes a conversation module item and truncates it to be at most the focal tweet, the focal tweet's

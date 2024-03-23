@@ -1,6 +1,6 @@
-package com.twitter.follow_recommendations.flows.content_recommender_flow
+package com.ExTwitter.follow_recommendations.flows.content_recommender_flow
 
-import com.twitter.timelines.configapi.FSBoundedParam
+import com.ExTwitter.timelines.configapi.FSBoundedParam
 
 object ContentRecommenderFlowCandidateSourceWeightsParams {
   // Social based

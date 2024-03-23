@@ -3,6 +3,6 @@ scala_library(
     platform = "java8",
     tags = ["bazel-compatible"],
     dependencies = [
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline/pipeline_failure",
+        "product-mixer/core/src/main/scala/com/ExTwitter/product_mixer/core/pipeline/pipeline_failure",
     ],
 )

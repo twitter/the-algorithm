@@ -1,17 +1,17 @@
-package com.twitter.home_mixer.service
+package com.ExTwitter.home_mixer.service
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.product_mixer.core.functional_component.common.alert.Destination
-import com.twitter.product_mixer.core.functional_component.common.alert.EmptyResponseRateAlert
-import com.twitter.product_mixer.core.functional_component.common.alert.LatencyAlert
-import com.twitter.product_mixer.core.functional_component.common.alert.NotificationGroup
-import com.twitter.product_mixer.core.functional_component.common.alert.P99
-import com.twitter.product_mixer.core.functional_component.common.alert.Percentile
-import com.twitter.product_mixer.core.functional_component.common.alert.SuccessRateAlert
-import com.twitter.product_mixer.core.functional_component.common.alert.predicate.TriggerIfAbove
-import com.twitter.product_mixer.core.functional_component.common.alert.predicate.TriggerIfBelow
-import com.twitter.product_mixer.core.functional_component.common.alert.predicate.TriggerIfLatencyAbove
-import com.twitter.util.Duration
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.product_mixer.core.functional_component.common.alert.Destination
+import com.ExTwitter.product_mixer.core.functional_component.common.alert.EmptyResponseRateAlert
+import com.ExTwitter.product_mixer.core.functional_component.common.alert.LatencyAlert
+import com.ExTwitter.product_mixer.core.functional_component.common.alert.NotificationGroup
+import com.ExTwitter.product_mixer.core.functional_component.common.alert.P99
+import com.ExTwitter.product_mixer.core.functional_component.common.alert.Percentile
+import com.ExTwitter.product_mixer.core.functional_component.common.alert.SuccessRateAlert
+import com.ExTwitter.product_mixer.core.functional_component.common.alert.predicate.TriggerIfAbove
+import com.ExTwitter.product_mixer.core.functional_component.common.alert.predicate.TriggerIfBelow
+import com.ExTwitter.product_mixer.core.functional_component.common.alert.predicate.TriggerIfLatencyAbove
+import com.ExTwitter.util.Duration
 
 /**
  * Notifications (email, pagerduty, etc) can be specific per-alert but it is common for multiple

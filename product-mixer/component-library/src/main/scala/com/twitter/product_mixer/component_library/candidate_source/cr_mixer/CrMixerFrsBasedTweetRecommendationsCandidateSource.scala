@@ -1,9 +1,9 @@
-package com.twitter.product_mixer.component_library.candidate_source.cr_mixer
+package com.ExTwitter.product_mixer.component_library.candidate_source.cr_mixer
 
-import com.twitter.cr_mixer.{thriftscala => t}
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
+import com.ExTwitter.cr_mixer.{thriftscala => t}
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidateSource
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.stitch.Stitch
 import javax.inject.Inject
 import javax.inject.Singleton
 

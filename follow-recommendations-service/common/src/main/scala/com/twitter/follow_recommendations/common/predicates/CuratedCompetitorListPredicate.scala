@@ -1,18 +1,18 @@
-package com.twitter.follow_recommendations.common.predicates
+package com.ExTwitter.follow_recommendations.common.predicates
 
 import com.google.inject.name.Named
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.Predicate
-import com.twitter.follow_recommendations.common.base.PredicateResult
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.follow_recommendations.common.models.FilterReason.CuratedAccountsCompetitorList
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.follow_recommendations.common.base.Predicate
+import com.ExTwitter.follow_recommendations.common.base.PredicateResult
+import com.ExTwitter.follow_recommendations.common.constants.GuiceNamedConstants
+import com.ExTwitter.follow_recommendations.common.models.FilterReason.CuratedAccountsCompetitorList
+import com.ExTwitter.follow_recommendations.common.models.CandidateUser
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.strato.client.Fetcher
 import javax.inject.Inject
 import javax.inject.Singleton
-import com.twitter.conversions.DurationOps._
-import com.twitter.escherbird.util.stitchcache.StitchCache
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.escherbird.util.stitchcache.StitchCache
 
 @Singleton
 case class CuratedCompetitorListPredicate @Inject() (

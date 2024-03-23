@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.component_library.model.candidate
+package com.ExTwitter.product_mixer.component_library.model.candidate
 
-import com.twitter.product_mixer.core.model.common.UniversalNoun
+import com.ExTwitter.product_mixer.core.model.common.UniversalNoun
 
 trait BaseDMConvoCandidate extends UniversalNoun[String] {
   def lastReadableEventId: Option[Long]
@@ -9,11 +9,11 @@ trait BaseDMConvoCandidate extends UniversalNoun[String] {
 /**
  * Canonical DMConvoCandidate model. Always prefer this version over all other variants.
  *
- * @note Any additional fields should be added as a [[com.twitter.product_mixer.core.feature.Feature]]
- *       on the candidate's [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap]]. If the
+ * @note Any additional fields should be added as a [[com.ExTwitter.product_mixer.core.feature.Feature]]
+ *       on the candidate's [[com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap]]. If the
  *       features come from the candidate source itself (as opposed to hydrated via a
- *       [[com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator]]),
- *       then [[com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig.featuresFromCandidateSourceTransformers]]
+ *       [[com.ExTwitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator]]),
+ *       then [[com.ExTwitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig.featuresFromCandidateSourceTransformers]]
  *       can be used to extract features from the candidate source response.
  *
  * @note This class should always remain `final`. If for any reason the `final` modifier is removed,
@@ -86,11 +86,11 @@ object DMConvoCandidate {
 /**
  * Canonical DMConvoSearchCandidate model. Always prefer this version over all other variants.
  *
- * @note Any additional fields should be added as a [[com.twitter.product_mixer.core.feature.Feature]]
- *       on the candidate's [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap]]. If the
+ * @note Any additional fields should be added as a [[com.ExTwitter.product_mixer.core.feature.Feature]]
+ *       on the candidate's [[com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap]]. If the
  *       features come from the candidate source itself (as opposed to hydrated via a
- *       [[com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator]]),
- *       then [[com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig.featuresFromCandidateSourceTransformers]]
+ *       [[com.ExTwitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator]]),
+ *       then [[com.ExTwitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig.featuresFromCandidateSourceTransformers]]
  *       can be used to extract features from the candidate source response.
  *
  * @note This class should always remain `final`. If for any reason the `final` modifier is removed,

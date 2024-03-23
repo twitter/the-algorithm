@@ -1,8 +1,8 @@
-package com.twitter.follow_recommendations.products.home_timeline
+package com.ExTwitter.follow_recommendations.products.home_timeline
 
-import com.twitter.product_mixer.core.product.guice.scope.ProductScoped
-import com.twitter.stringcenter.client.ExternalStringRegistry
-import com.twitter.stringcenter.client.core.ExternalString
+import com.ExTwitter.product_mixer.core.product.guice.scope.ProductScoped
+import com.ExTwitter.stringcenter.client.ExternalStringRegistry
+import com.ExTwitter.stringcenter.client.core.ExternalString
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Singleton

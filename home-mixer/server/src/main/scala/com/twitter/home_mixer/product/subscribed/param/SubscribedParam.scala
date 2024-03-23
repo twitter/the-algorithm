@@ -1,6 +1,6 @@
-package com.twitter.home_mixer.product.subscribed.param
+package com.ExTwitter.home_mixer.product.subscribed.param
 
-import com.twitter.timelines.configapi.FSBoundedParam
+import com.ExTwitter.timelines.configapi.FSBoundedParam
 
 object SubscribedParam {
   val SupportedClientFSName = "subscribed_supported_client"

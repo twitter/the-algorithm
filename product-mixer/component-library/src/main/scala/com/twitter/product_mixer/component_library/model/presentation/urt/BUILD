@@ -5,9 +5,9 @@ scala_library(
     strict_deps = True,
     tags = ["bazel-compatible"],
     dependencies = [
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common/presentation/urt",
+        "product-mixer/core/src/main/scala/com/ExTwitter/product_mixer/core/model/common/presentation/urt",
     ],
     exports = [
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common/presentation/urt",
+        "product-mixer/core/src/main/scala/com/ExTwitter/product_mixer/core/model/common/presentation/urt",
     ],
 )

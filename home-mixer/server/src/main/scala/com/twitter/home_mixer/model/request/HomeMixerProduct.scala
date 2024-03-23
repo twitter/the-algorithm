@@ -1,7 +1,7 @@
-package com.twitter.home_mixer.model.request
+package com.ExTwitter.home_mixer.model.request
 
-import com.twitter.product_mixer.core.model.common.identifier.ProductIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.Product
+import com.ExTwitter.product_mixer.core.model.common.identifier.ProductIdentifier
+import com.ExTwitter.product_mixer.core.model.marshalling.request.Product
 
 /**
  * Identifier names on products can be used to create Feature Switch rules by product,

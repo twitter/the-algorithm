@@ -1,10 +1,10 @@
-package com.twitter.follow_recommendations.models
+package com.ExTwitter.follow_recommendations.models
 
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.product_mixer.core.model.marshalling.request
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
-import com.twitter.product_mixer.core.model.marshalling.request.ProductContext
-import com.twitter.product_mixer.core.model.marshalling.request.{Request => ProductMixerRequest}
+import com.ExTwitter.follow_recommendations.common.models.DisplayLocation
+import com.ExTwitter.product_mixer.core.model.marshalling.request
+import com.ExTwitter.product_mixer.core.model.marshalling.request.ClientContext
+import com.ExTwitter.product_mixer.core.model.marshalling.request.ProductContext
+import com.ExTwitter.product_mixer.core.model.marshalling.request.{Request => ProductMixerRequest}
 
 case class Request(
   override val maxResults: Option[Int],

@@ -1,48 +1,48 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.ad
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.ad
 
-import com.twitter.ads.adserver.{thriftscala => ads}
-import com.twitter.adserver.{thriftscala => adserver}
-import com.twitter.product_mixer.component_library.decorator.urt.builder.contextual_ref.ContextualTweetRefBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.tweet.TweetCandidateUrtItemBuilder.TweetClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.ads.AdsCandidate
-import com.twitter.product_mixer.component_library.model.candidate.ads.AdsTweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.Tweet
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.AdMetadataContainer
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.Amplify
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.CallToAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.ClickTrackingInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DcmUrlOverrideType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DirectSponsorshipType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DisclaimerIssue
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DisclaimerPolitical
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DisclaimerType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DisclosureType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DynamicPrerollType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.Earned
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.IndirectSponsorshipType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.Issue
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.LiveTvEvent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.Marketplace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.MediaInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.NoDisclosure
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.NoSponsorshipSponsorshipType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.Political
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.Preroll
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.PrerollMetadata
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.PromotedMetadata
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.SkAdNetworkData
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.SponsorshipType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.UnknownUrlOverrideType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.VideoVariant
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.util.AdMetadataContainerSerializer
-import com.twitter.timelines.util.PrerollMetadataSerializer
+import com.ExTwitter.ads.adserver.{thriftscala => ads}
+import com.ExTwitter.adserver.{thriftscala => adserver}
+import com.ExTwitter.product_mixer.component_library.decorator.urt.builder.contextual_ref.ContextualTweetRefBuilder
+import com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.tweet.TweetCandidateUrtItemBuilder.TweetClientEventInfoElement
+import com.ExTwitter.product_mixer.component_library.model.candidate.ads.AdsCandidate
+import com.ExTwitter.product_mixer.component_library.model.candidate.ads.AdsTweetCandidate
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.tweet.Tweet
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetDisplayType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.promoted.AdMetadataContainer
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.promoted.Amplify
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.promoted.CallToAction
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.promoted.ClickTrackingInfo
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.promoted.DcmUrlOverrideType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.promoted.DirectSponsorshipType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.promoted.DisclaimerIssue
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.promoted.DisclaimerPolitical
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.promoted.DisclaimerType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.promoted.DisclosureType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.promoted.DynamicPrerollType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.promoted.Earned
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.promoted.IndirectSponsorshipType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.promoted.Issue
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.promoted.LiveTvEvent
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.promoted.Marketplace
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.promoted.MediaInfo
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.promoted.NoDisclosure
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.promoted.NoSponsorshipSponsorshipType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.promoted.Political
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.promoted.Preroll
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.promoted.PrerollMetadata
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.promoted.PromotedMetadata
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.promoted.SkAdNetworkData
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.promoted.SponsorshipType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.promoted.UnknownUrlOverrideType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.promoted.VideoVariant
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.timelines.util.AdMetadataContainerSerializer
+import com.ExTwitter.timelines.util.PrerollMetadataSerializer
 
 /**
  * [[AdsCandidateUrtItemBuilder]] takes a [[AdsCandidate]] (with a [[Query]] as additional context)

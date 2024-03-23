@@ -1,11 +1,11 @@
-package com.twitter.follow_recommendations.common.predicates.dismiss
+package com.ExTwitter.follow_recommendations.common.predicates.dismiss
 
-import com.twitter.follow_recommendations.common.base.Predicate
-import com.twitter.follow_recommendations.common.base.PredicateResult
-import com.twitter.follow_recommendations.common.models.FilterReason.DismissedId
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasDismissedUserIds
-import com.twitter.stitch.Stitch
+import com.ExTwitter.follow_recommendations.common.base.Predicate
+import com.ExTwitter.follow_recommendations.common.base.PredicateResult
+import com.ExTwitter.follow_recommendations.common.models.FilterReason.DismissedId
+import com.ExTwitter.follow_recommendations.common.models.CandidateUser
+import com.ExTwitter.follow_recommendations.common.models.HasDismissedUserIds
+import com.ExTwitter.stitch.Stitch
 import javax.inject.Singleton
 
 @Singleton

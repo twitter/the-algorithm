@@ -1,10 +1,10 @@
-package com.twitter.ann.common
+package com.ExTwitter.ann.common
 
-import com.twitter.stitch.Stitch
+import com.ExTwitter.stitch.Stitch
 
 /**
  * This is a trait that allows you to query for nearest neighbors given an arbitrary type T1. This is
- * in contrast to a regular com.twitter.ann.common.Appendable, which takes an embedding as the input
+ * in contrast to a regular com.ExTwitter.ann.common.Appendable, which takes an embedding as the input
  * argument.
  *
  * This interface uses the Stitch API for batching. See go/stitch for details on how to use it.

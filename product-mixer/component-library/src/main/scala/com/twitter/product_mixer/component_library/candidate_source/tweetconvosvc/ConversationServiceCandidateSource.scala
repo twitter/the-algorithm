@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.component_library.candidate_source.tweetconvosvc
+package com.ExTwitter.product_mixer.component_library.candidate_source.tweetconvosvc
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSourceWithExtractedFeatures
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidatesWithSourceFeatures
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.tweetconvosvc.tweet_ancestor.{thriftscala => ta}
-import com.twitter.tweetconvosvc.{thriftscala => tcs}
-import com.twitter.util.Return
-import com.twitter.util.Throw
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidateSourceWithExtractedFeatures
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidatesWithSourceFeatures
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.tweetconvosvc.tweet_ancestor.{thriftscala => ta}
+import com.ExTwitter.tweetconvosvc.{thriftscala => tcs}
+import com.ExTwitter.util.Return
+import com.ExTwitter.util.Throw
 import javax.inject.Inject
 import javax.inject.Singleton
 

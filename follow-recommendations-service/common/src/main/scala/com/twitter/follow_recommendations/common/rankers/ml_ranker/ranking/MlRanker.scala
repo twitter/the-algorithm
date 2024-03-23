@@ -1,29 +1,29 @@
-package com.twitter.follow_recommendations.common.rankers.ml_ranker.ranking
+package com.ExTwitter.follow_recommendations.common.rankers.ml_ranker.ranking
 
 import com.google.common.annotations.VisibleForTesting
 import com.google.inject.Inject
 import com.google.inject.Singleton
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.Ranker
-import com.twitter.follow_recommendations.common.base.StatsUtil
-import com.twitter.follow_recommendations.common.base.StatsUtil.profileSeqResults
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasDisplayLocation
-import com.twitter.follow_recommendations.common.models.HasDebugOptions
-import com.twitter.follow_recommendations.common.models.Scores
-import com.twitter.follow_recommendations.common.rankers.common.RankerId
-import com.twitter.follow_recommendations.common.rankers.common.RankerId.RankerId
-import com.twitter.follow_recommendations.common.rankers.utils.Utils
-import com.twitter.follow_recommendations.common.rankers.ml_ranker.scoring.AdhocScorer
-import com.twitter.follow_recommendations.common.rankers.ml_ranker.scoring.Scorer
-import com.twitter.follow_recommendations.common.rankers.ml_ranker.scoring.ScorerFactory
-import com.twitter.follow_recommendations.common.utils.CollectionUtil
-import com.twitter.ml.api.DataRecord
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.timelines.configapi.Params
-import com.twitter.util.logging.Logging
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.follow_recommendations.common.base.Ranker
+import com.ExTwitter.follow_recommendations.common.base.StatsUtil
+import com.ExTwitter.follow_recommendations.common.base.StatsUtil.profileSeqResults
+import com.ExTwitter.follow_recommendations.common.models.CandidateUser
+import com.ExTwitter.follow_recommendations.common.models.HasDisplayLocation
+import com.ExTwitter.follow_recommendations.common.models.HasDebugOptions
+import com.ExTwitter.follow_recommendations.common.models.Scores
+import com.ExTwitter.follow_recommendations.common.rankers.common.RankerId
+import com.ExTwitter.follow_recommendations.common.rankers.common.RankerId.RankerId
+import com.ExTwitter.follow_recommendations.common.rankers.utils.Utils
+import com.ExTwitter.follow_recommendations.common.rankers.ml_ranker.scoring.AdhocScorer
+import com.ExTwitter.follow_recommendations.common.rankers.ml_ranker.scoring.Scorer
+import com.ExTwitter.follow_recommendations.common.rankers.ml_ranker.scoring.ScorerFactory
+import com.ExTwitter.follow_recommendations.common.utils.CollectionUtil
+import com.ExTwitter.ml.api.DataRecord
+import com.ExTwitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.timelines.configapi.HasParams
+import com.ExTwitter.timelines.configapi.Params
+import com.ExTwitter.util.logging.Logging
 
 /**
  * This class has a rank function that will perform 4 steps:

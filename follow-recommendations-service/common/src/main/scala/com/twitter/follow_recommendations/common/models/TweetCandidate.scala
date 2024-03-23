@@ -1,4 +1,4 @@
-package com.twitter.follow_recommendations.common.models
+package com.ExTwitter.follow_recommendations.common.models
 
 case class TweetCandidate(
   tweetId: Long,

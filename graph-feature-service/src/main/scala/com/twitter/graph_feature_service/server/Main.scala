@@ -1,27 +1,27 @@
-package com.twitter.graph_feature_service.server
+package com.ExTwitter.graph_feature_service.server
 
 import com.google.inject.Module
-import com.twitter.finatra.decider.modules.DeciderModule
-import com.twitter.finatra.mtls.thriftmux.Mtls
-import com.twitter.finatra.thrift.ThriftServer
-import com.twitter.finatra.thrift.filters.{
+import com.ExTwitter.finatra.decider.modules.DeciderModule
+import com.ExTwitter.finatra.mtls.thriftmux.Mtls
+import com.ExTwitter.finatra.thrift.ThriftServer
+import com.ExTwitter.finatra.thrift.filters.{
   AccessLoggingFilter,
   LoggingMDCFilter,
   StatsFilter,
   ThriftMDCFilter,
   TraceIdMDCFilter
 }
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsThriftWebFormsModule
-import com.twitter.finatra.thrift.routing.ThriftRouter
-import com.twitter.graph_feature_service.server.controllers.ServerController
-import com.twitter.graph_feature_service.server.handlers.ServerWarmupHandler
-import com.twitter.graph_feature_service.server.modules.{
+import com.ExTwitter.finatra.mtls.thriftmux.modules.MtlsThriftWebFormsModule
+import com.ExTwitter.finatra.thrift.routing.ThriftRouter
+import com.ExTwitter.graph_feature_service.server.controllers.ServerController
+import com.ExTwitter.graph_feature_service.server.handlers.ServerWarmupHandler
+import com.ExTwitter.graph_feature_service.server.modules.{
   GetIntersectionStoreModule,
   GraphFeatureServiceWorkerClientsModule,
   ServerFlagsModule
 }
-import com.twitter.graph_feature_service.thriftscala
-import com.twitter.inject.thrift.modules.ThriftClientIdModule
+import com.ExTwitter.graph_feature_service.thriftscala
+import com.ExTwitter.inject.thrift.modules.ThriftClientIdModule
 
 object Main extends ServerMain
 

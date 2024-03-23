@@ -1,11 +1,11 @@
-package com.twitter.follow_recommendations.common.candidate_sources.base
+package com.ExTwitter.follow_recommendations.common.candidate_sources.base
 
-import com.twitter.escherbird.util.stitchcache.StitchCache
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.util.Duration
+import com.ExTwitter.escherbird.util.stitchcache.StitchCache
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidateSource
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.util.Duration
 
 class CachedCandidateSource[K <: Object, V <: Object](
   candidateSource: CandidateSource[K, V],

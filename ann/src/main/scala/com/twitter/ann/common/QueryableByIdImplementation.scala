@@ -1,6 +1,6 @@
-package com.twitter.ann.common
+package com.ExTwitter.ann.common
 
-import com.twitter.stitch.Stitch
+import com.ExTwitter.stitch.Stitch
 
 /**
  * Implementation of QueryableById that composes an EmbeddingProducer and a Queryable so that we

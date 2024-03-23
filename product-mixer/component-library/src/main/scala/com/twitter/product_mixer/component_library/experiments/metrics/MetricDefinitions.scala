@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.component_library.experiments.metrics
+package com.ExTwitter.product_mixer.component_library.experiments.metrics
 
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
+import com.ExTwitter.util.Return
+import com.ExTwitter.util.Throw
+import com.ExTwitter.util.Try
 
 object MetricDefinition {
   val SingleQuote = """""""

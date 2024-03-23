@@ -1,4 +1,4 @@
-package com.twitter.follow_recommendations.flows.post_nux_ml
+package com.ExTwitter.follow_recommendations.flows.post_nux_ml
 
 object PostNuxMlFlowFeatureSwitchKeys {
   val UseMlRanker = "post_nux_ml_flow_use_ml_ranker"

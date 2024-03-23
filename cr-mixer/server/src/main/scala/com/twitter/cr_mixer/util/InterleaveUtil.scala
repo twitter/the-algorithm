@@ -1,11 +1,11 @@
-package com.twitter.cr_mixer.util
+package com.ExTwitter.cr_mixer.util
 
-import com.twitter.cr_mixer.model.Candidate
-import com.twitter.cr_mixer.model.CandidateGenerationInfo
-import com.twitter.cr_mixer.model.RankedCandidate
-import com.twitter.cr_mixer.model.SourceInfo
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.simclusters_v2.common.TweetId
+import com.ExTwitter.cr_mixer.model.Candidate
+import com.ExTwitter.cr_mixer.model.CandidateGenerationInfo
+import com.ExTwitter.cr_mixer.model.RankedCandidate
+import com.ExTwitter.cr_mixer.model.SourceInfo
+import com.ExTwitter.cr_mixer.thriftscala.SimilarityEngineType
+import com.ExTwitter.simclusters_v2.common.TweetId
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 

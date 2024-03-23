@@ -1,8 +1,8 @@
-package com.twitter.follow_recommendations.common.models
+package com.ExTwitter.follow_recommendations.common.models
 
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.usersignalservice.thriftscala.SignalType
-import com.twitter.usersignalservice.thriftscala.Signal
+import com.ExTwitter.simclusters_v2.thriftscala.InternalId
+import com.ExTwitter.usersignalservice.thriftscala.SignalType
+import com.ExTwitter.usersignalservice.thriftscala.Signal
 
 trait SignalData {
   val userId: Long

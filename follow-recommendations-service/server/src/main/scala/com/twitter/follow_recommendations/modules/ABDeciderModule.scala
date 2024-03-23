@@ -1,16 +1,16 @@
-package com.twitter.follow_recommendations.modules
+package com.ExTwitter.follow_recommendations.modules
 
 import com.google.inject.Provides
 import com.google.inject.name.Named
-import com.twitter.abdecider.ABDeciderFactory
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.inject.TwitterModule
-import com.twitter.logging.LoggerFactory
+import com.ExTwitter.abdecider.ABDeciderFactory
+import com.ExTwitter.abdecider.LoggingABDecider
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.follow_recommendations.common.constants.GuiceNamedConstants
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.logging.LoggerFactory
 import javax.inject.Singleton
 
-object ABDeciderModule extends TwitterModule {
+object ABDeciderModule extends ExTwitterModule {
   @Provides
   @Singleton
   def provideABDecider(

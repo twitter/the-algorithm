@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.component_library.filter
+package com.ExTwitter.product_mixer.component_library.filter
 
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasExcludedIds
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+import com.ExTwitter.product_mixer.core.functional_component.filter.Filter
+import com.ExTwitter.product_mixer.core.functional_component.filter.FilterResult
+import com.ExTwitter.product_mixer.core.model.common.CandidateWithFeatures
+import com.ExTwitter.product_mixer.core.model.common.UniversalNoun
+import com.ExTwitter.product_mixer.core.model.common.identifier.FilterIdentifier
+import com.ExTwitter.product_mixer.core.model.marshalling.request.HasExcludedIds
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.stitch.Stitch
 
 case class ExcludedIdsFilter[
   Query <: PipelineQuery with HasExcludedIds,

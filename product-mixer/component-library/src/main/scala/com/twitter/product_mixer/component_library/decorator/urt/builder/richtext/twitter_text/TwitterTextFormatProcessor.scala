@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.richtext.twitter_text
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.richtext.ExTwitter_text
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Plain
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextFormat
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Strong
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.richtext.Plain
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextFormat
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.richtext.Strong
 import scala.collection.mutable
 
-object TwitterTextFormatProcessor {
-  lazy val defaultFormatProcessor = TwitterTextFormatProcessor()
+object ExTwitterTextFormatProcessor {
+  lazy val defaultFormatProcessor = ExTwitterTextFormatProcessor()
 }
 
 /**
- * Add the corresponding [[RichTextFormat]] extraction logic into [[TwitterTextRenderer]].
- * The [[TwitterTextRenderer]] after being processed will extract the defined entities. 
+ * Add the corresponding [[RichTextFormat]] extraction logic into [[ExTwitterTextRenderer]].
+ * The [[ExTwitterTextRenderer]] after being processed will extract the defined entities. 
  */
-case class TwitterTextFormatProcessor(
+case class ExTwitterTextFormatProcessor(
   formats: Set[RichTextFormat] = Set(Plain, Strong),
-) extends TwitterTextRendererProcessor {
+) extends ExTwitterTextRendererProcessor {
 
   private val formatMap = formats.map { format => format.name.toLowerCase -> format }.toMap
 
@@ -26,10 +26,10 @@ case class TwitterTextFormatProcessor(
   }
 
   def renderText(text: String): RichText = {
-    process(TwitterTextRenderer(text)).build
+    process(ExTwitterTextRenderer(text)).build
   }
 
-  def process(richTextBuilder: TwitterTextRenderer): TwitterTextRenderer = {
+  def process(richTextBuilder: ExTwitterTextRenderer): ExTwitterTextRenderer = {
     val text = richTextBuilder.text
     val nodeStack = mutable.ArrayStack[(RichTextFormat, Int)]()
     var offset = 0

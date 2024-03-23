@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.unified_trend_event
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.unified_trend_event
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.event_summary.EventCandidateUrtItemBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.trend.TrendCandidateUrtItemBuilder
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.UnifiedEventCandidate
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.UnifiedTrendCandidate
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.UnifiedTrendEventCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.event_summary.EventCandidateUrtItemBuilder
+import com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.trend.TrendCandidateUrtItemBuilder
+import com.ExTwitter.product_mixer.component_library.model.candidate.trends_events.UnifiedEventCandidate
+import com.ExTwitter.product_mixer.component_library.model.candidate.trends_events.UnifiedTrendCandidate
+import com.ExTwitter.product_mixer.component_library.model.candidate.trends_events.UnifiedTrendEventCandidate
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
 
 case class UnifiedTrendEventCandidateUrtItemBuilder[Query <: PipelineQuery](
   eventCandidateUrtItemBuilder: EventCandidateUrtItemBuilder[Query],

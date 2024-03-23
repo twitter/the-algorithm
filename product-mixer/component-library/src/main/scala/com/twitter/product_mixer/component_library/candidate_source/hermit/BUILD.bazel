@@ -5,12 +5,12 @@ scala_library(
     tags = ["bazel-compatible"],
     dependencies = [
         "3rdparty/jvm/javax/inject:javax.inject",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/candidate_source/strato",
-        "src/thrift/com/twitter/hermit:hermit-scala",
+        "product-mixer/core/src/main/scala/com/ExTwitter/product_mixer/core/functional_component/candidate_source/strato",
+        "src/thrift/com/ExTwitter/hermit:hermit-scala",
         "strato/config/columns/onboarding:onboarding-strato-client",
     ],
     exports = [
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/candidate_source/strato",
-        "src/thrift/com/twitter/hermit:hermit-scala",
+        "product-mixer/core/src/main/scala/com/ExTwitter/product_mixer/core/functional_component/candidate_source/strato",
+        "src/thrift/com/ExTwitter/hermit:hermit-scala",
     ],
 )

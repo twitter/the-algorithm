@@ -1,20 +1,20 @@
-package com.twitter.cr_mixer.source_signal
+package com.ExTwitter.cr_mixer.source_signal
 
-import com.twitter.core_workflows.user_model.thriftscala.UserState
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.source_signal.SourceFetcher.FetcherQuery
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.timelines.configapi.Params
-import com.twitter.cr_mixer.thriftscala.{Product => TProduct}
-import com.twitter.finagle.GlobalRequestTimeoutException
-import com.twitter.finagle.mux.ClientDiscardedRequestException
-import com.twitter.finagle.mux.ServerApplicationError
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
-import com.twitter.util.TimeoutException
+import com.ExTwitter.core_workflows.user_model.thriftscala.UserState
+import com.ExTwitter.cr_mixer.config.TimeoutConfig
+import com.ExTwitter.cr_mixer.source_signal.SourceFetcher.FetcherQuery
+import com.ExTwitter.simclusters_v2.common.UserId
+import com.ExTwitter.timelines.configapi.Params
+import com.ExTwitter.cr_mixer.thriftscala.{Product => TProduct}
+import com.ExTwitter.finagle.GlobalRequestTimeoutException
+import com.ExTwitter.finagle.mux.ClientDiscardedRequestException
+import com.ExTwitter.finagle.mux.ServerApplicationError
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.storehaus.ReadableStore
+import com.ExTwitter.util.Future
+import com.ExTwitter.util.TimeoutException
 import org.apache.thrift.TApplicationException
-import com.twitter.util.logging.Logging
+import com.ExTwitter.util.logging.Logging
 
 /**
  * A SourceFetcher is a trait which, given a [[FetcherQuery]], returns [[ResultType]]
@@ -27,7 +27,7 @@ import com.twitter.util.logging.Logging
  */
 trait SourceFetcher[ResultType] extends ReadableStore[FetcherQuery, ResultType] with Logging {
 
-  protected final val timer = com.twitter.finagle.util.DefaultTimer
+  protected final val timer = com.ExTwitter.finagle.util.DefaultTimer
   protected final def identifier: String = this.getClass.getSimpleName
   protected def stats: StatsReceiver
   protected def timeoutConfig: TimeoutConfig

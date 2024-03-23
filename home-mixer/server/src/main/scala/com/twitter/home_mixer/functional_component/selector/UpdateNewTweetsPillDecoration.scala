@@ -1,24 +1,24 @@
-package com.twitter.home_mixer.functional_component.selector
+package com.ExTwitter.home_mixer.functional_component.selector
 
-import com.twitter.home_mixer.functional_component.selector.UpdateNewTweetsPillDecoration.NumAvatars
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.model.request.HasDeviceContext
-import com.twitter.home_mixer.param.HomeGlobalParams.EnableNewTweetsPillAvatarsParam
-import com.twitter.home_mixer.util.CandidatesUtil
-import com.twitter.product_mixer.component_library.model.candidate.ShowAlertCandidate
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.component_library.model.presentation.urt.UrtItemPresentation
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ShowAlert
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stringcenter.client.StringCenter
-import com.twitter.stringcenter.client.core.ExternalString
+import com.ExTwitter.home_mixer.functional_component.selector.UpdateNewTweetsPillDecoration.NumAvatars
+import com.ExTwitter.home_mixer.model.HomeFeatures.AuthorIdFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.IsRetweetFeature
+import com.ExTwitter.home_mixer.model.request.HasDeviceContext
+import com.ExTwitter.home_mixer.param.HomeGlobalParams.EnableNewTweetsPillAvatarsParam
+import com.ExTwitter.home_mixer.util.CandidatesUtil
+import com.ExTwitter.product_mixer.component_library.model.candidate.ShowAlertCandidate
+import com.ExTwitter.product_mixer.component_library.model.candidate.TweetCandidate
+import com.ExTwitter.product_mixer.component_library.model.presentation.urt.UrtItemPresentation
+import com.ExTwitter.product_mixer.core.functional_component.common.CandidateScope
+import com.ExTwitter.product_mixer.core.functional_component.selector.Selector
+import com.ExTwitter.product_mixer.core.functional_component.selector.SelectorResult
+import com.ExTwitter.product_mixer.core.model.common.presentation.CandidateWithDetails
+import com.ExTwitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.ShowAlert
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.stringcenter.client.StringCenter
+import com.ExTwitter.stringcenter.client.core.ExternalString
 
 object UpdateNewTweetsPillDecoration {
   val NumAvatars = 3

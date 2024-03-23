@@ -1,6 +1,6 @@
-namespace java com.twitter.follow_recommendations.thriftjava
-#@namespace scala com.twitter.follow_recommendations.thriftscala
-#@namespace strato com.twitter.follow_recommendations
+namespace java com.ExTwitter.follow_recommendations.thriftjava
+#@namespace scala com.ExTwitter.follow_recommendations.thriftscala
+#@namespace strato com.ExTwitter.follow_recommendations
 
 enum DisplayLocation {
     SIDEBAR = 0
@@ -22,7 +22,7 @@ enum DisplayLocation {
      * The display location should be added to the following files:
      *  - follow-recommendations-service/thrift/src/main/thrift/display_location.thrift
      *  - follow-recommendations-service/thrift/src/main/thrift/logging/display_location.thrift
-     *  - follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/models/DisplayLocation.scala
+     *  - follow-recommendations-service/common/src/main/scala/com/ExTwitter/follow_recommendations/common/models/DisplayLocation.scala
    */
     CAMPAIGN_FORM = 61
     RUX_LANDING_PAGE = 62

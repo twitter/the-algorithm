@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.alert
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.alert
 
-import com.twitter.product_mixer.component_library.model.candidate.ShowAlertCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.alert.BaseShowAlertIconDisplayInfoBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.ShowAlertIconDisplayInfo
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.component_library.model.candidate.ShowAlertCandidate
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.item.alert.BaseShowAlertIconDisplayInfoBuilder
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.alert.ShowAlertIconDisplayInfo
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
 
 case class StaticShowAlertIconDisplayInfoBuilder[-Query <: PipelineQuery](
   iconDisplayInfo: ShowAlertIconDisplayInfo)

@@ -4,10 +4,10 @@ scala_library(
     strict_deps = True,
     tags = ["bazel-compatible"],
     dependencies = [
-        "finatra/inject/inject-core/src/main/scala/com/twitter/inject",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/candidate_source",
-        "src/thrift/com/twitter/timelineranker:thrift-scala",
-        "src/thrift/com/twitter/timelineranker/server/model:thrift-scala",
+        "finatra/inject/inject-core/src/main/scala/com/ExTwitter/inject",
+        "product-mixer/core/src/main/scala/com/ExTwitter/product_mixer/core/functional_component/candidate_source",
+        "src/thrift/com/ExTwitter/timelineranker:thrift-scala",
+        "src/thrift/com/ExTwitter/timelineranker/server/model:thrift-scala",
         "stitch/stitch-core",
     ],
 )

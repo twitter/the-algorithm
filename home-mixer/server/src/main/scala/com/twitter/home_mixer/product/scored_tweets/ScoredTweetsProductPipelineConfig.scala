@@ -1,27 +1,27 @@
-package com.twitter.home_mixer.product.scored_tweets
+package com.ExTwitter.home_mixer.product.scored_tweets
 
-import com.twitter.home_mixer.model.HomeFeatures.ServedTweetIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.TimelineServiceTweetsFeature
-import com.twitter.home_mixer.model.request.HomeMixerRequest
-import com.twitter.home_mixer.model.request.ScoredTweetsProduct
-import com.twitter.home_mixer.model.request.ScoredTweetsProductContext
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.ServerMaxResultsParam
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParamConfig
-import com.twitter.home_mixer.service.HomeMixerAccessPolicy.DefaultHomeMixerAccessPolicy
-import com.twitter.home_mixer.{thriftscala => t}
-import com.twitter.product_mixer.component_library.premarshaller.cursor.UrtCursorSerializer
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.common.access_policy.AccessPolicy
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ProductPipelineIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.Product
-import com.twitter.product_mixer.core.pipeline.PipelineConfig
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.BadRequest
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.product.ProductPipelineConfig
-import com.twitter.product_mixer.core.product.ProductParamConfig
-import com.twitter.timelines.configapi.Params
+import com.ExTwitter.home_mixer.model.HomeFeatures.ServedTweetIdsFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.TimelineServiceTweetsFeature
+import com.ExTwitter.home_mixer.model.request.HomeMixerRequest
+import com.ExTwitter.home_mixer.model.request.ScoredTweetsProduct
+import com.ExTwitter.home_mixer.model.request.ScoredTweetsProductContext
+import com.ExTwitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
+import com.ExTwitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.ServerMaxResultsParam
+import com.ExTwitter.home_mixer.product.scored_tweets.param.ScoredTweetsParamConfig
+import com.ExTwitter.home_mixer.service.HomeMixerAccessPolicy.DefaultHomeMixerAccessPolicy
+import com.ExTwitter.home_mixer.{thriftscala => t}
+import com.ExTwitter.product_mixer.component_library.premarshaller.cursor.UrtCursorSerializer
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
+import com.ExTwitter.product_mixer.core.functional_component.common.access_policy.AccessPolicy
+import com.ExTwitter.product_mixer.core.model.common.identifier.ComponentIdentifier
+import com.ExTwitter.product_mixer.core.model.common.identifier.ProductPipelineIdentifier
+import com.ExTwitter.product_mixer.core.model.marshalling.request.Product
+import com.ExTwitter.product_mixer.core.pipeline.PipelineConfig
+import com.ExTwitter.product_mixer.core.pipeline.pipeline_failure.BadRequest
+import com.ExTwitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
+import com.ExTwitter.product_mixer.core.pipeline.product.ProductPipelineConfig
+import com.ExTwitter.product_mixer.core.product.ProductParamConfig
+import com.ExTwitter.timelines.configapi.Params
 import javax.inject.Inject
 import javax.inject.Singleton
 

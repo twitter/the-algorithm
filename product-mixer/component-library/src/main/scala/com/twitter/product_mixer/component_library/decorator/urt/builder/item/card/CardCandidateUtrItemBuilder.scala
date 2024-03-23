@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.card
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.card
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.card.CardCandidateUtrItemBuilder.CardClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.CardCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseStr
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseUrlBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.card.CardDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.card.CardItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.card.CardCandidateUtrItemBuilder.CardClientEventInfoElement
+import com.ExTwitter.product_mixer.component_library.model.candidate.CardCandidate
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseStr
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseUrlBuilder
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.card.CardDisplayType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.card.CardItem
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
 
 object CardCandidateUtrItemBuilder {
   val CardClientEventInfoElement: String = "card"

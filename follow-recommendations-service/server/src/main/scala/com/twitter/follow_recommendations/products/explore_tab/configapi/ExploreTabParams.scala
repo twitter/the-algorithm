@@ -1,7 +1,7 @@
-package com.twitter.follow_recommendations.products.explore_tab.configapi
+package com.ExTwitter.follow_recommendations.products.explore_tab.configapi
 
-import com.twitter.timelines.configapi.Param
-import com.twitter.timelines.configapi.FSParam
+import com.ExTwitter.timelines.configapi.Param
+import com.ExTwitter.timelines.configapi.FSParam
 
 object ExploreTabParams {
   object EnableProduct extends Param[Boolean](false)

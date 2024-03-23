@@ -1,15 +1,15 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates
+package com.ExTwitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates
 
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.adapters.offline_aggregates.PassThroughAdapter
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.adapters.offline_aggregates.SparseAggregatesToDenseAdapter
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.MentionScreenNameFeature
-import com.twitter.home_mixer.model.HomeFeatures.TopicIdSocialContextFeature
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.TSPInferredTopicFeature
-import com.twitter.home_mixer.util.CandidatesUtil
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateType
-import com.twitter.timelines.prediction.common.aggregates.TimelinesAggregationConfig
-import com.twitter.timelines.prediction.common.aggregates.TimelinesAggregationConfig.CombineCountPolicies
+import com.ExTwitter.home_mixer.product.scored_tweets.feature_hydrator.adapters.offline_aggregates.PassThroughAdapter
+import com.ExTwitter.home_mixer.product.scored_tweets.feature_hydrator.adapters.offline_aggregates.SparseAggregatesToDenseAdapter
+import com.ExTwitter.home_mixer.model.HomeFeatures.AuthorIdFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.MentionScreenNameFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.TopicIdSocialContextFeature
+import com.ExTwitter.home_mixer.product.scored_tweets.feature_hydrator.TSPInferredTopicFeature
+import com.ExTwitter.home_mixer.util.CandidatesUtil
+import com.ExTwitter.timelines.data_processing.ml_util.aggregation_framework.AggregateType
+import com.ExTwitter.timelines.prediction.common.aggregates.TimelinesAggregationConfig
+import com.ExTwitter.timelines.prediction.common.aggregates.TimelinesAggregationConfig.CombineCountPolicies
 
 object EdgeAggregateFeatures {
 
@@ -18,7 +18,7 @@ object EdgeAggregateFeatures {
         aggregateGroups = TimelinesAggregationConfig.userAuthorAggregatesV2 ++ Set(
           TimelinesAggregationConfig.userAuthorAggregatesV5,
           TimelinesAggregationConfig.tweetSourceUserAuthorAggregatesV1,
-          TimelinesAggregationConfig.twitterWideUserAuthorAggregates
+          TimelinesAggregationConfig.ExTwitterWideUserAuthorAggregates
         ),
         aggregateType = AggregateType.UserAuthor,
         extractMapFn = _.userAuthorAggregates,

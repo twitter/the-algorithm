@@ -14,8 +14,8 @@ import com.twitter.scrooge.BinaryThriftStructSerializer
 import com.twitter.scrooge.ThriftStructCodec
 import com.twitter.search.common.util.bloomfilter.AdaptiveLongIntBloomFilterSerializer
 import com.twitter.util.Base64UrlSafeStringEncoder
-import com.twitter.util.StringEncoder
-import com.twitter.product_mixer.core.functional_component.marshaller.response.slice.CursorTypeMarshaller
+import com.ExTwitter.util.StringEncoder
+import com.ExTwitter.product_mixer.core.functional_component.marshaller.response.slice.CursorTypeMarshaller
 
 /**
  * Handles serialization and deserialization for all supported generic cursors. Note that generic

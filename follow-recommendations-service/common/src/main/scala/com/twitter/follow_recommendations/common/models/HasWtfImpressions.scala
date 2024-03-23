@@ -1,6 +1,6 @@
-package com.twitter.follow_recommendations.common.models
+package com.ExTwitter.follow_recommendations.common.models
 
-import com.twitter.util.Time
+import com.ExTwitter.util.Time
 
 trait HasWtfImpressions {
 

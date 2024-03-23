@@ -1,14 +1,14 @@
-package com.twitter.graph_feature_service.scalding
+package com.ExTwitter.graph_feature_service.scalding
 
-import com.twitter.scalding._
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.scalding_internal.job.analytics_batch.{
+import com.ExTwitter.scalding._
+import com.ExTwitter.scalding_internal.job.ExTwitterExecutionApp
+import com.ExTwitter.scalding_internal.job.analytics_batch.{
   AnalyticsBatchExecution,
   AnalyticsBatchExecutionArgs,
   BatchDescription,
   BatchFirstTime,
   BatchIncrement,
-  TwitterScheduledExecutionApp
+  ExTwitterScheduledExecutionApp
 }
 import java.util.TimeZone
 
@@ -49,7 +49,7 @@ trait GraphFeatureServiceBaseJob {
 /**
  * Trait that wraps things about adhoc jobs.
  */
-trait GraphFeatureServiceAdhocBaseApp extends TwitterExecutionApp with GraphFeatureServiceBaseJob {
+trait GraphFeatureServiceAdhocBaseApp extends ExTwitterExecutionApp with GraphFeatureServiceBaseJob {
   override def job: Execution[Unit] = Execution.withId { implicit uniqueId =>
     Execution.getArgs.flatMap { args: Args =>
       implicit val dateRange: DateRange = DateRange.parse(args.list("date"))(timeZone, dateParser)
@@ -64,7 +64,7 @@ trait GraphFeatureServiceAdhocBaseApp extends TwitterExecutionApp with GraphFeat
  * A new daily app only needs to declare the starting date.
  */
 trait GraphFeatureServiceScheduledBaseApp
-    extends TwitterScheduledExecutionApp
+    extends ExTwitterScheduledExecutionApp
     with GraphFeatureServiceBaseJob {
 
   def firstTime: RichDate // for example: RichDate("2018-02-21")

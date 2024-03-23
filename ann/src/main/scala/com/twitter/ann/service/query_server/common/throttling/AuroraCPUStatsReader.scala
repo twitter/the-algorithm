@@ -1,6 +1,6 @@
-package com.twitter.ann.service.query_server.common.throttling
+package com.ExTwitter.ann.service.query_server.common.throttling
 
-import com.twitter.server.filter.CgroupsCpu
+import com.ExTwitter.server.filter.CgroupsCpu
 
 class AuroraCPUStatsReader() {
 

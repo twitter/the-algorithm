@@ -1,4 +1,4 @@
-package com.twitter.cr_mixer.scribe
+package com.ExTwitter.cr_mixer.scribe
 
 /**
  * Categories define scribe categories used in cr-mixer service.
@@ -54,7 +54,7 @@ object ScribeCategories {
  * Category represents each scribe log data.
  *
  * @param loggerFactoryNode loggerFactory node name in cr-mixer associated with this scribe category
- * @param scribeCategory    scribe category name (globally unique at Twitter)
+ * @param scribeCategory    scribe category name (globally unique at ExTwitter)
  */
 case class ScribeCategory(
   loggerFactoryNode: String,

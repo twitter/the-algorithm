@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.common.candidate_sources.real_graph
+package com.ExTwitter.follow_recommendations.common.candidate_sources.real_graph
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.Param
+import com.ExTwitter.follow_recommendations.configapi.common.FeatureSwitchConfig
+import com.ExTwitter.timelines.configapi.FSBoundedParam
+import com.ExTwitter.timelines.configapi.FSName
+import com.ExTwitter.timelines.configapi.Param
 import javax.inject.Inject
 import javax.inject.Singleton
 

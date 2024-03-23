@@ -1,8 +1,8 @@
-package com.twitter.home_mixer.marshaller.timelines
+package com.ExTwitter.home_mixer.marshaller.timelines
 
-import com.twitter.product_mixer.component_library.model.cursor.UrtUnorderedExcludeIdsCursor
-import com.twitter.timelines.service.{thriftscala => t}
-import com.twitter.util.Time
+import com.ExTwitter.product_mixer.component_library.model.cursor.UrtUnorderedExcludeIdsCursor
+import com.ExTwitter.timelines.service.{thriftscala => t}
+import com.ExTwitter.util.Time
 
 object RecommendedUsersCursorUnmarshaller {
 

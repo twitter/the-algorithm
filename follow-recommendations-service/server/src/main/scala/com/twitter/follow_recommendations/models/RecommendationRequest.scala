@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.models
+package com.ExTwitter.follow_recommendations.models
 
-import com.twitter.follow_recommendations.common.models.ClientContextConverter
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
+import com.ExTwitter.follow_recommendations.common.models.ClientContextConverter
+import com.ExTwitter.follow_recommendations.common.models.DisplayLocation
+import com.ExTwitter.follow_recommendations.logging.{thriftscala => offline}
+import com.ExTwitter.product_mixer.core.model.marshalling.request.ClientContext
 
 case class RecommendationRequest(
   clientContext: ClientContext,

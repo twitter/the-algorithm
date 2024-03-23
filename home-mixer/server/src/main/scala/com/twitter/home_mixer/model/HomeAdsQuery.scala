@@ -1,16 +1,16 @@
-package com.twitter.home_mixer.model
+package com.ExTwitter.home_mixer.model
 
-import com.twitter.adserver.thriftscala.RequestTriggerType
-import com.twitter.home_mixer.model.HomeFeatures.GetInitialFeature
-import com.twitter.home_mixer.model.HomeFeatures.GetNewerFeature
-import com.twitter.home_mixer.model.HomeFeatures.GetOlderFeature
-import com.twitter.home_mixer.model.HomeFeatures.PollingFeature
-import com.twitter.home_mixer.model.request.HasDeviceContext
-import com.twitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
-import com.twitter.product_mixer.component_library.model.query.ads.AdsQuery
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.adserver.thriftscala.RequestTriggerType
+import com.ExTwitter.home_mixer.model.HomeFeatures.GetInitialFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.GetNewerFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.GetOlderFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.PollingFeature
+import com.ExTwitter.home_mixer.model.request.HasDeviceContext
+import com.ExTwitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
+import com.ExTwitter.product_mixer.component_library.model.query.ads.AdsQuery
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.pipeline.HasPipelineCursor
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
 
 /**
  * These are for feeds needed for ads only.

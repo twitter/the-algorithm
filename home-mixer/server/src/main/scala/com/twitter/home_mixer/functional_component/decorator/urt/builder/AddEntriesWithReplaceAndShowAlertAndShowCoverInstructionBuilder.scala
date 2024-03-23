@@ -1,13 +1,13 @@
-package com.twitter.home_mixer.functional_component.decorator.urt.builder
+package com.ExTwitter.home_mixer.functional_component.decorator.urt.builder
 
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.AlwaysInclude
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.IncludeInstruction
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.UrtInstructionBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.AddEntriesTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.Cover
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ShowAlert
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.component_library.premarshaller.urt.builder.AlwaysInclude
+import com.ExTwitter.product_mixer.component_library.premarshaller.urt.builder.IncludeInstruction
+import com.ExTwitter.product_mixer.component_library.premarshaller.urt.builder.UrtInstructionBuilder
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.AddEntriesTimelineInstruction
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.Cover
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.ShowAlert
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
 
 case class AddEntriesWithReplaceAndShowAlertAndCoverInstructionBuilder[Query <: PipelineQuery](
   override val includeInstruction: IncludeInstruction[Query] = AlwaysInclude)

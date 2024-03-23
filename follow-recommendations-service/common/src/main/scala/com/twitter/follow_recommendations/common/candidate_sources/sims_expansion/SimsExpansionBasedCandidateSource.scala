@@ -1,14 +1,14 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims_expansion
+package com.ExTwitter.follow_recommendations.common.candidate_sources.sims_expansion
 
-import com.twitter.follow_recommendations.common.candidate_sources.base.TwoHopExpansionCandidateSource
-import com.twitter.follow_recommendations.common.candidate_sources.sims.SwitchingSimsSource
-import com.twitter.follow_recommendations.common.models.AccountProof
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasSimilarToContext
-import com.twitter.follow_recommendations.common.models.Reason
-import com.twitter.follow_recommendations.common.models.SimilarToProof
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
+import com.ExTwitter.follow_recommendations.common.candidate_sources.base.TwoHopExpansionCandidateSource
+import com.ExTwitter.follow_recommendations.common.candidate_sources.sims.SwitchingSimsSource
+import com.ExTwitter.follow_recommendations.common.models.AccountProof
+import com.ExTwitter.follow_recommendations.common.models.CandidateUser
+import com.ExTwitter.follow_recommendations.common.models.HasSimilarToContext
+import com.ExTwitter.follow_recommendations.common.models.Reason
+import com.ExTwitter.follow_recommendations.common.models.SimilarToProof
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.timelines.configapi.HasParams
 import scala.math._
 
 case class SimilarUser(candidateId: Long, similarTo: Long, score: Double)

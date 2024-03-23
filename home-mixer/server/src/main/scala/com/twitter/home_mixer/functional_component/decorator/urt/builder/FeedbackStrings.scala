@@ -1,7 +1,7 @@
-package com.twitter.home_mixer.functional_component.decorator.urt.builder
+package com.ExTwitter.home_mixer.functional_component.decorator.urt.builder
 
-import com.twitter.product_mixer.core.product.guice.scope.ProductScoped
-import com.twitter.stringcenter.client.ExternalStringRegistry
+import com.ExTwitter.product_mixer.core.product.guice.scope.ProductScoped
+import com.ExTwitter.stringcenter.client.ExternalStringRegistry
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Singleton

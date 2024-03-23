@@ -1,49 +1,49 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.flexible_injection_pipeline
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.flexible_injection_pipeline
 
-import com.twitter.onboarding.injections.{thriftscala => onboardingthrift}
-import com.twitter.product_mixer.component_library.decorator.urt.builder.flexible_injection_pipeline.OnboardingInjectionConversions.convertImageVariant
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.Classic
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.BlackRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.ClearRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.DeepBlueRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.DeepGrayRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.DeepGreenRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.DeepOrangeRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.DeepPurpleRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.DeepRedRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.DeepYellowRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.FadedBlueRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.FadedGrayRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.FadedGreenRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.FadedOrangeRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.FadedPurpleRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.FadedRedRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.FadedYellowRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.FaintBlueRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.FaintGrayRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.LightBlueRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.LightGrayRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.LightGreenRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.LightOrangeRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.LightPurpleRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.LightRedRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.LightYellowRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.MediumGrayRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.MediumGreenRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.MediumOrangeRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.MediumPurpleRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.MediumRedRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.MediumYellowRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.RosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.TextBlackRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.TextBlueRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.TwitterBlueRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.WhiteRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tile.CallToActionTileContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tile.StandardTileContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tile.TileItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Badge
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleHeader
+import com.ExTwitter.onboarding.injections.{thriftscala => onboardingthrift}
+import com.ExTwitter.product_mixer.component_library.decorator.urt.builder.flexible_injection_pipeline.OnboardingInjectionConversions.convertImageVariant
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.timeline_module.Classic
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.color.BlackRosettaColor
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.color.ClearRosettaColor
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.color.DeepBlueRosettaColor
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.color.DeepGrayRosettaColor
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.color.DeepGreenRosettaColor
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.color.DeepOrangeRosettaColor
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.color.DeepPurpleRosettaColor
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.color.DeepRedRosettaColor
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.color.DeepYellowRosettaColor
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.color.FadedBlueRosettaColor
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.color.FadedGrayRosettaColor
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.color.FadedGreenRosettaColor
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.color.FadedOrangeRosettaColor
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.color.FadedPurpleRosettaColor
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.color.FadedRedRosettaColor
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.color.FadedYellowRosettaColor
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.color.FaintBlueRosettaColor
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.color.FaintGrayRosettaColor
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.color.LightBlueRosettaColor
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.color.LightGrayRosettaColor
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.color.LightGreenRosettaColor
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.color.LightOrangeRosettaColor
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.color.LightPurpleRosettaColor
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.color.LightRedRosettaColor
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.color.LightYellowRosettaColor
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.color.MediumGrayRosettaColor
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.color.MediumGreenRosettaColor
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.color.MediumOrangeRosettaColor
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.color.MediumPurpleRosettaColor
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.color.MediumRedRosettaColor
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.color.MediumYellowRosettaColor
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.color.RosettaColor
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.color.TextBlackRosettaColor
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.color.TextBlueRosettaColor
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.color.ExTwitterBlueRosettaColor
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.color.WhiteRosettaColor
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.tile.CallToActionTileContent
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.tile.StandardTileContent
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.tile.TileItem
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.Badge
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleHeader
 
 object TilesCarouselConversions {
   // Tiles Carousel Conversions
@@ -129,7 +129,7 @@ object TilesCarouselConversions {
       case onboardingthrift.RosettaColor.FadedGreen => FadedGreenRosettaColor
 
       case onboardingthrift.RosettaColor.DeepBlue => DeepBlueRosettaColor
-      case onboardingthrift.RosettaColor.TwitterBlue => TwitterBlueRosettaColor
+      case onboardingthrift.RosettaColor.ExTwitterBlue => ExTwitterBlueRosettaColor
       case onboardingthrift.RosettaColor.LightBlue => LightBlueRosettaColor
       case onboardingthrift.RosettaColor.FadedBlue => FadedBlueRosettaColor
       case onboardingthrift.RosettaColor.FaintBlue => FaintBlueRosettaColor

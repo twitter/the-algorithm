@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.component_library.decorator.urt
+package com.ExTwitter.product_mixer.component_library.decorator.urt
 
-import com.twitter.product_mixer.component_library.model.presentation.urt.UrtItemPresentation
-import com.twitter.product_mixer.component_library.model.presentation.urt.UrtModulePresentation
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.DecoratorIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.decorator.Decoration
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseTimelineModuleBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.stitch.Stitch
+import com.ExTwitter.product_mixer.component_library.model.presentation.urt.UrtItemPresentation
+import com.ExTwitter.product_mixer.component_library.model.presentation.urt.UrtModulePresentation
+import com.ExTwitter.product_mixer.core.model.common.UniversalNoun
+import com.ExTwitter.product_mixer.core.model.common.identifier.DecoratorIdentifier
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.core.functional_component.decorator.CandidateDecorator
+import com.ExTwitter.product_mixer.core.functional_component.decorator.Decoration
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseTimelineModuleBuilder
+import com.ExTwitter.product_mixer.core.model.common.CandidateWithFeatures
+import com.ExTwitter.stitch.Stitch
 
 /**
  * Decorator that will apply the provided [[urtItemCandidateDecorator]] to all the `candidates` and apply

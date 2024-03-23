@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.common.models
+package com.ExTwitter.follow_recommendations.common.models
 
 /**
  * Each candidate source algorithm could be based on one, or more, of the 4 general type of
  * information we have on a user:
- *   1. Social: the user's connections in Twitter's social graph.
+ *   1. Social: the user's connections in ExTwitter's social graph.
  *   2. Geo: the user's geographical information.
  *   3. Interest: information on the user's chosen interests.
  *   4. Activity: information on the user's past activity.

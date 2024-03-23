@@ -1,17 +1,17 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+package com.ExTwitter.home_mixer.functional_component.feature_hydrator
 
-import com.twitter.home_mixer.model.HomeFeatures.DismissInfoFeature
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.timelinemixer.clients.manhattan.InjectionHistoryClient
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelinemixer.clients.manhattan.DismissInfo
-import com.twitter.timelineservice.suggests.thriftscala.SuggestType
+import com.ExTwitter.home_mixer.model.HomeFeatures.DismissInfoFeature
+import com.ExTwitter.home_mixer.service.HomeMixerAlertConfig
+import com.ExTwitter.timelinemixer.clients.manhattan.InjectionHistoryClient
+import com.ExTwitter.product_mixer.core.feature.Feature
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
+import com.ExTwitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
+import com.ExTwitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.timelinemixer.clients.manhattan.DismissInfo
+import com.ExTwitter.timelineservice.suggests.thriftscala.SuggestType
 import javax.inject.Inject
 import javax.inject.Singleton
 

@@ -1,6 +1,6 @@
-package com.twitter.follow_recommendations.products.common
+package com.ExTwitter.follow_recommendations.products.common
 
-import com.twitter.follow_recommendations.common.models.DisplayLocation
+import com.ExTwitter.follow_recommendations.common.models.DisplayLocation
 
 trait ProductRegistry {
   def products: Seq[Product]

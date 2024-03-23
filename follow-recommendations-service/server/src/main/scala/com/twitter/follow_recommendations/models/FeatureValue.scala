@@ -1,7 +1,7 @@
-package com.twitter.follow_recommendations.models
+package com.ExTwitter.follow_recommendations.models
 
-import com.twitter.follow_recommendations.{thriftscala => t}
-import com.twitter.timelines.configapi._
+import com.ExTwitter.follow_recommendations.{thriftscala => t}
+import com.ExTwitter.timelines.configapi._
 
 object FeatureValue {
   def fromThrift(thriftFeatureValue: t.FeatureValue): FeatureValue = thriftFeatureValue match {

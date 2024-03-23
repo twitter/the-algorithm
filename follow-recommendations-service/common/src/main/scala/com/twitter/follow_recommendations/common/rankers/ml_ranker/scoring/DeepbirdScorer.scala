@@ -1,22 +1,22 @@
-package com.twitter.follow_recommendations.common.rankers.ml_ranker.scoring
+package com.ExTwitter.follow_recommendations.common.rankers.ml_ranker.scoring
 
-import com.twitter.cortex.deepbird.thriftjava.DeepbirdPredictionService
-import com.twitter.cortex.deepbird.thriftjava.ModelSelector
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasDebugOptions
-import com.twitter.follow_recommendations.common.models.HasDisplayLocation
-import com.twitter.follow_recommendations.common.models.Score
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.ml.prediction_service.{BatchPredictionRequest => JBatchPredictionRequest}
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.util.Future
-import com.twitter.util.TimeoutException
+import com.ExTwitter.cortex.deepbird.thriftjava.DeepbirdPredictionService
+import com.ExTwitter.cortex.deepbird.thriftjava.ModelSelector
+import com.ExTwitter.finagle.stats.Stat
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.follow_recommendations.common.models.CandidateUser
+import com.ExTwitter.follow_recommendations.common.models.HasDebugOptions
+import com.ExTwitter.follow_recommendations.common.models.HasDisplayLocation
+import com.ExTwitter.follow_recommendations.common.models.Score
+import com.ExTwitter.ml.api.DataRecord
+import com.ExTwitter.ml.api.Feature
+import com.ExTwitter.ml.api.RichDataRecord
+import com.ExTwitter.ml.prediction_service.{BatchPredictionRequest => JBatchPredictionRequest}
+import com.ExTwitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.timelines.configapi.HasParams
+import com.ExTwitter.util.Future
+import com.ExTwitter.util.TimeoutException
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
 

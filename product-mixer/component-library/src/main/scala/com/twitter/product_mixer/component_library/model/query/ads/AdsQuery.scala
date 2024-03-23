@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.component_library.model.query.ads
+package com.ExTwitter.product_mixer.component_library.model.query.ads
 
-import com.twitter.adserver.{thriftscala => ads}
-import com.twitter.dspbidder.commons.{thriftscala => dsp}
+import com.ExTwitter.adserver.{thriftscala => ads}
+import com.ExTwitter.dspbidder.commons.{thriftscala => dsp}
 
 /**
  * AdsQuery holds request-time fields required by our ads candidate pipelines

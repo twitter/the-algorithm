@@ -1,32 +1,32 @@
-package com.twitter.cr_mixer.module.similarity_engine
+package com.ExTwitter.cr_mixer.module.similarity_engine
 
 import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.model.TweetWithScore
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.similarity_engine.SimClustersANNSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.SimClustersANNSimilarityEngine.Query
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.GatingConfig
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.SimilarityEngineConfig
-import com.twitter.cr_mixer.similarity_engine.StandardSimilarityEngine
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.memcached.{Client => MemcachedClient}
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.hashing.KeyHasher
-import com.twitter.hermit.store.common.ObservedMemcachedReadableStore
-import com.twitter.hermit.store.common.ObservedReadableStore
-import com.twitter.inject.TwitterModule
-import com.twitter.relevance_platform.common.injection.LZ4Injection
-import com.twitter.relevance_platform.common.injection.SeqObjectInjection
-import com.twitter.simclusters_v2.candidate_source.SimClustersANNCandidateSource.CacheableShortTTLEmbeddingTypes
-import com.twitter.simclustersann.thriftscala.SimClustersANNService
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.cr_mixer.model.ModuleNames
+import com.ExTwitter.cr_mixer.model.TweetWithScore
+import com.ExTwitter.cr_mixer.config.TimeoutConfig
+import com.ExTwitter.cr_mixer.similarity_engine.SimClustersANNSimilarityEngine
+import com.ExTwitter.cr_mixer.similarity_engine.SimClustersANNSimilarityEngine.Query
+import com.ExTwitter.cr_mixer.similarity_engine.SimilarityEngine.GatingConfig
+import com.ExTwitter.cr_mixer.similarity_engine.SimilarityEngine.SimilarityEngineConfig
+import com.ExTwitter.cr_mixer.similarity_engine.StandardSimilarityEngine
+import com.ExTwitter.cr_mixer.thriftscala.SimilarityEngineType
+import com.ExTwitter.finagle.memcached.{Client => MemcachedClient}
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.hashing.KeyHasher
+import com.ExTwitter.hermit.store.common.ObservedMemcachedReadableStore
+import com.ExTwitter.hermit.store.common.ObservedReadableStore
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.relevance_platform.common.injection.LZ4Injection
+import com.ExTwitter.relevance_platform.common.injection.SeqObjectInjection
+import com.ExTwitter.simclusters_v2.candidate_source.SimClustersANNCandidateSource.CacheableShortTTLEmbeddingTypes
+import com.ExTwitter.simclustersann.thriftscala.SimClustersANNService
+import com.ExTwitter.storehaus.ReadableStore
+import com.ExTwitter.util.Future
 import javax.inject.Named
 import javax.inject.Singleton
 
-object SimClustersANNSimilarityEngineModule extends TwitterModule {
+object SimClustersANNSimilarityEngineModule extends ExTwitterModule {
 
   private val keyHasher: KeyHasher = KeyHasher.FNV1A_64
 

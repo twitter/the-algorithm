@@ -1,27 +1,27 @@
-package com.twitter.follow_recommendations.common.clients.socialgraph
+package com.ExTwitter.follow_recommendations.common.clients.socialgraph
 
-import com.twitter.escherbird.util.stitchcache.StitchCache
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.StatsUtil
-import com.twitter.follow_recommendations.common.models.FollowProof
-import com.twitter.follow_recommendations.common.models.UserIdWithTimestamp
-import com.twitter.inject.Logging
-import com.twitter.socialgraph.thriftscala.EdgesRequest
-import com.twitter.socialgraph.thriftscala.IdsRequest
-import com.twitter.socialgraph.thriftscala.IdsResult
-import com.twitter.socialgraph.thriftscala.LookupContext
-import com.twitter.socialgraph.thriftscala.OverCapacity
-import com.twitter.socialgraph.thriftscala.PageRequest
-import com.twitter.socialgraph.thriftscala.RelationshipType
-import com.twitter.socialgraph.thriftscala.SrcRelationship
-import com.twitter.socialgraph.util.ByteBufferUtil
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.socialgraph.SocialGraph
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.generated.client.onboarding.socialGraphService.IdsClientColumn
-import com.twitter.util.Duration
-import com.twitter.util.Time
+import com.ExTwitter.escherbird.util.stitchcache.StitchCache
+import com.ExTwitter.finagle.stats.NullStatsReceiver
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.follow_recommendations.common.base.StatsUtil
+import com.ExTwitter.follow_recommendations.common.models.FollowProof
+import com.ExTwitter.follow_recommendations.common.models.UserIdWithTimestamp
+import com.ExTwitter.inject.Logging
+import com.ExTwitter.socialgraph.thriftscala.EdgesRequest
+import com.ExTwitter.socialgraph.thriftscala.IdsRequest
+import com.ExTwitter.socialgraph.thriftscala.IdsResult
+import com.ExTwitter.socialgraph.thriftscala.LookupContext
+import com.ExTwitter.socialgraph.thriftscala.OverCapacity
+import com.ExTwitter.socialgraph.thriftscala.PageRequest
+import com.ExTwitter.socialgraph.thriftscala.RelationshipType
+import com.ExTwitter.socialgraph.thriftscala.SrcRelationship
+import com.ExTwitter.socialgraph.util.ByteBufferUtil
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.stitch.socialgraph.SocialGraph
+import com.ExTwitter.strato.client.Fetcher
+import com.ExTwitter.strato.generated.client.onboarding.socialGraphService.IdsClientColumn
+import com.ExTwitter.util.Duration
+import com.ExTwitter.util.Time
 import java.nio.ByteBuffer
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -384,7 +384,7 @@ object SocialGraphClient {
 
   val MaxQuerySize: Int = 500
   val MaxCacheSize: Int = 5000000
-  // Ref: src/thrift/com/twitter/socialgraph/social_graph_service.thrift
+  // Ref: src/thrift/com/ExTwitter/socialgraph/social_graph_service.thrift
   val MaxNumInvalidRelationship: Int = 5000
   val CacheTTL: Duration = Duration.fromHours(24)
 

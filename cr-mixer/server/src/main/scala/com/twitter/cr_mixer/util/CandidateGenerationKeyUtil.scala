@@ -1,13 +1,13 @@
-package com.twitter.cr_mixer.util
+package com.ExTwitter.cr_mixer.util
 
-import com.twitter.cr_mixer.model.CandidateGenerationInfo
-import com.twitter.cr_mixer.model.SourceInfo
-import com.twitter.cr_mixer.thriftscala.CandidateGenerationKey
-import com.twitter.cr_mixer.thriftscala.SimilarityEngine
-import com.twitter.cr_mixer.thriftscala.SourceType
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.util.Time
+import com.ExTwitter.cr_mixer.model.CandidateGenerationInfo
+import com.ExTwitter.cr_mixer.model.SourceInfo
+import com.ExTwitter.cr_mixer.thriftscala.CandidateGenerationKey
+import com.ExTwitter.cr_mixer.thriftscala.SimilarityEngine
+import com.ExTwitter.cr_mixer.thriftscala.SourceType
+import com.ExTwitter.simclusters_v2.common.UserId
+import com.ExTwitter.simclusters_v2.thriftscala.InternalId
+import com.ExTwitter.util.Time
 
 object CandidateGenerationKeyUtil {
   private val PlaceholderUserId = 0L // this default value will not be used

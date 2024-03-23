@@ -1,6 +1,6 @@
-package com.twitter.follow_recommendations.products.sidebar.configapi
+package com.ExTwitter.follow_recommendations.products.sidebar.configapi
 
-import com.twitter.timelines.configapi.Param
+import com.ExTwitter.timelines.configapi.Param
 
 object SidebarParams {
   object EnableProduct extends Param[Boolean](false)

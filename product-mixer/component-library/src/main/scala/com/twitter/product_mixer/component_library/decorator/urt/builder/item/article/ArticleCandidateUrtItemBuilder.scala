@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.article
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.article
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.article.ArticleCandidateUrtItemBuilder.ArticleClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.BaseArticleCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseSocialContextBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.article.ArticleDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.article.ArticleItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.article.ArticleSeedType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.article.FollowingListSeed
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.article.ArticleCandidateUrtItemBuilder.ArticleClientEventInfoElement
+import com.ExTwitter.product_mixer.component_library.model.candidate.BaseArticleCandidate
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseSocialContextBuilder
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.article.ArticleDisplayType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.article.ArticleItem
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.article.ArticleSeedType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.article.FollowingListSeed
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
 
 object ArticleCandidateUrtItemBuilder {
   val ArticleClientEventInfoElement: String = "article"

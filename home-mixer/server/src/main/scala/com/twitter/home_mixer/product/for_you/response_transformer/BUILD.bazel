@@ -5,9 +5,9 @@ scala_library(
     tags = ["bazel-compatible"],
     dependencies = [
         "3rdparty/jvm/javax/inject:javax.inject",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/model",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline/candidate",
-        "src/java/com/twitter/search/common/schema/earlybird",
-        "src/thrift/com/twitter/search:earlybird-scala",
+        "home-mixer/server/src/main/scala/com/ExTwitter/home_mixer/model",
+        "product-mixer/core/src/main/scala/com/ExTwitter/product_mixer/core/pipeline/candidate",
+        "src/java/com/ExTwitter/search/common/schema/earlybird",
+        "src/thrift/com/ExTwitter/search:earlybird-scala",
     ],
 )

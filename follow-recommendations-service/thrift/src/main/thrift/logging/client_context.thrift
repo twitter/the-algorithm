@@ -1,6 +1,6 @@
-namespace java com.twitter.follow_recommendations.logging.thriftjava
-#@namespace scala com.twitter.follow_recommendations.logging.thriftscala
-#@namespace strato com.twitter.follow_recommendations.logging
+namespace java com.ExTwitter.follow_recommendations.logging.thriftjava
+#@namespace scala com.ExTwitter.follow_recommendations.logging.thriftscala
+#@namespace strato com.ExTwitter.follow_recommendations.logging
 
 // Offline equal of ClientContext
 struct OfflineClientContext {

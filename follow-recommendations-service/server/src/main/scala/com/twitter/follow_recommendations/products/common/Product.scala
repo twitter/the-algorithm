@@ -1,14 +1,14 @@
-package com.twitter.follow_recommendations.products.common
+package com.ExTwitter.follow_recommendations.products.common
 
-import com.twitter.follow_recommendations.assembler.models.Layout
-import com.twitter.follow_recommendations.common.base.BaseRecommendationFlow
-import com.twitter.follow_recommendations.common.base.Transform
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.follow_recommendations.common.models.Recommendation
-import com.twitter.follow_recommendations.models.RecommendationRequest
-import com.twitter.product_mixer.core.model.marshalling.request.{Product => ProductMixerProduct}
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Params
+import com.ExTwitter.follow_recommendations.assembler.models.Layout
+import com.ExTwitter.follow_recommendations.common.base.BaseRecommendationFlow
+import com.ExTwitter.follow_recommendations.common.base.Transform
+import com.ExTwitter.follow_recommendations.common.models.DisplayLocation
+import com.ExTwitter.follow_recommendations.common.models.Recommendation
+import com.ExTwitter.follow_recommendations.models.RecommendationRequest
+import com.ExTwitter.product_mixer.core.model.marshalling.request.{Product => ProductMixerProduct}
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.timelines.configapi.Params
 
 trait Product {
 

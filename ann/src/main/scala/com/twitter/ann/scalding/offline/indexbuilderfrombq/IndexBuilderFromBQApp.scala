@@ -1,30 +1,30 @@
-package com.twitter.ann.scalding.offline.indexbuilderfrombq
+package com.ExTwitter.ann.scalding.offline.indexbuilderfrombq
 
 import com.google.auth.oauth2.ServiceAccountCredentials
 import com.google.cloud.bigquery.BigQueryOptions
 import com.google.cloud.bigquery.QueryJobConfiguration
-import com.twitter.ann.annoy.TypedAnnoyIndex
-import com.twitter.ann.brute_force.SerializableBruteForceIndex
-import com.twitter.ann.common.Distance
-import com.twitter.ann.common.Metric
-import com.twitter.ann.common.ReadWriteFuturePool
-import com.twitter.ann.hnsw.TypedHnswIndex
-import com.twitter.ann.serialization.PersistedEmbeddingInjection
-import com.twitter.ann.serialization.ThriftIteratorIO
-import com.twitter.ann.serialization.thriftscala.PersistedEmbedding
-import com.twitter.cortex.ml.embeddings.common._
-import com.twitter.ml.api.embedding.Embedding
-import com.twitter.ml.featurestore.lib._
-import com.twitter.ml.featurestore.lib.embedding.EmbeddingWithEntity
-import com.twitter.scalding.Args
-import com.twitter.scalding.Execution
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding_internal.bigquery.BigQueryConfig
-import com.twitter.scalding_internal.bigquery.BigQuerySource
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.search.common.file.FileUtils
-import com.twitter.util.FuturePool
+import com.ExTwitter.ann.annoy.TypedAnnoyIndex
+import com.ExTwitter.ann.brute_force.SerializableBruteForceIndex
+import com.ExTwitter.ann.common.Distance
+import com.ExTwitter.ann.common.Metric
+import com.ExTwitter.ann.common.ReadWriteFuturePool
+import com.ExTwitter.ann.hnsw.TypedHnswIndex
+import com.ExTwitter.ann.serialization.PersistedEmbeddingInjection
+import com.ExTwitter.ann.serialization.ThriftIteratorIO
+import com.ExTwitter.ann.serialization.thriftscala.PersistedEmbedding
+import com.ExTwitter.cortex.ml.embeddings.common._
+import com.ExTwitter.ml.api.embedding.Embedding
+import com.ExTwitter.ml.featurestore.lib._
+import com.ExTwitter.ml.featurestore.lib.embedding.EmbeddingWithEntity
+import com.ExTwitter.scalding.Args
+import com.ExTwitter.scalding.Execution
+import com.ExTwitter.scalding.typed.TypedPipe
+import com.ExTwitter.scalding_internal.bigquery.BigQueryConfig
+import com.ExTwitter.scalding_internal.bigquery.BigQuerySource
+import com.ExTwitter.scalding_internal.job.ExTwitterExecutionApp
+import com.ExTwitter.scalding_internal.multiformat.format.keyval.KeyVal
+import com.ExTwitter.search.common.file.FileUtils
+import com.ExTwitter.util.FuturePool
 import java.io.FileInputStream
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -42,7 +42,7 @@ import scala.collection.JavaConverters._
  *
  * Command for running the app (from source repo root):
  * scalding remote run \
- *   --target ann/src/main/scala/com/twitter/ann/scalding/offline/indexbuilderfrombq:ann-index-builder-binary
+ *   --target ann/src/main/scala/com/ExTwitter/ann/scalding/offline/indexbuilderfrombq:ann-index-builder-binary
  */
 trait IndexBuilderFromBQExecutable {
   // This method is used to cast the entityKind and the metric to have parameters.
@@ -185,9 +185,9 @@ trait IndexBuilderFromBQExecutable {
 
 /*
 scalding remote run \
---target ann/src/main/scala/com/twitter/ann/scalding/offline/indexbuilderfrombq:ann-index-builder-binary
+--target ann/src/main/scala/com/ExTwitter/ann/scalding/offline/indexbuilderfrombq:ann-index-builder-binary
  */
-object IndexBuilderFromBQApp extends TwitterExecutionApp with IndexBuilderFromBQExecutable {
+object IndexBuilderFromBQApp extends ExTwitterExecutionApp with IndexBuilderFromBQExecutable {
   override def job: Execution[Unit] = Execution.getArgs.flatMap { args: Args =>
     indexBuilderExecution(args)
   }

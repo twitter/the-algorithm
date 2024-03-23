@@ -1,10 +1,10 @@
-package com.twitter.cr_mixer.param.decider
+package com.ExTwitter.cr_mixer.param.decider
 
-import com.twitter.decider.Decider
-import com.twitter.decider.RandomRecipient
-import com.twitter.decider.Recipient
-import com.twitter.decider.SimpleRecipient
-import com.twitter.simclusters_v2.common.DeciderGateBuilderWithIdHashing
+import com.ExTwitter.decider.Decider
+import com.ExTwitter.decider.RandomRecipient
+import com.ExTwitter.decider.Recipient
+import com.ExTwitter.decider.SimpleRecipient
+import com.ExTwitter.simclusters_v2.common.DeciderGateBuilderWithIdHashing
 import javax.inject.Inject
 
 case class CrMixerDecider @Inject() (decider: Decider) {

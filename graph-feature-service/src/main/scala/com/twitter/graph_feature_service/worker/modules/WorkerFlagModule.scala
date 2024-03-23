@@ -1,6 +1,6 @@
-package com.twitter.graph_feature_service.worker.modules
+package com.ExTwitter.graph_feature_service.worker.modules
 
-import com.twitter.inject.TwitterModule
+import com.ExTwitter.inject.ExTwitterModule
 
 object WorkerFlagNames {
   final val ServiceRole = "service.role"
@@ -15,7 +15,7 @@ object WorkerFlagNames {
  * Initializes references to the flag values defined in the aurora.deploy file.
  * To check what the flag values are initialized in runtime, search FlagsModule in stdout
  */
-object WorkerFlagModule extends TwitterModule {
+object WorkerFlagModule extends ExTwitterModule {
 
   import WorkerFlagNames._
 

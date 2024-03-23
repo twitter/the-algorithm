@@ -1,14 +1,14 @@
-package com.twitter.follow_recommendations.common.models
+package com.ExTwitter.follow_recommendations.common.models
 
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
-import com.twitter.follow_recommendations.{thriftscala => t}
-import com.twitter.hermit.constants.AlgorithmFeedbackTokens
-import com.twitter.ml.api.thriftscala.{DataRecord => TDataRecord}
-import com.twitter.ml.api.util.ScalaToJavaDataRecordConversions
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.timelines.configapi.Params
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.follow_recommendations.logging.{thriftscala => offline}
+import com.ExTwitter.follow_recommendations.{thriftscala => t}
+import com.ExTwitter.hermit.constants.AlgorithmFeedbackTokens
+import com.ExTwitter.ml.api.thriftscala.{DataRecord => TDataRecord}
+import com.ExTwitter.ml.api.util.ScalaToJavaDataRecordConversions
+import com.ExTwitter.timelines.configapi.HasParams
+import com.ExTwitter.timelines.configapi.Params
+import com.ExTwitter.product_mixer.core.model.common.UniversalNoun
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
 
 trait FollowableEntity extends UniversalNoun[Long]
 

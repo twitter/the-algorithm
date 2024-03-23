@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.richtext
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.richtext
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ExternalUrl
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.UrlType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextAlignment
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextEntity
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Strong
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.ExternalUrl
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.UrlType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextAlignment
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextEntity
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.richtext.Strong
 
 /*
  * RichTextMarkupUtil facilitates building a Product Mixer URT RichText object out of

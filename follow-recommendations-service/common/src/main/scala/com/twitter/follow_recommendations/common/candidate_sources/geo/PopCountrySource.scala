@@ -1,18 +1,18 @@
-package com.twitter.follow_recommendations.common.candidate_sources.geo
+package com.ExTwitter.follow_recommendations.common.candidate_sources.geo
 
 import com.google.inject.Singleton
-import com.twitter.core_workflows.user_model.thriftscala.UserState
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasGeohashAndCountryCode
-import com.twitter.follow_recommendations.common.models.HasUserState
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
+import com.ExTwitter.core_workflows.user_model.thriftscala.UserState
+import com.ExTwitter.finagle.stats.Counter
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.follow_recommendations.common.models.CandidateUser
+import com.ExTwitter.follow_recommendations.common.models.HasGeohashAndCountryCode
+import com.ExTwitter.follow_recommendations.common.models.HasUserState
+import com.ExTwitter.hermit.model.Algorithm
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidateSource
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.timelines.configapi.HasParams
 import javax.inject.Inject
 
 @Singleton

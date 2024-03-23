@@ -5,8 +5,8 @@ scala_library(
     tags = ["bazel-compatible"],
     dependencies = [
         "3rdparty/jvm/javax/inject:javax.inject",
-        "configapi/configapi-core/src/main/scala/com/twitter/timelines/configapi",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/param/decider",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/product",
+        "configapi/configapi-core/src/main/scala/com/ExTwitter/timelines/configapi",
+        "home-mixer/server/src/main/scala/com/ExTwitter/home_mixer/param/decider",
+        "product-mixer/core/src/main/scala/com/ExTwitter/product_mixer/core/product",
     ],
 )

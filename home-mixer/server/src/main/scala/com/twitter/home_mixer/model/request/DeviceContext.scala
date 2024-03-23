@@ -1,7 +1,7 @@
-package com.twitter.home_mixer.model.request
+package com.ExTwitter.home_mixer.model.request
 
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
-import com.twitter.{timelineservice => tls}
+import com.ExTwitter.product_mixer.core.model.marshalling.request.ClientContext
+import com.ExTwitter.{timelineservice => tls}
 
 case class DeviceContext(
   isPolling: Option[Boolean],

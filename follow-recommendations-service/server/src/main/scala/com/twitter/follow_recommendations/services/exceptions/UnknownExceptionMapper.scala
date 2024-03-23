@@ -1,8 +1,8 @@
-package com.twitter.follow_recommendations.service.exceptions
+package com.ExTwitter.follow_recommendations.service.exceptions
 
-import com.twitter.finatra.thrift.exceptions.ExceptionMapper
-import com.twitter.inject.Logging
-import com.twitter.util.Future
+import com.ExTwitter.finatra.thrift.exceptions.ExceptionMapper
+import com.ExTwitter.inject.Logging
+import com.ExTwitter.util.Future
 import javax.inject.Singleton
 
 @Singleton

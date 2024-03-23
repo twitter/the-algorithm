@@ -1,4 +1,4 @@
-package com.twitter.follow_recommendations.common.rankers.common
+package com.ExTwitter.follow_recommendations.common.rankers.common
 
 /**
  * To manage the extent of adhoc score modifications, we set a hard limit that from each of the

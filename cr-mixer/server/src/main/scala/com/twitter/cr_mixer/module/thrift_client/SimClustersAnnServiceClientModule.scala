@@ -1,20 +1,20 @@
-package com.twitter.cr_mixer.module.thrift_client
+package com.ExTwitter.cr_mixer.module.thrift_client
 
 import com.google.inject.Provides
-import com.twitter.conversions.PercentOps._
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.inject.TwitterModule
-import com.twitter.simclustersann.{thriftscala => t}
+import com.ExTwitter.conversions.PercentOps._
+import com.ExTwitter.cr_mixer.model.ModuleNames
+import com.ExTwitter.cr_mixer.config.TimeoutConfig
+import com.ExTwitter.finagle.ThriftMux
+import com.ExTwitter.finagle.mtls.authentication.ServiceIdentifier
+import com.ExTwitter.finagle.mtls.client.MtlsStackClient._
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.finagle.thrift.ClientId
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.simclustersann.{thriftscala => t}
 import javax.inject.Named
 import javax.inject.Singleton
 
-object SimClustersAnnServiceClientModule extends TwitterModule {
+object SimClustersAnnServiceClientModule extends ExTwitterModule {
 
   @Provides
   @Singleton

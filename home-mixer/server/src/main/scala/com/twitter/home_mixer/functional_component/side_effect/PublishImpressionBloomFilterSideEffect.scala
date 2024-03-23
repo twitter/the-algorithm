@@ -1,17 +1,17 @@
-package com.twitter.home_mixer.functional_component.side_effect
+package com.ExTwitter.home_mixer.functional_component.side_effect
 
-import com.twitter.home_mixer.model.HomeFeatures.ImpressionBloomFilterFeature
-import com.twitter.home_mixer.model.request.HasSeenTweetIds
-import com.twitter.home_mixer.param.HomeGlobalParams.EnableImpressionBloomFilter
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.common.identifier.SideEffectIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.clients.manhattan.store.ManhattanStoreClient
-import com.twitter.timelines.impressionbloomfilter.{thriftscala => blm}
+import com.ExTwitter.home_mixer.model.HomeFeatures.ImpressionBloomFilterFeature
+import com.ExTwitter.home_mixer.model.request.HasSeenTweetIds
+import com.ExTwitter.home_mixer.param.HomeGlobalParams.EnableImpressionBloomFilter
+import com.ExTwitter.home_mixer.service.HomeMixerAlertConfig
+import com.ExTwitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
+import com.ExTwitter.product_mixer.core.model.common.identifier.SideEffectIdentifier
+import com.ExTwitter.product_mixer.core.model.common.presentation.CandidateWithDetails
+import com.ExTwitter.product_mixer.core.model.marshalling.HasMarshalling
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.timelines.clients.manhattan.store.ManhattanStoreClient
+import com.ExTwitter.timelines.impressionbloomfilter.{thriftscala => blm}
 import javax.inject.Inject
 import javax.inject.Singleton
 

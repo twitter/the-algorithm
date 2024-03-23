@@ -1,40 +1,40 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+package com.ExTwitter.home_mixer.functional_component.feature_hydrator
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.ExclusiveConversationAuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.InNetworkFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsHydratedFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsNsfwFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.QuotedTweetDroppedFeature
-import com.twitter.home_mixer.model.HomeFeatures.QuotedTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.QuotedUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.TweetLanguageFeature
-import com.twitter.home_mixer.model.HomeFeatures.TweetTextFeature
-import com.twitter.home_mixer.model.request.FollowingProduct
-import com.twitter.home_mixer.model.request.ForYouProduct
-import com.twitter.home_mixer.model.request.ListTweetsProduct
-import com.twitter.home_mixer.model.request.ScoredTweetsProduct
-import com.twitter.home_mixer.model.request.SubscribedProduct
-import com.twitter.home_mixer.util.tweetypie.RequestFields
-import com.twitter.product_mixer.component_library.feature_hydrator.candidate.tweet_is_nsfw.IsNsfw
-import com.twitter.product_mixer.component_library.feature_hydrator.candidate.tweet_visibility_reason.VisibilityReason
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.spam.rtf.{thriftscala => rtf}
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.tweetypie.{TweetyPie => TweetypieStitchClient}
-import com.twitter.tweetypie.{thriftscala => tp}
-import com.twitter.util.logging.Logging
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.home_mixer.model.HomeFeatures.AuthorIdFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.ExclusiveConversationAuthorIdFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.InNetworkFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.InReplyToTweetIdFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.IsHydratedFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.IsNsfwFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.IsRetweetFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.QuotedTweetDroppedFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.QuotedTweetIdFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.QuotedUserIdFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.SourceTweetIdFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.SourceUserIdFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.TweetLanguageFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.TweetTextFeature
+import com.ExTwitter.home_mixer.model.request.FollowingProduct
+import com.ExTwitter.home_mixer.model.request.ForYouProduct
+import com.ExTwitter.home_mixer.model.request.ListTweetsProduct
+import com.ExTwitter.home_mixer.model.request.ScoredTweetsProduct
+import com.ExTwitter.home_mixer.model.request.SubscribedProduct
+import com.ExTwitter.home_mixer.util.tweetypie.RequestFields
+import com.ExTwitter.product_mixer.component_library.feature_hydrator.candidate.tweet_is_nsfw.IsNsfw
+import com.ExTwitter.product_mixer.component_library.feature_hydrator.candidate.tweet_visibility_reason.VisibilityReason
+import com.ExTwitter.product_mixer.component_library.model.candidate.TweetCandidate
+import com.ExTwitter.product_mixer.core.feature.Feature
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
+import com.ExTwitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator
+import com.ExTwitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.spam.rtf.{thriftscala => rtf}
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.stitch.tweetypie.{TweetyPie => TweetypieStitchClient}
+import com.ExTwitter.tweetypie.{thriftscala => tp}
+import com.ExTwitter.util.logging.Logging
 import javax.inject.Inject
 import javax.inject.Singleton
 

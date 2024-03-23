@@ -6,6 +6,6 @@ scala_library(
     tags = ["bazel-compatible"],
     dependencies = [
         "3rdparty/jvm/com/github/scopt",
-        "util/util-core/src/main/java/com/twitter/io",
+        "util/util-core/src/main/java/com/ExTwitter/io",
     ],
 )

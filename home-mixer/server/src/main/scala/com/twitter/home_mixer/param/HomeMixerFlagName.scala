@@ -1,4 +1,4 @@
-package com.twitter.home_mixer.param
+package com.ExTwitter.home_mixer.param
 
 object HomeMixerFlagName {
   final val ScribeClientEventsFlag = "scribe.client_events"

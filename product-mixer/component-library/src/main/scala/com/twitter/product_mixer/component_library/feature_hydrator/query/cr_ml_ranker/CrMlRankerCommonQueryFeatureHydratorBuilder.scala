@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.component_library.feature_hydrator.query.cr_ml_ranker
+package com.ExTwitter.product_mixer.component_library.feature_hydrator.query.cr_ml_ranker
 
-import com.twitter.cr_ml_ranker.{thriftscala => t}
+import com.ExTwitter.cr_ml_ranker.{thriftscala => t}
 import javax.inject.Inject
 import javax.inject.Singleton
 

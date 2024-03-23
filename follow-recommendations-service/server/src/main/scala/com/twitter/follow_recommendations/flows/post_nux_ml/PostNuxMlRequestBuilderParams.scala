@@ -1,11 +1,11 @@
-package com.twitter.follow_recommendations.flows.post_nux_ml
+package com.ExTwitter.follow_recommendations.flows.post_nux_ml
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.util.Duration
-import com.twitter.conversions.DurationOps._
-import com.twitter.timelines.configapi.DurationConversion
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.HasDurationConversion
+import com.ExTwitter.timelines.configapi.FSBoundedParam
+import com.ExTwitter.util.Duration
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.timelines.configapi.DurationConversion
+import com.ExTwitter.timelines.configapi.FSParam
+import com.ExTwitter.timelines.configapi.HasDurationConversion
 
 object PostNuxMlRequestBuilderParams {
   case object TopicIdFetchBudget

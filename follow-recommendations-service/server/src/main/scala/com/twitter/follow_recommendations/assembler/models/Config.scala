@@ -1,6 +1,6 @@
-package com.twitter.follow_recommendations.assembler.models
+package com.ExTwitter.follow_recommendations.assembler.models
 
-import com.twitter.stringcenter.client.core.ExternalString
+import com.ExTwitter.stringcenter.client.core.ExternalString
 
 case class HeaderConfig(title: TitleConfig)
 case class TitleConfig(text: ExternalString)

@@ -1,15 +1,15 @@
-package com.twitter.ann.hnsw
+package com.ExTwitter.ann.hnsw
 
-import com.twitter.ann.common._
-import com.twitter.bijection.Injection
-import com.twitter.search.common.file.AbstractFile
+import com.ExTwitter.ann.common._
+import com.ExTwitter.bijection.Injection
+import com.ExTwitter.search.common.file.AbstractFile
 
 // Class to provide HNSW based approximate nearest neighbour index
 object TypedHnswIndex {
 
   /**
    * Creates in-memory HNSW based index which supports querying/addition/updates of the entity embeddings.
-   * See https://docbird.twitter.biz/ann/hnsw.html to check information about arguments.
+   * See https://docbird.ExTwitter.biz/ann/hnsw.html to check information about arguments.
    *
    * @param dimension Dimension of the embedding to be indexed
    * @param metric Distance metric (InnerProduct/Cosine/L2)
@@ -55,7 +55,7 @@ object TypedHnswIndex {
   /**
    * Creates in-memory HNSW based index which supports querying/addition/updates of the entity embeddings.
    * It can be serialized to a directory (HDFS/Local file system)
-   * See https://docbird.twitter.biz/ann/hnsw.html to check information about arguments.
+   * See https://docbird.ExTwitter.biz/ann/hnsw.html to check information about arguments.
    *
    * @param dimension Dimension of the embedding to be indexed
    * @param metric Distance metric (InnerProduct/Cosine/L2)

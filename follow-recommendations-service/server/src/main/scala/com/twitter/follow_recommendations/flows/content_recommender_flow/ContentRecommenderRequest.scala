@@ -1,21 +1,21 @@
-package com.twitter.follow_recommendations.flows.content_recommender_flow
+package com.ExTwitter.follow_recommendations.flows.content_recommender_flow
 
-import com.twitter.core_workflows.user_model.thriftscala.UserState
-import com.twitter.follow_recommendations.common.models.DebugOptions
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.follow_recommendations.common.models.GeohashAndCountryCode
-import com.twitter.follow_recommendations.common.models.HasDebugOptions
-import com.twitter.follow_recommendations.common.models.HasDisplayLocation
-import com.twitter.follow_recommendations.common.models.HasExcludedUserIds
-import com.twitter.follow_recommendations.common.models.HasGeohashAndCountryCode
-import com.twitter.follow_recommendations.common.models.HasInvalidRelationshipUserIds
-import com.twitter.follow_recommendations.common.models.HasRecentFollowedByUserIds
-import com.twitter.follow_recommendations.common.models.HasRecentFollowedUserIds
-import com.twitter.follow_recommendations.common.models.HasUserState
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.timelines.configapi.Params
+import com.ExTwitter.core_workflows.user_model.thriftscala.UserState
+import com.ExTwitter.follow_recommendations.common.models.DebugOptions
+import com.ExTwitter.follow_recommendations.common.models.DisplayLocation
+import com.ExTwitter.follow_recommendations.common.models.GeohashAndCountryCode
+import com.ExTwitter.follow_recommendations.common.models.HasDebugOptions
+import com.ExTwitter.follow_recommendations.common.models.HasDisplayLocation
+import com.ExTwitter.follow_recommendations.common.models.HasExcludedUserIds
+import com.ExTwitter.follow_recommendations.common.models.HasGeohashAndCountryCode
+import com.ExTwitter.follow_recommendations.common.models.HasInvalidRelationshipUserIds
+import com.ExTwitter.follow_recommendations.common.models.HasRecentFollowedByUserIds
+import com.ExTwitter.follow_recommendations.common.models.HasRecentFollowedUserIds
+import com.ExTwitter.follow_recommendations.common.models.HasUserState
+import com.ExTwitter.product_mixer.core.model.marshalling.request.ClientContext
+import com.ExTwitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.ExTwitter.timelines.configapi.HasParams
+import com.ExTwitter.timelines.configapi.Params
 
 case class ContentRecommenderRequest(
   override val params: Params,

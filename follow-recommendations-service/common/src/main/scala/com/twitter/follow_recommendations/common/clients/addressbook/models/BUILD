@@ -4,7 +4,7 @@ scala_library(
     platform = "java8",
     tags = ["bazel-compatible"],
     dependencies = [
-        "addressbook/thrift/src/thrift/com/twitter/addressbook:thrift-scala",
-        "addressbook/thrift/src/thrift/com/twitter/addressbook/datatypes:thrift-scala",
+        "addressbook/thrift/src/thrift/com/ExTwitter/addressbook:thrift-scala",
+        "addressbook/thrift/src/thrift/com/ExTwitter/addressbook/datatypes:thrift-scala",
     ],
 )

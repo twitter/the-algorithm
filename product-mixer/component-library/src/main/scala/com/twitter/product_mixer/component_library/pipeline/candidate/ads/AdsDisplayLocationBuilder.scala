@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.ads
+package com.ExTwitter.product_mixer.component_library.pipeline.candidate.ads
 
-import com.twitter.adserver.{thriftscala => ads}
-import com.twitter.product_mixer.component_library.model.query.ads.AdsQuery
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.adserver.{thriftscala => ads}
+import com.ExTwitter.product_mixer.component_library.model.query.ads.AdsQuery
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
 
 trait AdsDisplayLocationBuilder[-Query <: PipelineQuery with AdsQuery] {
 

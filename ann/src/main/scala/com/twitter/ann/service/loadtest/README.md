@@ -131,7 +131,7 @@ Sample queries can be generated from the embeddings dataset and can be used dire
 To generate sample queries `EmbeddingSamplingJob` can be used as follows.
 
 ```bash
-$ ./bazel bundle cortex-core/entity-embeddings/src/scala/main/com/twitter/scalding/util/EmbeddingFormat:embeddingformat-deploy
+$ ./bazel bundle cortex-core/entity-embeddings/src/scala/main/com/ExTwitter/scalding/util/EmbeddingFormat:embeddingformat-deploy
 
 $ export INPUT_PATH=/user/cortex/embeddings/user/tfwproducersg/embedding_datarecords_on_data/2018/05/01
 $ export ENTITY_KIND=user
@@ -145,8 +145,8 @@ $ oscar hdfs \
     --hadoop-properties "yarn.app.mapreduce.am.resource.mb=6000;yarn.app.mapreduce.am.command-opts='-Xmx7500m';mapreduce.map.memory.mb=7500;mapreduce.reduce.java.opts='-Xmx6000m';mapreduce.reduce.memory.mb=7500;mapred.task.timeout=36000000;" \
     --min-split-size 284217728 \
     --bundle embeddingformat-deploy \
-    --host hadoopnest1.smf1.twitter.com \
-    --tool com.twitter.scalding.entityembeddings.util.EmbeddingFormat.EmbeddingSamplingJob -- \
+    --host hadoopnest1.smf1.ExTwitter.com \
+    --tool com.ExTwitter.scalding.entityembeddings.util.EmbeddingFormat.EmbeddingSamplingJob -- \
     --entity_kind $ENTITY_KIND \
     --input.embedding_path $INPUT_PATH \
     --input.embedding_format $EMBEDDING_INPUT_FORMAT \
@@ -170,7 +170,7 @@ And also you need to figure out the dimension for your embedding vectors.
 KnnTruthSetGenerator can help to prepare data sets:
 
 ```bash
-$ ./bazel bundle ann/src/main/scala/com/twitter/ann/scalding/offline:ann-offline-deploy
+$ ./bazel bundle ann/src/main/scala/com/ExTwitter/ann/scalding/offline:ann-offline-deploy
 
 $ export QUERY_EMBEDDINGS_PATH=/user/cortex-mlx/official_examples/ann/non_pii_random_user_embeddings_tab_format
 $ export INDEX_EMBEDDINGS_PATH=/user/cortex-mlx/official_examples/ann/non_pii_random_user_embeddings_tab_format
@@ -188,8 +188,8 @@ $ oscar hdfs \
   --hadoop-properties "yarn.app.mapreduce.am.resource.mb=6000;yarn.app.mapreduce.am.command-opts='-Xmx7500m';mapreduce.map.memory.mb=7500;mapreduce.reduce.java.opts='-Xmx6000m';mapreduce.reduce.memory.mb=7500;mapred.task.timeout=36000000;" \
   --bundle ann-offline-deploy \
   --min-split-size 284217728 \
-  --host hadoopnest1.smf1.twitter.com \
-  --tool com.twitter.ann.scalding.offline.KnnTruthSetGenerator -- \
+  --host hadoopnest1.smf1.ExTwitter.com \
+  --tool com.ExTwitter.ann.scalding.offline.KnnTruthSetGenerator -- \
   --neighbors $NEIGHBOURS \
   --metric $METRIC \
   --query_entity_kind $QUERY_ENTITY_KIND \
@@ -215,4 +215,4 @@ Set `--reducers` according to the embeddings dataset size.
 # FAQ
 
 There are multiple type of `query_id_type` and `index_id_type` that can be used. Some native types like string/int/long or related to entity embeddings
-like tweet/word/user/url... for more info: [Link](https://cgit.twitter.biz/source/tree/src/scala/com/twitter/cortex/ml/embeddings/common/EntityKind.scala#n8)
+like tweet/word/user/url... for more info: [Link](https://cgit.ExTwitter.biz/source/tree/src/scala/com/ExTwitter/cortex/ml/embeddings/common/EntityKind.scala#n8)

@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.timeline_module
 
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.icon.BaseHorizonIconBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseStr
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseModuleSocialContextBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleHeaderBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleHeaderDisplayTypeBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.Classic
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageVariant
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleHeader
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.icon.BaseHorizonIconBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseStr
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseModuleSocialContextBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleHeaderBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleHeaderDisplayTypeBuilder
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.timeline_module.Classic
+import com.ExTwitter.product_mixer.core.model.common.CandidateWithFeatures
+import com.ExTwitter.product_mixer.core.model.common.UniversalNoun
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageVariant
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleHeader
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
 
 case class ModuleHeaderBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]](
   textBuilder: BaseStr[Query, Candidate],

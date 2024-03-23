@@ -1,11 +1,11 @@
-package com.twitter.cr_mixer.module.core
+package com.ExTwitter.cr_mixer.module.core
 
-import com.twitter.finagle.stats.LoadedStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.servo.util.MemoizingStatsReceiver
+import com.ExTwitter.finagle.stats.LoadedStatsReceiver
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.servo.util.MemoizingStatsReceiver
 
-object MemoizingStatsReceiverModule extends TwitterModule {
+object MemoizingStatsReceiverModule extends ExTwitterModule {
   override def configure(): Unit = {
     bind[StatsReceiver].toInstance(new MemoizingStatsReceiver(LoadedStatsReceiver))
   }

@@ -1,66 +1,66 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.flexible_injection_pipeline
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.flexible_injection_pipeline
 
-import com.twitter.onboarding.injections.{thriftscala => onboardingthrift}
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CenterCoverHalfCoverDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverBehaviorDismiss
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverBehaviorNavigate
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverCta
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverCtaBehavior
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverHalfCoverDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverImage
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.HalfCoverDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.icon._
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.FollowAllMessageActionType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.LargeUserFacepileDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageActionType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageImage
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageTextAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.UserFacepile
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Bounce
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.ButtonStyle
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.Default
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.Primary
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.Secondary
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.Text
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.Destructive
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.Neutral
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.DestructiveSecondary
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.DestructiveText
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Callback
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.DeepLink
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Dismiss
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.DismissInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ExternalUrl
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FollowGeneralContextType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.GeneralContext
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageAnimationType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageVariant
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FullWidth
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Icon
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.IconSmall
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.SocialContext
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.UrtEndpoint
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.UrtEndpointOptions
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Center
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Natural
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Plain
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.ReferenceObject
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextAlignment
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextEntity
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextFormat
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextCashtag
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextHashtag
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextList
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextMention
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextUser
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Strong
+import com.ExTwitter.onboarding.injections.{thriftscala => onboardingthrift}
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.cover.CenterCoverHalfCoverDisplayType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.cover.CoverBehaviorDismiss
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.cover.CoverBehaviorNavigate
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.cover.CoverCta
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.cover.CoverCtaBehavior
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.cover.CoverHalfCoverDisplayType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.cover.CoverImage
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.cover.HalfCoverDisplayType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.icon._
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.message.FollowAllMessageActionType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.message.LargeUserFacepileDisplayType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageAction
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageActionType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageImage
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageTextAction
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.message.UserFacepile
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.Bounce
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.button.ButtonStyle
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.button.Default
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.button.Primary
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.button.Secondary
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.button.Text
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.button.Destructive
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.button.Neutral
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.button.DestructiveSecondary
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.button.DestructiveText
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.Callback
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.DeepLink
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.Dismiss
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.DismissInfo
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.ExternalUrl
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackAction
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.FollowGeneralContextType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.GeneralContext
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageAnimationType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageDisplayType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageVariant
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.FullWidth
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.Icon
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.IconSmall
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.SocialContext
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.UrtEndpoint
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.UrtEndpointOptions
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.richtext.Center
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.richtext.Natural
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.richtext.Plain
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.richtext.ReferenceObject
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextAlignment
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextEntity
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextFormat
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextCashtag
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextHashtag
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextList
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextMention
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextUser
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.richtext.Strong
 
 /***
  * Helper class to convert onboarding thrift to product-mixer models
@@ -172,7 +172,7 @@ object OnboardingInjectionConversions {
     }
 
   def convertRichText(
-    richText: com.twitter.onboarding.injections.thriftscala.RichText
+    richText: com.ExTwitter.onboarding.injections.thriftscala.RichText
   ): RichText = {
     val entities = richText.entities.map(entity =>
       RichTextEntity(
@@ -203,7 +203,7 @@ object OnboardingInjectionConversions {
       case onboardingthrift.ReferenceObject.Hashtag(hashtag) => RichTextHashtag(hashtag.text)
 
       case onboardingthrift.ReferenceObject.Cashtag(cashtag) => RichTextCashtag(cashtag.text)
-      case onboardingthrift.ReferenceObject.TwitterList(twList) =>
+      case onboardingthrift.ReferenceObject.ExTwitterList(twList) =>
         RichTextList(twList.id, twList.url)
       case onboardingthrift.ReferenceObject.Url(url) => RichTextHashtag(url.url)
       case onboardingthrift.ReferenceObject.UnknownUnionField(value) =>

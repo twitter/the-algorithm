@@ -1,10 +1,10 @@
-package com.twitter.follow_recommendations.common.models
+package com.ExTwitter.follow_recommendations.common.models
 
-import com.twitter.adserver.thriftscala.{DisplayLocation => AdDisplayLocation}
-import com.twitter.follow_recommendations.logging.thriftscala.{
+import com.ExTwitter.adserver.thriftscala.{DisplayLocation => AdDisplayLocation}
+import com.ExTwitter.follow_recommendations.logging.thriftscala.{
   OfflineDisplayLocation => TOfflineDisplayLocation
 }
-import com.twitter.follow_recommendations.thriftscala.{DisplayLocation => TDisplayLocation}
+import com.ExTwitter.follow_recommendations.thriftscala.{DisplayLocation => TDisplayLocation}
 
 sealed trait DisplayLocation {
   def toThrift: TDisplayLocation
@@ -22,7 +22,7 @@ sealed trait DisplayLocation {
  * Make sure you add the new DL to the following files and redeploy our attribution jobs
  *  - follow-recommendations-service/thrift/src/main/thrift/display_location.thrift
  *  - follow-recommendations-service/thrift/src/main/thrift/logging/display_location.thrift
- *  - follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/models/DisplayLocation.scala
+ *  - follow-recommendations-service/common/src/main/scala/com/ExTwitter/follow_recommendations/common/models/DisplayLocation.scala
  */
 
 object DisplayLocation {

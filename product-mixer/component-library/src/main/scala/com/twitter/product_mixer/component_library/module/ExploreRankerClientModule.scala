@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.component_library.module
+package com.ExTwitter.product_mixer.component_library.module
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.explore_ranker.thriftscala.ExploreRanker
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.annotations.Flags
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.util.Duration
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.explore_ranker.thriftscala.ExploreRanker
+import com.ExTwitter.finagle.thriftmux.MethodBuilder
+import com.ExTwitter.finatra.mtls.thriftmux.modules.MtlsClient
+import com.ExTwitter.inject.annotations.Flags
+import com.ExTwitter.inject.Injector
+import com.ExTwitter.inject.thrift.modules.ThriftMethodBuilderClientModule
+import com.ExTwitter.util.Duration
 
 object ExploreRankerClientModule
     extends ThriftMethodBuilderClientModule[

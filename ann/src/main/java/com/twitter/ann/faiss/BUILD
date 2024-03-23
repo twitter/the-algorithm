@@ -1,7 +1,7 @@
 target(
     name = "faiss",
     dependencies = [
-        "ann/src/main/java/com/twitter/ann/faiss/swig:swig-artifactory",
+        "ann/src/main/java/com/ExTwitter/ann/faiss/swig:swig-artifactory",
     ],
 )
 

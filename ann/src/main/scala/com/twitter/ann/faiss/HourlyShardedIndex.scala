@@ -1,16 +1,16 @@
-package com.twitter.ann.faiss
+package com.ExTwitter.ann.faiss
 
-import com.twitter.ann.common.Distance
-import com.twitter.ann.common.MemoizedInEpochs
-import com.twitter.ann.common.Metric
-import com.twitter.ann.common.Task
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.search.common.file.AbstractFile
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Time
-import com.twitter.util.Try
-import com.twitter.util.logging.Logging
+import com.ExTwitter.ann.common.Distance
+import com.ExTwitter.ann.common.MemoizedInEpochs
+import com.ExTwitter.ann.common.Metric
+import com.ExTwitter.ann.common.Task
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.search.common.file.AbstractFile
+import com.ExTwitter.util.Duration
+import com.ExTwitter.util.Future
+import com.ExTwitter.util.Time
+import com.ExTwitter.util.Try
+import com.ExTwitter.util.logging.Logging
 import java.util.concurrent.atomic.AtomicReference
 
 object HourlyShardedIndex {

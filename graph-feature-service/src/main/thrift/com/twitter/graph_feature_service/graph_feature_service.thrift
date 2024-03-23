@@ -1,6 +1,6 @@
-namespace java com.twitter.graph_feature_service.thriftjava
-#@namespace scala com.twitter.graph_feature_service.thriftscala
-#@namespace strato com.twitter.graph_feature_service.thriftscala
+namespace java com.ExTwitter.graph_feature_service.thriftjava
+#@namespace scala com.ExTwitter.graph_feature_service.thriftscala
+#@namespace strato com.ExTwitter.graph_feature_service.thriftscala
 
 // edge type to differentiate different types of graphs (we can also add a lot of other types of edges)
 enum EdgeType {

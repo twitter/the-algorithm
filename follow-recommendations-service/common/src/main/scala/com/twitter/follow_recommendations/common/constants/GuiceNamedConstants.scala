@@ -1,4 +1,4 @@
-package com.twitter.follow_recommendations.common.constants
+package com.ExTwitter.follow_recommendations.common.constants
 
 object GuiceNamedConstants {
   final val PRODUCER_SIDE_FEATURE_SWITCHES = "PRODUCER_SIDE_FEATURE_SWITCHES"

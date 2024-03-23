@@ -1,15 +1,15 @@
-package com.twitter.cr_mixer.param
+package com.ExTwitter.cr_mixer.param
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSEnumParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
-import com.twitter.usersignalservice.thriftscala.SignalType
+import com.ExTwitter.finagle.stats.NullStatsReceiver
+import com.ExTwitter.logging.Logger
+import com.ExTwitter.timelines.configapi.BaseConfig
+import com.ExTwitter.timelines.configapi.BaseConfigBuilder
+import com.ExTwitter.timelines.configapi.FSEnumParam
+import com.ExTwitter.timelines.configapi.FSName
+import com.ExTwitter.timelines.configapi.FSParam
+import com.ExTwitter.timelines.configapi.FeatureSwitchOverrideUtil
+import com.ExTwitter.timelines.configapi.Param
+import com.ExTwitter.usersignalservice.thriftscala.SignalType
 
 object GoodProfileClickParams {
 

@@ -1,6 +1,6 @@
-namespace java com.twitter.cr_mixer.thriftjava
-#@namespace scala com.twitter.cr_mixer.thriftscala
-#@namespace strato com.twitter.cr_mixer
+namespace java com.ExTwitter.cr_mixer.thriftjava
+#@namespace scala com.ExTwitter.cr_mixer.thriftscala
+#@namespace strato com.ExTwitter.cr_mixer
 
 include "ads.thrift"
 include "candidate_generation_key.thrift"
@@ -10,8 +10,8 @@ include "product.thrift"
 include "related_tweet.thrift"
 include "source_type.thrift"
 include "uteg.thrift"
-include "com/twitter/ml/api/data.thrift"
-include "com/twitter/simclusters_v2/identifier.thrift"
+include "com/ExTwitter/ml/api/data.thrift"
+include "com/ExTwitter/simclusters_v2/identifier.thrift"
 
 struct VITTweetCandidatesScribe {
   1: required i64 uuid (personalDataType = 'UniversallyUniqueIdentifierUuid') # RequestUUID - unique scribe id for every request that comes in. Same request but different stages of scribe log (FetchCandidate, Filter, etc) share the same uuid

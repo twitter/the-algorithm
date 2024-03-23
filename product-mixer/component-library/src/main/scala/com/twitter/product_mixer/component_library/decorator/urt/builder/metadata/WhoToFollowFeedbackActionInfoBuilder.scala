@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.metadata
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.metadata
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.stringcenter.Str
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.icon.Frown
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.SeeFewer
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stringcenter.client.ExternalStringRegistry
-import com.twitter.stringcenter.client.StringCenter
+import com.ExTwitter.product_mixer.component_library.decorator.urt.builder.stringcenter.Str
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
+import com.ExTwitter.product_mixer.core.model.common.UniversalNoun
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.icon.Frown
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackAction
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.SeeFewer
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.stringcenter.client.ExternalStringRegistry
+import com.ExTwitter.stringcenter.client.StringCenter
 
 case class WhoToFollowFeedbackActionInfoBuilder[
   -Query <: PipelineQuery,

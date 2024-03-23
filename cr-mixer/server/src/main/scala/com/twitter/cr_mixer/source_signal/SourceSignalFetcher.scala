@@ -1,10 +1,10 @@
-package com.twitter.cr_mixer.source_signal
+package com.ExTwitter.cr_mixer.source_signal
 
-import com.twitter.cr_mixer.model.SourceInfo
-import com.twitter.cr_mixer.source_signal.SourceFetcher.FetcherQuery
-import com.twitter.cr_mixer.thriftscala.SourceType
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.util.Future
+import com.ExTwitter.cr_mixer.model.SourceInfo
+import com.ExTwitter.cr_mixer.source_signal.SourceFetcher.FetcherQuery
+import com.ExTwitter.cr_mixer.thriftscala.SourceType
+import com.ExTwitter.frigate.common.util.StatsUtil
+import com.ExTwitter.util.Future
 
 /***
  * A SourceSignalFetcher is a trait that extends from `SourceFetcher`

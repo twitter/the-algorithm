@@ -1,8 +1,8 @@
-package com.twitter.follow_recommendations.common.rankers.ml_ranker.scoring
+package com.ExTwitter.follow_recommendations.common.rankers.ml_ranker.scoring
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.rankers.common.RankerId
-import com.twitter.follow_recommendations.common.rankers.common.RankerId.RankerId
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.follow_recommendations.common.rankers.common.RankerId
+import com.ExTwitter.follow_recommendations.common.rankers.common.RankerId.RankerId
 import javax.inject.Inject
 import javax.inject.Singleton
 

@@ -1,19 +1,19 @@
-package com.twitter.follow_recommendations.common.predicates.sgs
+package com.ExTwitter.follow_recommendations.common.predicates.sgs
 
 import com.google.common.annotations.VisibleForTesting
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.Predicate
-import com.twitter.follow_recommendations.common.base.PredicateResult
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FilterReason.InvalidRelationshipTypes
-import com.twitter.socialgraph.thriftscala.ExistsRequest
-import com.twitter.socialgraph.thriftscala.ExistsResult
-import com.twitter.socialgraph.thriftscala.LookupContext
-import com.twitter.socialgraph.thriftscala.Relationship
-import com.twitter.socialgraph.thriftscala.RelationshipType
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.socialgraph.SocialGraph
-import com.twitter.util.logging.Logging
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.follow_recommendations.common.base.Predicate
+import com.ExTwitter.follow_recommendations.common.base.PredicateResult
+import com.ExTwitter.follow_recommendations.common.models.CandidateUser
+import com.ExTwitter.follow_recommendations.common.models.FilterReason.InvalidRelationshipTypes
+import com.ExTwitter.socialgraph.thriftscala.ExistsRequest
+import com.ExTwitter.socialgraph.thriftscala.ExistsResult
+import com.ExTwitter.socialgraph.thriftscala.LookupContext
+import com.ExTwitter.socialgraph.thriftscala.Relationship
+import com.ExTwitter.socialgraph.thriftscala.RelationshipType
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.stitch.socialgraph.SocialGraph
+import com.ExTwitter.util.logging.Logging
 import javax.inject.Inject
 import javax.inject.Singleton
 

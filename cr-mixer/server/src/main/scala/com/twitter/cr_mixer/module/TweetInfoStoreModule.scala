@@ -1,49 +1,49 @@
-package com.twitter.cr_mixer.module
+package com.ExTwitter.cr_mixer.module
 
 import com.google.inject.Module
 import com.google.inject.Provides
 import com.google.inject.Singleton
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.contentrecommender.thriftscala.TweetInfo
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.memcached.{Client => MemcachedClient}
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.frigate.common.store.health.TweetHealthModelStore
-import com.twitter.frigate.common.store.health.TweetHealthModelStore.TweetHealthModelStoreConfig
-import com.twitter.frigate.common.store.health.UserHealthModelStore
-import com.twitter.frigate.thriftscala.TweetHealthScores
-import com.twitter.frigate.thriftscala.UserAgathaScores
-import com.twitter.hermit.store.common.DeciderableReadableStore
-import com.twitter.hermit.store.common.ObservedCachedReadableStore
-import com.twitter.hermit.store.common.ObservedMemcachedReadableStore
-import com.twitter.hermit.store.common.ObservedReadableStore
-import com.twitter.inject.TwitterModule
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.contentrecommender.store.TweetInfoStore
-import com.twitter.contentrecommender.store.TweetyPieFieldsStore
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.param.decider.CrMixerDecider
-import com.twitter.cr_mixer.param.decider.DeciderKey
-import com.twitter.frigate.data_pipeline.scalding.thriftscala.BlueVerifiedAnnotationsV2
-import com.twitter.recos.user_tweet_graph_plus.thriftscala.UserTweetGraphPlus
-import com.twitter.recos.user_tweet_graph_plus.thriftscala.TweetEngagementScores
-import com.twitter.relevance_platform.common.health_store.UserMediaRepresentationHealthStore
-import com.twitter.relevance_platform.common.health_store.MagicRecsRealTimeAggregatesStore
-import com.twitter.relevance_platform.thriftscala.MagicRecsRealTimeAggregatesScores
-import com.twitter.relevance_platform.thriftscala.UserMediaRepresentationScores
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.tweetypie.thriftscala.TweetService
-import com.twitter.util.Future
-import com.twitter.util.JavaTimer
-import com.twitter.util.Timer
+import com.ExTwitter.bijection.scrooge.BinaryScalaCodec
+import com.ExTwitter.contentrecommender.thriftscala.TweetInfo
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.finagle.memcached.{Client => MemcachedClient}
+import com.ExTwitter.finagle.mtls.authentication.ServiceIdentifier
+import com.ExTwitter.frigate.common.store.health.TweetHealthModelStore
+import com.ExTwitter.frigate.common.store.health.TweetHealthModelStore.TweetHealthModelStoreConfig
+import com.ExTwitter.frigate.common.store.health.UserHealthModelStore
+import com.ExTwitter.frigate.thriftscala.TweetHealthScores
+import com.ExTwitter.frigate.thriftscala.UserAgathaScores
+import com.ExTwitter.hermit.store.common.DeciderableReadableStore
+import com.ExTwitter.hermit.store.common.ObservedCachedReadableStore
+import com.ExTwitter.hermit.store.common.ObservedMemcachedReadableStore
+import com.ExTwitter.hermit.store.common.ObservedReadableStore
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.simclusters_v2.common.TweetId
+import com.ExTwitter.simclusters_v2.common.UserId
+import com.ExTwitter.storehaus.ReadableStore
+import com.ExTwitter.strato.client.{Client => StratoClient}
+import com.ExTwitter.contentrecommender.store.TweetInfoStore
+import com.ExTwitter.contentrecommender.store.TweetyPieFieldsStore
+import com.ExTwitter.cr_mixer.model.ModuleNames
+import com.ExTwitter.cr_mixer.param.decider.CrMixerDecider
+import com.ExTwitter.cr_mixer.param.decider.DeciderKey
+import com.ExTwitter.frigate.data_pipeline.scalding.thriftscala.BlueVerifiedAnnotationsV2
+import com.ExTwitter.recos.user_tweet_graph_plus.thriftscala.UserTweetGraphPlus
+import com.ExTwitter.recos.user_tweet_graph_plus.thriftscala.TweetEngagementScores
+import com.ExTwitter.relevance_platform.common.health_store.UserMediaRepresentationHealthStore
+import com.ExTwitter.relevance_platform.common.health_store.MagicRecsRealTimeAggregatesStore
+import com.ExTwitter.relevance_platform.thriftscala.MagicRecsRealTimeAggregatesScores
+import com.ExTwitter.relevance_platform.thriftscala.UserMediaRepresentationScores
+import com.ExTwitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
+import com.ExTwitter.tweetypie.thriftscala.TweetService
+import com.ExTwitter.util.Future
+import com.ExTwitter.util.JavaTimer
+import com.ExTwitter.util.Timer
 
 import javax.inject.Named
 
-object TweetInfoStoreModule extends TwitterModule {
+object TweetInfoStoreModule extends ExTwitterModule {
   implicit val timer: Timer = new JavaTimer(true)
   override def modules: Seq[Module] = Seq(UnifiedCacheClient)
 

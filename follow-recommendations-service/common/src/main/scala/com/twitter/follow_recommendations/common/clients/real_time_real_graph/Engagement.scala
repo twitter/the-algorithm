@@ -1,4 +1,4 @@
-package com.twitter.follow_recommendations.common.clients.real_time_real_graph
+package com.ExTwitter.follow_recommendations.common.clients.real_time_real_graph
 
 sealed trait EngagementType
 

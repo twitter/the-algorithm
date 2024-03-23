@@ -1,28 +1,28 @@
-package com.twitter.home_mixer.product.for_you
+package com.ExTwitter.home_mixer.product.for_you
 
-import com.twitter.home_mixer.product.for_you.model.ForYouQuery
-import com.twitter.home_mixer.product.for_you.param.ForYouParam
-import com.twitter.product_mixer.component_library.premarshaller.urt.UrtDomainMarshaller
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.AddEntriesInstructionBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.ClearCacheInstructionBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.OrderedBottomCursorBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.OrderedTopCursorBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.ParamGatedIncludeInstruction
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.StaticTimelineScribeConfigBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.UrtMetadataBuilder
-import com.twitter.product_mixer.component_library.selector.InsertAppendResults
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.UrtTransportMarshaller
-import com.twitter.product_mixer.core.functional_component.premarshaller.DomainMarshaller
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.MixerPipelineIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.urt.Timeline
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineScribeConfig
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.product_mixer.core.pipeline.mixer.MixerPipelineConfig
-import com.twitter.timelines.render.{thriftscala => urt}
+import com.ExTwitter.home_mixer.product.for_you.model.ForYouQuery
+import com.ExTwitter.home_mixer.product.for_you.param.ForYouParam
+import com.ExTwitter.product_mixer.component_library.premarshaller.urt.UrtDomainMarshaller
+import com.ExTwitter.product_mixer.component_library.premarshaller.urt.builder.AddEntriesInstructionBuilder
+import com.ExTwitter.product_mixer.component_library.premarshaller.urt.builder.ClearCacheInstructionBuilder
+import com.ExTwitter.product_mixer.component_library.premarshaller.urt.builder.OrderedBottomCursorBuilder
+import com.ExTwitter.product_mixer.component_library.premarshaller.urt.builder.OrderedTopCursorBuilder
+import com.ExTwitter.product_mixer.component_library.premarshaller.urt.builder.ParamGatedIncludeInstruction
+import com.ExTwitter.product_mixer.component_library.premarshaller.urt.builder.StaticTimelineScribeConfigBuilder
+import com.ExTwitter.product_mixer.component_library.premarshaller.urt.builder.UrtMetadataBuilder
+import com.ExTwitter.product_mixer.component_library.selector.InsertAppendResults
+import com.ExTwitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
+import com.ExTwitter.product_mixer.core.functional_component.marshaller.response.urt.UrtTransportMarshaller
+import com.ExTwitter.product_mixer.core.functional_component.premarshaller.DomainMarshaller
+import com.ExTwitter.product_mixer.core.functional_component.selector.Selector
+import com.ExTwitter.product_mixer.core.model.common.UniversalNoun
+import com.ExTwitter.product_mixer.core.model.common.identifier.MixerPipelineIdentifier
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.Timeline
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.TimelineScribeConfig
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
+import com.ExTwitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
+import com.ExTwitter.product_mixer.core.pipeline.mixer.MixerPipelineConfig
+import com.ExTwitter.timelines.render.{thriftscala => urt}
 import javax.inject.Inject
 import javax.inject.Singleton
 

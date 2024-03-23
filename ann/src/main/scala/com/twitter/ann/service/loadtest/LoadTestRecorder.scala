@@ -1,8 +1,8 @@
-package com.twitter.ann.service.loadtest
+package com.ExTwitter.ann.service.loadtest
 
 import com.google.common.util.concurrent.AtomicDouble
-import com.twitter.finagle.stats.{MetricsBucketedHistogram, Snapshot, StatsReceiver}
-import com.twitter.util.{Duration, Stopwatch}
+import com.ExTwitter.finagle.stats.{MetricsBucketedHistogram, Snapshot, StatsReceiver}
+import com.ExTwitter.util.{Duration, Stopwatch}
 import java.util.concurrent.atomic.{AtomicInteger, AtomicReference}
 
 trait LoadTestQueryRecorder[T] {

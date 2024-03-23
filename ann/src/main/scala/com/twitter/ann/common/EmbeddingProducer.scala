@@ -1,6 +1,6 @@
-package com.twitter.ann.common
+package com.ExTwitter.ann.common
 
-import com.twitter.stitch.Stitch
+import com.ExTwitter.stitch.Stitch
 
 trait EmbeddingProducer[T] {
 

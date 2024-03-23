@@ -1,11 +1,11 @@
-package com.twitter.home_mixer.functional_component.candidate_source
+package com.ExTwitter.home_mixer.functional_component.candidate_source
 
 import com.google.inject.name.Named
-import com.twitter.finagle.memcached.{Client => MemcachedClient}
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.StaleTweetsCache
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
+import com.ExTwitter.finagle.memcached.{Client => MemcachedClient}
+import com.ExTwitter.home_mixer.param.HomeMixerInjectionNames.StaleTweetsCache
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidateSource
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.stitch.Stitch
 import javax.inject.Inject
 import javax.inject.Singleton
 

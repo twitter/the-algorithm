@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+package com.ExTwitter.follow_recommendations.common.candidate_sources.stp
 
 import com.google.inject.Singleton
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.generated.client.onboarding.userrecs.MutualFollowExpansionClientColumn
+import com.ExTwitter.hermit.model.Algorithm
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.strato.generated.client.onboarding.userrecs.MutualFollowExpansionClientColumn
 import javax.inject.Inject
 
 /**

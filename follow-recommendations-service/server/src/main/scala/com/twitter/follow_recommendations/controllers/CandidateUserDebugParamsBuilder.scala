@@ -1,10 +1,10 @@
-package com.twitter.follow_recommendations.controllers
+package com.ExTwitter.follow_recommendations.controllers
 
-import com.twitter.follow_recommendations.common.models._
-import com.twitter.follow_recommendations.configapi.ParamsFactory
-import com.twitter.follow_recommendations.models.CandidateUserDebugParams
-import com.twitter.follow_recommendations.models.FeatureValue
-import com.twitter.follow_recommendations.{thriftscala => t}
+import com.ExTwitter.follow_recommendations.common.models._
+import com.ExTwitter.follow_recommendations.configapi.ParamsFactory
+import com.ExTwitter.follow_recommendations.models.CandidateUserDebugParams
+import com.ExTwitter.follow_recommendations.models.FeatureValue
+import com.ExTwitter.follow_recommendations.{thriftscala => t}
 import javax.inject.Inject
 import javax.inject.Singleton
 

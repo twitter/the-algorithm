@@ -1,13 +1,13 @@
-package com.twitter.cr_mixer.logging
+package com.ExTwitter.cr_mixer.logging
 
-import com.twitter.cr_mixer.model.AdsCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.CrCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.RelatedTweetCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.UtegTweetCandidateGeneratorQuery
-import com.twitter.cr_mixer.thriftscala.Product
-import com.twitter.product_mixer.core.thriftscala.ClientContext
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala.InternalId
+import com.ExTwitter.cr_mixer.model.AdsCandidateGeneratorQuery
+import com.ExTwitter.cr_mixer.model.CrCandidateGeneratorQuery
+import com.ExTwitter.cr_mixer.model.RelatedTweetCandidateGeneratorQuery
+import com.ExTwitter.cr_mixer.model.UtegTweetCandidateGeneratorQuery
+import com.ExTwitter.cr_mixer.thriftscala.Product
+import com.ExTwitter.product_mixer.core.thriftscala.ClientContext
+import com.ExTwitter.simclusters_v2.common.UserId
+import com.ExTwitter.simclusters_v2.thriftscala.InternalId
 
 case class ScribeMetadata(
   requestUUID: Long,

@@ -1,19 +1,19 @@
-package com.twitter.cr_mixer.source_signal
+package com.ExTwitter.cr_mixer.source_signal
 
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.model.SourceInfo
-import com.twitter.cr_mixer.thriftscala.SourceType
-import com.twitter.cr_mixer.source_signal.SourceFetcher.FetcherQuery
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.storehaus.ReadableStore
-import com.twitter.usersignalservice.thriftscala.{Signal => UssSignal}
-import com.twitter.usersignalservice.thriftscala.SignalType
-import com.twitter.frigate.common.util.StatsUtil.Size
-import com.twitter.frigate.common.util.StatsUtil.Success
-import com.twitter.frigate.common.util.StatsUtil.Empty
-import com.twitter.util.Future
-import com.twitter.util.Time
+import com.ExTwitter.cr_mixer.config.TimeoutConfig
+import com.ExTwitter.cr_mixer.model.ModuleNames
+import com.ExTwitter.cr_mixer.model.SourceInfo
+import com.ExTwitter.cr_mixer.thriftscala.SourceType
+import com.ExTwitter.cr_mixer.source_signal.SourceFetcher.FetcherQuery
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.storehaus.ReadableStore
+import com.ExTwitter.usersignalservice.thriftscala.{Signal => UssSignal}
+import com.ExTwitter.usersignalservice.thriftscala.SignalType
+import com.ExTwitter.frigate.common.util.StatsUtil.Size
+import com.ExTwitter.frigate.common.util.StatsUtil.Success
+import com.ExTwitter.frigate.common.util.StatsUtil.Empty
+import com.ExTwitter.util.Future
+import com.ExTwitter.util.Time
 import javax.inject.Singleton
 import javax.inject.Inject
 import javax.inject.Named

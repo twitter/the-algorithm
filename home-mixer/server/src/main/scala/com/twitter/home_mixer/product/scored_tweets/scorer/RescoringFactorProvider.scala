@@ -1,23 +1,23 @@
-package com.twitter.home_mixer.product.scored_tweets.scorer
+package com.ExTwitter.home_mixer.product.scored_tweets.scorer
 
-import com.twitter.home_mixer.functional_component.scorer.FeedbackFatigueScorer
-import com.twitter.home_mixer.model.HomeFeatures
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIsBlueVerifiedFeature
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIsCreatorFeature
-import com.twitter.home_mixer.model.HomeFeatures.FeedbackHistoryFeature
-import com.twitter.home_mixer.model.HomeFeatures.InNetworkFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToTweetIdFeature
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.BlueVerifiedAuthorInNetworkMultiplierParam
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.BlueVerifiedAuthorOutOfNetworkMultiplierParam
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.CreatorInNetworkMultiplierParam
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.CreatorOutOfNetworkMultiplierParam
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.OutOfNetworkScaleFactorParam
-import com.twitter.home_mixer.util.CandidatesUtil
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelineservice.{thriftscala => tls}
+import com.ExTwitter.home_mixer.functional_component.scorer.FeedbackFatigueScorer
+import com.ExTwitter.home_mixer.model.HomeFeatures
+import com.ExTwitter.home_mixer.model.HomeFeatures.AuthorIsBlueVerifiedFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.AuthorIsCreatorFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.FeedbackHistoryFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.InNetworkFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.InReplyToTweetIdFeature
+import com.ExTwitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.BlueVerifiedAuthorInNetworkMultiplierParam
+import com.ExTwitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.BlueVerifiedAuthorOutOfNetworkMultiplierParam
+import com.ExTwitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.CreatorInNetworkMultiplierParam
+import com.ExTwitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.CreatorOutOfNetworkMultiplierParam
+import com.ExTwitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.OutOfNetworkScaleFactorParam
+import com.ExTwitter.home_mixer.util.CandidatesUtil
+import com.ExTwitter.product_mixer.component_library.model.candidate.TweetCandidate
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.model.common.CandidateWithFeatures
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.timelineservice.{thriftscala => tls}
 
 trait RescoringFactorProvider {
 
@@ -53,7 +53,7 @@ object RescoreCreators extends RescoringFactorProvider {
 }
 
 /**
- * Re-scoring multiplier to apply to authors who are verified by Twitter Blue
+ * Re-scoring multiplier to apply to authors who are verified by ExTwitter Blue
  */
 object RescoreBlueVerified extends RescoringFactorProvider {
 

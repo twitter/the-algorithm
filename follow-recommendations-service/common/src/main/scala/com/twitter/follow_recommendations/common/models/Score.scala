@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.common.models
+package com.ExTwitter.follow_recommendations.common.models
 
-import com.twitter.follow_recommendations.common.rankers.common.RankerId
-import com.twitter.follow_recommendations.common.rankers.common.RankerId.RankerId
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
-import com.twitter.follow_recommendations.{thriftscala => t}
+import com.ExTwitter.follow_recommendations.common.rankers.common.RankerId
+import com.ExTwitter.follow_recommendations.common.rankers.common.RankerId.RankerId
+import com.ExTwitter.follow_recommendations.logging.{thriftscala => offline}
+import com.ExTwitter.follow_recommendations.{thriftscala => t}
 
 /**
  * Type of Score. This is used to differentiate scores.

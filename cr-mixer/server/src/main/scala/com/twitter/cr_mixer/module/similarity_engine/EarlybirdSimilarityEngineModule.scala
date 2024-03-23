@@ -1,22 +1,22 @@
-package com.twitter.cr_mixer.module.similarity_engine
+package com.ExTwitter.cr_mixer.module.similarity_engine
 
 import com.google.inject.Provides
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.param.decider.CrMixerDecider
-import com.twitter.cr_mixer.param.decider.DeciderConstants
-import com.twitter.cr_mixer.similarity_engine.EarlybirdModelBasedSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.EarlybirdRecencyBasedSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.EarlybirdSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.EarlybirdTensorflowBasedSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.DeciderConfig
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.GatingConfig
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.SimilarityEngineConfig
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
+import com.ExTwitter.cr_mixer.config.TimeoutConfig
+import com.ExTwitter.cr_mixer.param.decider.CrMixerDecider
+import com.ExTwitter.cr_mixer.param.decider.DeciderConstants
+import com.ExTwitter.cr_mixer.similarity_engine.EarlybirdModelBasedSimilarityEngine
+import com.ExTwitter.cr_mixer.similarity_engine.EarlybirdRecencyBasedSimilarityEngine
+import com.ExTwitter.cr_mixer.similarity_engine.EarlybirdSimilarityEngine
+import com.ExTwitter.cr_mixer.similarity_engine.EarlybirdTensorflowBasedSimilarityEngine
+import com.ExTwitter.cr_mixer.similarity_engine.SimilarityEngine.DeciderConfig
+import com.ExTwitter.cr_mixer.similarity_engine.SimilarityEngine.GatingConfig
+import com.ExTwitter.cr_mixer.similarity_engine.SimilarityEngine.SimilarityEngineConfig
+import com.ExTwitter.cr_mixer.thriftscala.SimilarityEngineType
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.inject.ExTwitterModule
 import javax.inject.Singleton
 
-object EarlybirdSimilarityEngineModule extends TwitterModule {
+object EarlybirdSimilarityEngineModule extends ExTwitterModule {
 
   @Provides
   @Singleton

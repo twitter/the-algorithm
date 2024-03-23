@@ -1,16 +1,16 @@
-package com.twitter.cr_mixer
+package com.ExTwitter.cr_mixer
 
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finatra.thrift.routing.ThriftWarmup
-import com.twitter.inject.Logging
-import com.twitter.inject.utils.Handler
-import com.twitter.product_mixer.core.{thriftscala => pt}
-import com.twitter.cr_mixer.{thriftscala => st}
-import com.twitter.scrooge.Request
-import com.twitter.scrooge.Response
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
+import com.ExTwitter.finagle.thrift.ClientId
+import com.ExTwitter.finatra.thrift.routing.ThriftWarmup
+import com.ExTwitter.inject.Logging
+import com.ExTwitter.inject.utils.Handler
+import com.ExTwitter.product_mixer.core.{thriftscala => pt}
+import com.ExTwitter.cr_mixer.{thriftscala => st}
+import com.ExTwitter.scrooge.Request
+import com.ExTwitter.scrooge.Response
+import com.ExTwitter.util.Return
+import com.ExTwitter.util.Throw
+import com.ExTwitter.util.Try
 import javax.inject.Inject
 import javax.inject.Singleton
 

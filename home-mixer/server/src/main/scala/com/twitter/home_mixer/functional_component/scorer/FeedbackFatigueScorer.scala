@@ -1,27 +1,27 @@
-package com.twitter.home_mixer.functional_component.scorer
+package com.ExTwitter.home_mixer.functional_component.scorer
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.FeedbackHistoryFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.SGSValidFollowedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.SGSValidLikedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.ScoreFeature
-import com.twitter.home_mixer.util.CandidatesUtil
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.scorer.Scorer
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.Conditionally
-import com.twitter.product_mixer.core.model.common.identifier.ScorerIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.common.{thriftscala => tl}
-import com.twitter.timelineservice.model.FeedbackEntry
-import com.twitter.timelineservice.{thriftscala => tls}
-import com.twitter.util.Time
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.home_mixer.model.HomeFeatures.AuthorIdFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.FeedbackHistoryFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.IsRetweetFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.SGSValidFollowedByUserIdsFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.SGSValidLikedByUserIdsFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.ScoreFeature
+import com.ExTwitter.home_mixer.util.CandidatesUtil
+import com.ExTwitter.product_mixer.component_library.model.candidate.TweetCandidate
+import com.ExTwitter.product_mixer.core.feature.Feature
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
+import com.ExTwitter.product_mixer.core.functional_component.scorer.Scorer
+import com.ExTwitter.product_mixer.core.model.common.CandidateWithFeatures
+import com.ExTwitter.product_mixer.core.model.common.Conditionally
+import com.ExTwitter.product_mixer.core.model.common.identifier.ScorerIdentifier
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.timelines.common.{thriftscala => tl}
+import com.ExTwitter.timelineservice.model.FeedbackEntry
+import com.ExTwitter.timelineservice.{thriftscala => tls}
+import com.ExTwitter.util.Time
 import scala.collection.mutable
 
 object FeedbackFatigueScorer

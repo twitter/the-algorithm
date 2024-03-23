@@ -5,6 +5,6 @@ scala_library(
     dependencies = [
         "configapi/configapi-core",
         "configapi/configapi-decider",
-        "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/products/common",
+        "follow-recommendations-service/server/src/main/scala/com/ExTwitter/follow_recommendations/products/common",
     ],
 )

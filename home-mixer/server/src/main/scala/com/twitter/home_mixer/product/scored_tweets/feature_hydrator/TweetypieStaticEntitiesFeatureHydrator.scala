@@ -1,37 +1,37 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.ExTwitter.home_mixer.product.scored_tweets.feature_hydrator
 
 import com.google.inject.name.Named
-import com.twitter.conversions.DurationOps.RichDuration
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.DirectedAtUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.ExclusiveConversationAuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.HasImageFeature
-import com.twitter.home_mixer.model.HomeFeatures.HasVideoFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.MentionScreenNameFeature
-import com.twitter.home_mixer.model.HomeFeatures.MentionUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.QuotedTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.QuotedUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceUserIdFeature
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TweetypieStaticEntitiesCache
-import com.twitter.home_mixer.util.tweetypie.RequestFields
-import com.twitter.home_mixer.util.tweetypie.content.TweetMediaFeaturesExtractor
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.servo.cache.TtlCache
-import com.twitter.spam.rtf.{thriftscala => sp}
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.tweetypie.{TweetyPie => TweetypieStitchClient}
-import com.twitter.tweetypie.{thriftscala => tp}
+import com.ExTwitter.conversions.DurationOps.RichDuration
+import com.ExTwitter.home_mixer.model.HomeFeatures.AuthorIdFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.DirectedAtUserIdFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.ExclusiveConversationAuthorIdFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.HasImageFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.HasVideoFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.InReplyToTweetIdFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.InReplyToUserIdFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.IsRetweetFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.MentionScreenNameFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.MentionUserIdFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.QuotedTweetIdFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.QuotedUserIdFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.SourceTweetIdFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.SourceUserIdFeature
+import com.ExTwitter.home_mixer.param.HomeMixerInjectionNames.TweetypieStaticEntitiesCache
+import com.ExTwitter.home_mixer.util.tweetypie.RequestFields
+import com.ExTwitter.home_mixer.util.tweetypie.content.TweetMediaFeaturesExtractor
+import com.ExTwitter.product_mixer.component_library.model.candidate.TweetCandidate
+import com.ExTwitter.product_mixer.core.feature.Feature
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
+import com.ExTwitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
+import com.ExTwitter.product_mixer.core.model.common.CandidateWithFeatures
+import com.ExTwitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.servo.cache.TtlCache
+import com.ExTwitter.spam.rtf.{thriftscala => sp}
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.stitch.tweetypie.{TweetyPie => TweetypieStitchClient}
+import com.ExTwitter.tweetypie.{thriftscala => tp}
 import javax.inject.Inject
 import javax.inject.Singleton
 

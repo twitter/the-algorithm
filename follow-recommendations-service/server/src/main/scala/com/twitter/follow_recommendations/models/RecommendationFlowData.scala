@@ -1,16 +1,16 @@
-package com.twitter.follow_recommendations.models
+package com.ExTwitter.follow_recommendations.models
 
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.ClientContextConverter
-import com.twitter.follow_recommendations.common.models.HasUserState
-import com.twitter.follow_recommendations.common.utils.UserSignupUtil
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.RecommendationPipelineIdentifier
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.util.Time
+import com.ExTwitter.follow_recommendations.common.models.CandidateUser
+import com.ExTwitter.follow_recommendations.common.models.ClientContextConverter
+import com.ExTwitter.follow_recommendations.common.models.HasUserState
+import com.ExTwitter.follow_recommendations.common.utils.UserSignupUtil
+import com.ExTwitter.follow_recommendations.logging.{thriftscala => offline}
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidateSource
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.product_mixer.core.model.common.identifier.RecommendationPipelineIdentifier
+import com.ExTwitter.product_mixer.core.model.marshalling.HasMarshalling
+import com.ExTwitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.ExTwitter.util.Time
 
 case class RecommendationFlowData[Target <: HasClientContext](
   request: Target,

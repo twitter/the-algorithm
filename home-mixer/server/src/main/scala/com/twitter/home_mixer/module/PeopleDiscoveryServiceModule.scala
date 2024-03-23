@@ -1,15 +1,15 @@
-package com.twitter.home_mixer.module
+package com.ExTwitter.home_mixer.module
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.peoplediscovery.api.thriftscala.ThriftPeopleDiscoveryService
-import com.twitter.util.Duration
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.finagle.thriftmux.MethodBuilder
+import com.ExTwitter.finatra.mtls.thriftmux.modules.MtlsClient
+import com.ExTwitter.inject.Injector
+import com.ExTwitter.inject.thrift.modules.ThriftMethodBuilderClientModule
+import com.ExTwitter.peoplediscovery.api.thriftscala.ThriftPeopleDiscoveryService
+import com.ExTwitter.util.Duration
 
 /**
- * Copy of com.twitter.product_mixer.component_library.module.PeopleDiscoveryServiceModule
+ * Copy of com.ExTwitter.product_mixer.component_library.module.PeopleDiscoveryServiceModule
  */
 object PeopleDiscoveryServiceModule
     extends ThriftMethodBuilderClientModule[

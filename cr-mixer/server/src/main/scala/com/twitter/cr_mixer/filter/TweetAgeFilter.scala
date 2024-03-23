@@ -1,14 +1,14 @@
-package com.twitter.cr_mixer.filter
+package com.ExTwitter.cr_mixer.filter
 
-import com.twitter.cr_mixer.model.CandidateGeneratorQuery
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.param.GlobalParams
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Time
+import com.ExTwitter.cr_mixer.model.CandidateGeneratorQuery
+import com.ExTwitter.cr_mixer.model.InitialCandidate
+import com.ExTwitter.cr_mixer.param.GlobalParams
+import com.ExTwitter.snowflake.id.SnowflakeId
+import com.ExTwitter.util.Duration
+import com.ExTwitter.util.Future
+import com.ExTwitter.util.Time
 import javax.inject.Singleton
-import com.twitter.conversions.DurationOps._
+import com.ExTwitter.conversions.DurationOps._
 
 @Singleton
 case class TweetAgeFilter() extends FilterBase {

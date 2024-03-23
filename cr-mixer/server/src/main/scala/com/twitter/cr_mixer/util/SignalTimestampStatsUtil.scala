@@ -1,14 +1,14 @@
-package com.twitter.cr_mixer.util
+package com.ExTwitter.cr_mixer.util
 
-import com.twitter.cr_mixer.model.CandidateGenerationInfo
-import com.twitter.cr_mixer.model.RankedCandidate
-import com.twitter.cr_mixer.model.SourceInfo
-import com.twitter.cr_mixer.thriftscala.SourceType
-import com.twitter.cr_mixer.thriftscala.TweetRecommendation
+import com.ExTwitter.cr_mixer.model.CandidateGenerationInfo
+import com.ExTwitter.cr_mixer.model.RankedCandidate
+import com.ExTwitter.cr_mixer.model.SourceInfo
+import com.ExTwitter.cr_mixer.thriftscala.SourceType
+import com.ExTwitter.cr_mixer.thriftscala.TweetRecommendation
 import javax.inject.Inject
-import com.twitter.finagle.stats.StatsReceiver
+import com.ExTwitter.finagle.stats.StatsReceiver
 import javax.inject.Singleton
-import com.twitter.relevance_platform.common.stats.BucketTimestampStats
+import com.ExTwitter.relevance_platform.common.stats.BucketTimestampStats
 
 @Singleton
 class SignalTimestampStatsUtil @Inject() (statsReceiver: StatsReceiver) {

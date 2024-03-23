@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.generic_summary
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.generic_summary
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.generic_summary.GenericSummaryCandidateUrtItemBuilder.GenericSummaryClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.GenericSummaryCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.richtext.BaseRichTextBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.generic_summary.GenericSummaryItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.generic_summary.GenericSummaryItemDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.media.Media
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.PromotedMetadata
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.util.Time
+import com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.generic_summary.GenericSummaryCandidateUrtItemBuilder.GenericSummaryClientEventInfoElement
+import com.ExTwitter.product_mixer.component_library.model.candidate.GenericSummaryCandidate
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.richtext.BaseRichTextBuilder
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.generic_summary.GenericSummaryItem
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.generic_summary.GenericSummaryItemDisplayType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.media.Media
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.promoted.PromotedMetadata
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.util.Time
 
 object GenericSummaryCandidateUrtItemBuilder {
   val GenericSummaryClientEventInfoElement: String = "genericsummary"

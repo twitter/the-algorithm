@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.component_library.experiments.metrics
+package com.ExTwitter.product_mixer.component_library.experiments.metrics
 
-import com.twitter.product_mixer.component_library.experiments.metrics.PlaceholderConfig.PlaceholdersMap
+import com.ExTwitter.product_mixer.component_library.experiments.metrics.PlaceholderConfig.PlaceholdersMap
 import reflect.ClassTag
 import scala.reflect.runtime.universe._
 import scala.util.matching.Regex

@@ -1,8 +1,8 @@
-package com.twitter.home_mixer.model
+package com.ExTwitter.home_mixer.model
 
-import com.twitter.escherbird.{thriftscala => esb}
-import com.twitter.search.common.features.{thriftscala => sc}
-import com.twitter.tweetypie.{thriftscala => tp}
+import com.ExTwitter.escherbird.{thriftscala => esb}
+import com.ExTwitter.search.common.features.{thriftscala => sc}
+import com.ExTwitter.tweetypie.{thriftscala => tp}
 
 object ContentFeatures {
   val Empty: ContentFeatures = ContentFeatures(

@@ -1,7 +1,7 @@
-package com.twitter.home_mixer.util
+package com.ExTwitter.home_mixer.util
 
-import com.twitter.ml.api.thriftscala.FloatTensor
-import com.twitter.ml.api.util.BufferToIterators.RichFloatBuffer
+import com.ExTwitter.ml.api.thriftscala.FloatTensor
+import com.ExTwitter.ml.api.util.BufferToIterators.RichFloatBuffer
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 

@@ -1,6 +1,6 @@
-package com.twitter.home_mixer.product.list_recommended_users.param
+package com.ExTwitter.home_mixer.product.list_recommended_users.param
 
-import com.twitter.timelines.configapi.FSBoundedParam
+import com.ExTwitter.timelines.configapi.FSBoundedParam
 
 object ListRecommendedUsersParam {
   val SupportedClientFSName = "list_recommended_users_supported_client"

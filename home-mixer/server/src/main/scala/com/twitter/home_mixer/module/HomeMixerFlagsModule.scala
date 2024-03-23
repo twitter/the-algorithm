@@ -1,11 +1,11 @@
-package com.twitter.home_mixer.module
+package com.ExTwitter.home_mixer.module
 
-import com.twitter.conversions.DurationOps.RichDuration
-import com.twitter.home_mixer.param.HomeMixerFlagName
-import com.twitter.inject.TwitterModule
-import com.twitter.util.Duration
+import com.ExTwitter.conversions.DurationOps.RichDuration
+import com.ExTwitter.home_mixer.param.HomeMixerFlagName
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.util.Duration
 
-object HomeMixerFlagsModule extends TwitterModule {
+object HomeMixerFlagsModule extends ExTwitterModule {
 
   import HomeMixerFlagName._
 

@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.component_library.candidate_source.timeline_service
+package com.ExTwitter.product_mixer.component_library.candidate_source.timeline_service
 
-import com.twitter.product_mixer.component_library.model.cursor.NextCursorFeature
-import com.twitter.product_mixer.component_library.model.cursor.PreviousCursorFeature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSourceWithExtractedFeatures
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidatesWithSourceFeatures
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.timelineservice.TimelineService
-import com.twitter.timelineservice.{thriftscala => t}
+import com.ExTwitter.product_mixer.component_library.model.cursor.NextCursorFeature
+import com.ExTwitter.product_mixer.component_library.model.cursor.PreviousCursorFeature
+import com.ExTwitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidateSourceWithExtractedFeatures
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidatesWithSourceFeatures
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.stitch.timelineservice.TimelineService
+import com.ExTwitter.timelineservice.{thriftscala => t}
 import javax.inject.Inject
 import javax.inject.Singleton
 

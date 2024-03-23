@@ -1,32 +1,32 @@
-package com.twitter.follow_recommendations.common.feature_hydration.sources
+package com.ExTwitter.follow_recommendations.common.feature_hydration.sources
 
 import com.google.inject.Provides
 import com.google.inject.Singleton
-import com.twitter.escherbird.util.stitchcache.StitchCache
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.stitch.Stitch
-import com.twitter.storage.client.manhattan.bijections.Bijections.BinaryCompactScalaInjection
-import com.twitter.storage.client.manhattan.bijections.Bijections.LongInjection
-import com.twitter.storage.client.manhattan.kv.Guarantee
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClient
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storage.client.manhattan.kv.ManhattanKVEndpoint
-import com.twitter.storage.client.manhattan.kv.ManhattanKVEndpointBuilder
-import com.twitter.storage.client.manhattan.kv.impl.Component
-import com.twitter.storage.client.manhattan.kv.impl.Component0
-import com.twitter.storage.client.manhattan.kv.impl.KeyDescriptor
-import com.twitter.storage.client.manhattan.kv.impl.ValueDescriptor
-import com.twitter.strato.generated.client.ml.featureStore.McUserCountingOnUserClientColumn
-import com.twitter.strato.generated.client.ml.featureStore.onboarding.TimelinesAuthorFeaturesOnUserClientColumn
-import com.twitter.timelines.author_features.v1.thriftscala.AuthorFeatures
-import com.twitter.conversions.DurationOps._
-import com.twitter.onboarding.relevance.features.thriftscala.MCUserCountingFeatures
+import com.ExTwitter.escherbird.util.stitchcache.StitchCache
+import com.ExTwitter.finagle.mtls.authentication.ServiceIdentifier
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.storage.client.manhattan.bijections.Bijections.BinaryCompactScalaInjection
+import com.ExTwitter.storage.client.manhattan.bijections.Bijections.LongInjection
+import com.ExTwitter.storage.client.manhattan.kv.Guarantee
+import com.ExTwitter.storage.client.manhattan.kv.ManhattanKVClient
+import com.ExTwitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
+import com.ExTwitter.storage.client.manhattan.kv.ManhattanKVEndpoint
+import com.ExTwitter.storage.client.manhattan.kv.ManhattanKVEndpointBuilder
+import com.ExTwitter.storage.client.manhattan.kv.impl.Component
+import com.ExTwitter.storage.client.manhattan.kv.impl.Component0
+import com.ExTwitter.storage.client.manhattan.kv.impl.KeyDescriptor
+import com.ExTwitter.storage.client.manhattan.kv.impl.ValueDescriptor
+import com.ExTwitter.strato.generated.client.ml.featureStore.McUserCountingOnUserClientColumn
+import com.ExTwitter.strato.generated.client.ml.featureStore.onboarding.TimelinesAuthorFeaturesOnUserClientColumn
+import com.ExTwitter.timelines.author_features.v1.thriftscala.AuthorFeatures
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.onboarding.relevance.features.thriftscala.MCUserCountingFeatures
 import java.lang.{Long => JLong}
 import scala.util.Random
 
-object HydrationSourcesModule extends TwitterModule {
+object HydrationSourcesModule extends ExTwitterModule {
 
   val readFromManhattan = flag(
     "feature_hydration_enable_reading_from_manhattan",

@@ -1,9 +1,9 @@
-package com.twitter.ann.common
+package com.ExTwitter.ann.common
 
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
-import com.twitter.util.logging.Logging
+import com.ExTwitter.util.Return
+import com.ExTwitter.util.Throw
+import com.ExTwitter.util.Try
+import com.ExTwitter.util.logging.Logging
 
 // Memoization with a twist
 // New epoch reuse K:V pairs from previous and recycle everything else

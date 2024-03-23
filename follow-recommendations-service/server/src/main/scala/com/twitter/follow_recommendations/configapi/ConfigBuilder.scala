@@ -1,7 +1,7 @@
-package com.twitter.follow_recommendations.configapi
+package com.ExTwitter.follow_recommendations.configapi
 
-import com.twitter.timelines.configapi.CompositeConfig
-import com.twitter.timelines.configapi.Config
+import com.ExTwitter.timelines.configapi.CompositeConfig
+import com.ExTwitter.timelines.configapi.Config
 import javax.inject.Inject
 import javax.inject.Singleton
 

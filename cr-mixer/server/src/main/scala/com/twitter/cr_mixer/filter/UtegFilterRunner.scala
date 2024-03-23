@@ -1,9 +1,9 @@
-package com.twitter.cr_mixer.filter
+package com.ExTwitter.cr_mixer.filter
 
-import com.twitter.cr_mixer.model.CandidateGeneratorQuery
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.Future
+import com.ExTwitter.cr_mixer.model.CandidateGeneratorQuery
+import com.ExTwitter.cr_mixer.model.InitialCandidate
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.util.Future
 
 import javax.inject.Inject
 import javax.inject.Singleton

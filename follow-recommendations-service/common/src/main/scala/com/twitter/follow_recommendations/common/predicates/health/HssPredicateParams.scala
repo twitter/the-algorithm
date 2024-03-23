@@ -1,10 +1,10 @@
-package com.twitter.follow_recommendations.common.predicates.hss
+package com.ExTwitter.follow_recommendations.common.predicates.hss
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.timelines.configapi.DurationConversion
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.util.Duration
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.timelines.configapi.DurationConversion
+import com.ExTwitter.timelines.configapi.FSBoundedParam
+import com.ExTwitter.timelines.configapi.HasDurationConversion
+import com.ExTwitter.util.Duration
 
 object HssPredicateParams {
   object HssCseScoreThreshold

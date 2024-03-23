@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.trend
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.trend
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.stringcenter.Str
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.PromotedTrendAdvertiserNameFeature
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.TrendTweetCount
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.trends.trending_content.util.CompactingNumberLocalizer
+import com.ExTwitter.product_mixer.component_library.decorator.urt.builder.stringcenter.Str
+import com.ExTwitter.product_mixer.component_library.model.candidate.trends_events.PromotedTrendAdvertiserNameFeature
+import com.ExTwitter.product_mixer.component_library.model.candidate.trends_events.TrendTweetCount
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.model.common.UniversalNoun
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.trends.trending_content.util.CompactingNumberLocalizer
 
 case class TrendMetaDescriptionBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]](
   promotedByMetaDescriptionStr: Str[PipelineQuery, UniversalNoun[Any]],

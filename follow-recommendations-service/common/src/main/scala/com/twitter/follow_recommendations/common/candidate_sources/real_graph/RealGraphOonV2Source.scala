@@ -1,14 +1,14 @@
-package com.twitter.follow_recommendations.common.candidate_sources.real_graph
+package com.ExTwitter.follow_recommendations.common.candidate_sources.real_graph
 
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.onboarding.realGraph.UserRealgraphOonV2ClientColumn
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.wtf.candidate.thriftscala.CandidateSeq
+import com.ExTwitter.follow_recommendations.common.models.CandidateUser
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidateSource
+import com.ExTwitter.hermit.model.Algorithm
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.strato.generated.client.onboarding.realGraph.UserRealgraphOonV2ClientColumn
+import com.ExTwitter.timelines.configapi.HasParams
+import com.ExTwitter.wtf.candidate.thriftscala.CandidateSeq
 import javax.inject.Inject
 import javax.inject.Singleton
 

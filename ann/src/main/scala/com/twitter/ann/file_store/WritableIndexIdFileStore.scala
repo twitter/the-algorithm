@@ -1,12 +1,12 @@
-package com.twitter.ann.file_store
+package com.ExTwitter.ann.file_store
 
-import com.twitter.ann.common.IndexOutputFile
-import com.twitter.ann.common.thriftscala.FileBasedIndexIdStore
-import com.twitter.bijection.Injection
-import com.twitter.mediaservices.commons.codec.ArrayByteBufferCodec
-import com.twitter.mediaservices.commons.codec.ThriftByteBufferCodec
-import com.twitter.storehaus.Store
-import com.twitter.util.Future
+import com.ExTwitter.ann.common.IndexOutputFile
+import com.ExTwitter.ann.common.thriftscala.FileBasedIndexIdStore
+import com.ExTwitter.bijection.Injection
+import com.ExTwitter.mediaservices.commons.codec.ArrayByteBufferCodec
+import com.ExTwitter.mediaservices.commons.codec.ThriftByteBufferCodec
+import com.ExTwitter.storehaus.Store
+import com.ExTwitter.util.Future
 import java.util.concurrent.{ConcurrentHashMap => JConcurrentHashMap}
 import scala.collection.JavaConverters._
 

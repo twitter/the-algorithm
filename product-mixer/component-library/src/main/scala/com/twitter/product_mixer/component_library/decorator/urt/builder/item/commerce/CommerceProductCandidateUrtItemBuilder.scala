@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.commerce
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.commerce
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.commerce.CommerceProductCandidateUrtItemBuilder.CommerceProductClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.CommerceProductCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.commerce.CommerceProductItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.commerce.CommerceProductCandidateUrtItemBuilder.CommerceProductClientEventInfoElement
+import com.ExTwitter.product_mixer.component_library.model.candidate.CommerceProductCandidate
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.commerce.CommerceProductItem
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
 
 object CommerceProductCandidateUrtItemBuilder {
   val CommerceProductClientEventInfoElement: String = "commerce-product"

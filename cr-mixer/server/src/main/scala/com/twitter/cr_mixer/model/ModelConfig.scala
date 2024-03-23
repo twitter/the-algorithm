@@ -1,4 +1,4 @@
-package com.twitter.cr_mixer.model
+package com.ExTwitter.cr_mixer.model
 
 /**
  * A Configuration class for all Model Based Candidate Sources.

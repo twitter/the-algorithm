@@ -1,6 +1,6 @@
-package com.twitter.follow_recommendations.common.models
+package com.ExTwitter.follow_recommendations.common.models
 
-import com.twitter.finagle.tracing.Trace
+import com.ExTwitter.finagle.tracing.Trace
 
 object Session {
 

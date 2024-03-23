@@ -1,13 +1,13 @@
-package com.twitter.cr_mixer.module.core
+package com.ExTwitter.cr_mixer.module.core
 
 import com.google.inject.Provides
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.cr_mixer.featureswitch.CrMixerLoggingABDecider
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
+import com.ExTwitter.abdecider.LoggingABDecider
+import com.ExTwitter.cr_mixer.featureswitch.CrMixerLoggingABDecider
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.inject.ExTwitterModule
 import javax.inject.Singleton
 
-object CrMixerLoggingABDeciderModule extends TwitterModule {
+object CrMixerLoggingABDeciderModule extends ExTwitterModule {
 
   @Provides
   @Singleton

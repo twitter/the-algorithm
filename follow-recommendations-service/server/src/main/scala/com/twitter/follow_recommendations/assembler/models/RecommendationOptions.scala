@@ -1,4 +1,4 @@
-package com.twitter.follow_recommendations.assembler.models
+package com.ExTwitter.follow_recommendations.assembler.models
 
 sealed trait RecommendationOptions
 

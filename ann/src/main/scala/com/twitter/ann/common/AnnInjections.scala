@@ -1,6 +1,6 @@
-package com.twitter.ann.common
+package com.ExTwitter.ann.common
 
-import com.twitter.bijection.{Bijection, Injection}
+import com.ExTwitter.bijection.{Bijection, Injection}
 
 // Class providing commonly used injections that can be used directly with ANN apis.
 // Injection  prefixed with `J` can be used in java directly with ANN apis.

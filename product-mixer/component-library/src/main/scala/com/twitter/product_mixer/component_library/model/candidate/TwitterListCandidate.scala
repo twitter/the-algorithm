@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.component_library.model.candidate
+package com.ExTwitter.product_mixer.component_library.model.candidate
 
-import com.twitter.product_mixer.core.model.common.UniversalNoun
+import com.ExTwitter.product_mixer.core.model.common.UniversalNoun
 
 /**
- * Canonical TwitterListCandidate model. Always prefer this version over all other variants.
+ * Canonical ExTwitterListCandidate model. Always prefer this version over all other variants.
  *
- * @note Any additional fields should be added as a [[com.twitter.product_mixer.core.feature.Feature]]
- *       on the candidate's [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap]]. If the
+ * @note Any additional fields should be added as a [[com.ExTwitter.product_mixer.core.feature.Feature]]
+ *       on the candidate's [[com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap]]. If the
  *       features come from the candidate source itself (as opposed to hydrated via a
- *       [[com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator]]),
- *       then [[com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig.featuresFromCandidateSourceTransformers]]
+ *       [[com.ExTwitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator]]),
+ *       then [[com.ExTwitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig.featuresFromCandidateSourceTransformers]]
  *       can be used to extract features from the candidate source response.
  *
  * @note This class should always remain `final`. If for any reason the `final` modifier is removed,
  *       the equals() implementation must be updated in order to handle class inheritor equality
  *       (see note on the equals method below)
  */
-final class TwitterListCandidate private (
+final class ExTwitterListCandidate private (
   override val id: Long)
     extends UniversalNoun[Long] {
 
   /**
    * @inheritdoc
    */
-  override def canEqual(that: Any): Boolean = that.isInstanceOf[TwitterListCandidate]
+  override def canEqual(that: Any): Boolean = that.isInstanceOf[ExTwitterListCandidate]
 
   /**
    * High performance implementation of equals method that leverages:
@@ -39,7 +39,7 @@ final class TwitterListCandidate private (
    */
   override def equals(that: Any): Boolean =
     that match {
-      case candidate: TwitterListCandidate =>
+      case candidate: ExTwitterListCandidate =>
         (
           (this eq candidate)
             || ((hashCode == candidate.hashCode) && (id == candidate.id))
@@ -69,6 +69,6 @@ final class TwitterListCandidate private (
   override val hashCode: Int = id.##
 }
 
-object TwitterListCandidate {
-  def apply(id: Long): TwitterListCandidate = new TwitterListCandidate(id)
+object ExTwitterListCandidate {
+  def apply(id: Long): ExTwitterListCandidate = new ExTwitterListCandidate(id)
 }

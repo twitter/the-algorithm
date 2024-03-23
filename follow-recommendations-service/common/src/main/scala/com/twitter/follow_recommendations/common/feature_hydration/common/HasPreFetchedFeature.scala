@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.common.feature_hydration.common
+package com.ExTwitter.follow_recommendations.common.feature_hydration.common
 
-import com.twitter.follow_recommendations.common.models.HasMutualFollowedUserIds
-import com.twitter.follow_recommendations.common.models.HasWtfImpressions
-import com.twitter.follow_recommendations.common.models.WtfImpression
-import com.twitter.util.Time
+import com.ExTwitter.follow_recommendations.common.models.HasMutualFollowedUserIds
+import com.ExTwitter.follow_recommendations.common.models.HasWtfImpressions
+import com.ExTwitter.follow_recommendations.common.models.WtfImpression
+import com.ExTwitter.util.Time
 
 trait HasPreFetchedFeature extends HasMutualFollowedUserIds with HasWtfImpressions {
 

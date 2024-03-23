@@ -1,14 +1,14 @@
-package com.twitter.follow_recommendations.common.feature_hydration.adapters
+package com.ExTwitter.follow_recommendations.common.feature_hydration.adapters
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.Feature.Continuous
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.IRecordOneToOneAdapter
-import com.twitter.ml.api.util.FDsl._
-import com.twitter.ml.featurestore.catalog.features.customer_journey.PostNuxAlgorithmFeatures
-import com.twitter.ml.featurestore.catalog.features.customer_journey.PostNuxAlgorithmIdAggregateFeatureGroup
-import com.twitter.ml.featurestore.catalog.features.customer_journey.PostNuxAlgorithmTypeAggregateFeatureGroup
+import com.ExTwitter.ml.api.DataRecord
+import com.ExTwitter.ml.api.Feature
+import com.ExTwitter.ml.api.Feature.Continuous
+import com.ExTwitter.ml.api.FeatureContext
+import com.ExTwitter.ml.api.IRecordOneToOneAdapter
+import com.ExTwitter.ml.api.util.FDsl._
+import com.ExTwitter.ml.featurestore.catalog.features.customer_journey.PostNuxAlgorithmFeatures
+import com.ExTwitter.ml.featurestore.catalog.features.customer_journey.PostNuxAlgorithmIdAggregateFeatureGroup
+import com.ExTwitter.ml.featurestore.catalog.features.customer_journey.PostNuxAlgorithmTypeAggregateFeatureGroup
 import scala.collection.JavaConverters._
 
 object PostNuxAlgorithmIdAdapter extends PostNuxAlgorithmAdapter {

@@ -1,9 +1,9 @@
-package com.twitter.product_mixer.component_library.candidate_source.topics
+package com.ExTwitter.product_mixer.component_library.candidate_source.topics
 
-import com.twitter.product_mixer.core.functional_component.candidate_source.strato.StratoKeyViewFetcherSeqSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.generated.client.interests.FollowedTopicsGetterClientColumn
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.strato.StratoKeyViewFetcherSeqSource
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.strato.client.Fetcher
+import com.ExTwitter.strato.generated.client.interests.FollowedTopicsGetterClientColumn
 import javax.inject.Inject
 import javax.inject.Singleton
 

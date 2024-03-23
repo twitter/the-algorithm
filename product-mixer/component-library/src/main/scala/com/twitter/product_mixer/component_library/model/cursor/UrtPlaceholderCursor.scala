@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.component_library.model.cursor
+package com.ExTwitter.product_mixer.component_library.model.cursor
 
-import com.twitter.product_mixer.core.pipeline.UrtPipelineCursor
+import com.ExTwitter.product_mixer.core.pipeline.UrtPipelineCursor
 
 /**
  * Cursor model that may be used when we just need a placeholder but no real cursor value. Since URT

@@ -1,28 +1,28 @@
-package com.twitter.graph_feature_service.server.modules
+package com.ExTwitter.graph_feature_service.server.modules
 
 import com.google.inject.Provides
-import com.twitter.bijection.scrooge.CompactScalaCodec
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.graph_feature_service.common.Configs._
-import com.twitter.graph_feature_service.server.stores.GetIntersectionStore
-import com.twitter.graph_feature_service.server.stores.GetIntersectionStore.GetIntersectionQuery
-import com.twitter.graph_feature_service.thriftscala.CachedIntersectionResult
-import com.twitter.hermit.store.common.ObservedMemcachedReadableStore
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.storehaus.ReadableStore
-import com.twitter.storehaus_internal.memcache.MemcacheStore
-import com.twitter.storehaus_internal.util.{ClientName, ZkEndPoint}
-import com.twitter.util.Duration
+import com.ExTwitter.bijection.scrooge.CompactScalaCodec
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.finagle.mtls.authentication.ServiceIdentifier
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.graph_feature_service.common.Configs._
+import com.ExTwitter.graph_feature_service.server.stores.GetIntersectionStore
+import com.ExTwitter.graph_feature_service.server.stores.GetIntersectionStore.GetIntersectionQuery
+import com.ExTwitter.graph_feature_service.thriftscala.CachedIntersectionResult
+import com.ExTwitter.hermit.store.common.ObservedMemcachedReadableStore
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.inject.annotations.Flag
+import com.ExTwitter.storehaus.ReadableStore
+import com.ExTwitter.storehaus_internal.memcache.MemcacheStore
+import com.ExTwitter.storehaus_internal.util.{ClientName, ZkEndPoint}
+import com.ExTwitter.util.Duration
 import javax.inject.{Named, Singleton}
 
 /**
  * Initialize the MemCache based GetIntersectionStore.
  * The Key of MemCache is UserId~CandidateId~FeatureTypes~IntersectionIdLimit.
  */
-object GetIntersectionStoreModule extends TwitterModule {
+object GetIntersectionStoreModule extends ExTwitterModule {
 
   private[this] val requestTimeout: Duration = 25.millis
   private[this] val retries: Int = 0

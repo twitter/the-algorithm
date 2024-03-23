@@ -1,11 +1,11 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.ads
+package com.ExTwitter.product_mixer.component_library.pipeline.candidate.ads
 
-import com.twitter.adserver.thriftscala.AdImpression
-import com.twitter.product_mixer.component_library.model.candidate.ads.AdsCandidate
-import com.twitter.product_mixer.component_library.model.candidate.ads.AdsTweetCandidate
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.UnexpectedCandidateResult
+import com.ExTwitter.adserver.thriftscala.AdImpression
+import com.ExTwitter.product_mixer.component_library.model.candidate.ads.AdsCandidate
+import com.ExTwitter.product_mixer.component_library.model.candidate.ads.AdsTweetCandidate
+import com.ExTwitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
+import com.ExTwitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
+import com.ExTwitter.product_mixer.core.pipeline.pipeline_failure.UnexpectedCandidateResult
 
 object AdsCandidatePipelineResultsTransformer
     extends CandidatePipelineResultsTransformer[AdImpression, AdsCandidate] {

@@ -1,25 +1,25 @@
-package com.twitter.product_mixer.component_library.module
+package com.ExTwitter.product_mixer.component_library.module
 
 import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.Memcached
-import com.twitter.finagle.Resolver
-import com.twitter.finagle.memcached.protocol.Command
-import com.twitter.finagle.memcached.protocol.Response
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient._
-import com.twitter.finagle.param.HighResTimer
-import com.twitter.finagle.service.RetryExceptionsFilter
-import com.twitter.finagle.service.RetryPolicy
-import com.twitter.finagle.service.StatsFilter
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.impressionstore.store.TweetImpressionsStore
-import com.twitter.timelines.impressionstore.thriftscala.ImpressionList
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.finagle.Memcached
+import com.ExTwitter.finagle.Resolver
+import com.ExTwitter.finagle.memcached.protocol.Command
+import com.ExTwitter.finagle.memcached.protocol.Response
+import com.ExTwitter.finagle.mtls.authentication.ServiceIdentifier
+import com.ExTwitter.finagle.mtls.client.MtlsStackClient._
+import com.ExTwitter.finagle.param.HighResTimer
+import com.ExTwitter.finagle.service.RetryExceptionsFilter
+import com.ExTwitter.finagle.service.RetryPolicy
+import com.ExTwitter.finagle.service.StatsFilter
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.storehaus.ReadableStore
+import com.ExTwitter.timelines.impressionstore.store.TweetImpressionsStore
+import com.ExTwitter.timelines.impressionstore.thriftscala.ImpressionList
 import javax.inject.Singleton
 
-object TweetImpressionStoreModule extends TwitterModule {
+object TweetImpressionStoreModule extends ExTwitterModule {
   private val TweetImpressionMemcacheWilyPath = "/s/cache/timelines_impressionstore:twemcaches"
   private val tweetImpressionLabel = "timelinesTweetImpressions"
 

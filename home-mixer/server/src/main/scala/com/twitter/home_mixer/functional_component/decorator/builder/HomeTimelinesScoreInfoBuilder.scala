@@ -1,12 +1,12 @@
-package com.twitter.home_mixer.functional_component.decorator.builder
+package com.ExTwitter.home_mixer.functional_component.decorator.builder
 
-import com.twitter.home_mixer.model.HomeFeatures.ScoreFeature
-import com.twitter.home_mixer.param.HomeGlobalParams.EnableSendScoresToClient
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.tweet.BaseTimelinesScoreInfoBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TimelinesScoreInfo
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.home_mixer.model.HomeFeatures.ScoreFeature
+import com.ExTwitter.home_mixer.param.HomeGlobalParams.EnableSendScoresToClient
+import com.ExTwitter.product_mixer.component_library.model.candidate.TweetCandidate
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.item.tweet.BaseTimelinesScoreInfoBuilder
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TimelinesScoreInfo
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
 
 object HomeTimelinesScoreInfoBuilder
     extends BaseTimelinesScoreInfoBuilder[PipelineQuery, TweetCandidate] {

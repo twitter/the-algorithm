@@ -1,20 +1,20 @@
-package com.twitter.home_mixer.module
+package com.ExTwitter.home_mixer.module
 
 import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.storage.client.manhattan.kv.Guarantee
-import com.twitter.storehaus_internal.manhattan.ManhattanClusters
-import com.twitter.timelines.clients.manhattan.store._
-import com.twitter.timelines.impressionbloomfilter.{thriftscala => blm}
-import com.twitter.timelines.impressionstore.impressionbloomfilter.ImpressionBloomFilterManhattanKeyValueDescriptor
-import com.twitter.util.Duration
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.finagle.mtls.authentication.ServiceIdentifier
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.inject.annotations.Flag
+import com.ExTwitter.storage.client.manhattan.kv.Guarantee
+import com.ExTwitter.storehaus_internal.manhattan.ManhattanClusters
+import com.ExTwitter.timelines.clients.manhattan.store._
+import com.ExTwitter.timelines.impressionbloomfilter.{thriftscala => blm}
+import com.ExTwitter.timelines.impressionstore.impressionbloomfilter.ImpressionBloomFilterManhattanKeyValueDescriptor
+import com.ExTwitter.util.Duration
 import javax.inject.Singleton
 
-object ImpressionBloomFilterModule extends TwitterModule {
+object ImpressionBloomFilterModule extends ExTwitterModule {
 
   private val ProdAppId = "impression_bloom_filter_store"
   private val ProdDataset = "impression_bloom_filter"

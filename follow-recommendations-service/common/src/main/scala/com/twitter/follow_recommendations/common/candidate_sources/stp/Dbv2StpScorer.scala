@@ -1,13 +1,13 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+package com.ExTwitter.follow_recommendations.common.candidate_sources.stp
 
-import com.twitter.cortex.deepbird.runtime.prediction_engine.TensorflowPredictionEngine
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.ml.api.Feature.Continuous
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.ml.prediction_service.PredictionRequest
-import com.twitter.stitch.Stitch
-import com.twitter.wtf.scalding.jobs.strong_tie_prediction.STPRecord
-import com.twitter.wtf.scalding.jobs.strong_tie_prediction.STPRecordAdapter
+import com.ExTwitter.cortex.deepbird.runtime.prediction_engine.TensorflowPredictionEngine
+import com.ExTwitter.follow_recommendations.common.constants.GuiceNamedConstants
+import com.ExTwitter.ml.api.Feature.Continuous
+import com.ExTwitter.ml.api.util.SRichDataRecord
+import com.ExTwitter.ml.prediction_service.PredictionRequest
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.wtf.scalding.jobs.strong_tie_prediction.STPRecord
+import com.ExTwitter.wtf.scalding.jobs.strong_tie_prediction.STPRecordAdapter
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton

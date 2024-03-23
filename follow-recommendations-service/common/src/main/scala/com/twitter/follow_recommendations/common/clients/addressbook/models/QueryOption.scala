@@ -1,6 +1,6 @@
-package com.twitter.follow_recommendations.common.clients.addressbook.models
+package com.ExTwitter.follow_recommendations.common.clients.addressbook.models
 
-import com.twitter.addressbook.{thriftscala => t}
+import com.ExTwitter.addressbook.{thriftscala => t}
 
 case class QueryOption(
   onlyDiscoverableInExpansion: Boolean,

@@ -1,16 +1,16 @@
-package com.twitter.home_mixer.functional_component.decorator.urt.builder
+package com.ExTwitter.home_mixer.functional_component.decorator.urt.builder
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ChildFeedbackAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.SeeFewer
-import com.twitter.stringcenter.client.StringCenter
-import com.twitter.stringcenter.client.core.ExternalString
-import com.twitter.timelines.common.{thriftscala => tlc}
-import com.twitter.timelines.service.{thriftscala => t}
-import com.twitter.timelineservice.model.FeedbackInfo
-import com.twitter.timelineservice.model.FeedbackMetadata
-import com.twitter.timelineservice.suggests.{thriftscala => st}
-import com.twitter.timelineservice.{thriftscala => tlst}
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.ChildFeedbackAction
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.SeeFewer
+import com.ExTwitter.stringcenter.client.StringCenter
+import com.ExTwitter.stringcenter.client.core.ExternalString
+import com.ExTwitter.timelines.common.{thriftscala => tlc}
+import com.ExTwitter.timelines.service.{thriftscala => t}
+import com.ExTwitter.timelineservice.model.FeedbackInfo
+import com.ExTwitter.timelineservice.model.FeedbackMetadata
+import com.ExTwitter.timelineservice.suggests.{thriftscala => st}
+import com.ExTwitter.timelineservice.{thriftscala => tlst}
 
 object FeedbackUtil {
 

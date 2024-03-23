@@ -1,7 +1,7 @@
-package com.twitter.cr_mixer.service
+package com.ExTwitter.cr_mixer.service
 
-import com.twitter.product_mixer.core.functional_component.common.alert.Destination
-import com.twitter.product_mixer.core.functional_component.common.alert.NotificationGroup
+import com.ExTwitter.product_mixer.core.functional_component.common.alert.Destination
+import com.ExTwitter.product_mixer.core.functional_component.common.alert.NotificationGroup
 
 /**
  * Notifications (email, pagerduty, etc) can be specific per-alert but it is common for multiple
@@ -16,11 +16,11 @@ import com.twitter.product_mixer.core.functional_component.common.alert.Notifica
  *
  *
  * For more information about how to get a PagerDuty key, see:
- * https://docbird.twitter.biz/mon/how-to-guides.html?highlight=notificationgroup#set-up-email-pagerduty-and-slack-notifications
+ * https://docbird.ExTwitter.biz/mon/how-to-guides.html?highlight=notificationgroup#set-up-email-pagerduty-and-slack-notifications
  */
 object CrMixerAlertNotificationConfig {
   val DefaultNotificationGroup: NotificationGroup = NotificationGroup(
-    warn = Destination(emails = Seq("no-reply@twitter.com")),
-    critical = Destination(emails = Seq("no-reply@twitter.com"))
+    warn = Destination(emails = Seq("no-reply@ExTwitter.com")),
+    critical = Destination(emails = Seq("no-reply@ExTwitter.com"))
   )
 }

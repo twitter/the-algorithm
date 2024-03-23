@@ -1,6 +1,6 @@
-package com.twitter.follow_recommendations.common.models
+package com.ExTwitter.follow_recommendations.common.models
 
-import com.twitter.core_workflows.user_model.thriftscala.UserState
+import com.ExTwitter.core_workflows.user_model.thriftscala.UserState
 
 trait HasUserState {
   def userState: Option[UserState]

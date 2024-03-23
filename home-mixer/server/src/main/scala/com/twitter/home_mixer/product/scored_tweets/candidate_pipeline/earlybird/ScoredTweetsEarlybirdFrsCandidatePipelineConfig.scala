@@ -1,24 +1,24 @@
-package com.twitter.home_mixer.product.scored_tweets.candidate_pipeline.earlybird
+package com.ExTwitter.home_mixer.product.scored_tweets.candidate_pipeline.earlybird
 
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.home_mixer.functional_component.candidate_source.EarlybirdCandidateSource
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.FrsSeedUsersQueryFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.gate.MinCachedTweetsGate
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.CachedScoredTweets
-import com.twitter.home_mixer.product.scored_tweets.query_transformer.earlybird.EarlybirdFrsQueryTransformer
-import com.twitter.home_mixer.product.scored_tweets.response_transformer.earlybird.ScoredTweetsEarlybirdFrsResponseFeatureTransformer
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseQueryFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.search.earlybird.{thriftscala => eb}
+import com.ExTwitter.finagle.thrift.ClientId
+import com.ExTwitter.home_mixer.functional_component.candidate_source.EarlybirdCandidateSource
+import com.ExTwitter.home_mixer.product.scored_tweets.feature_hydrator.FrsSeedUsersQueryFeatureHydrator
+import com.ExTwitter.home_mixer.product.scored_tweets.gate.MinCachedTweetsGate
+import com.ExTwitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
+import com.ExTwitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.CachedScoredTweets
+import com.ExTwitter.home_mixer.product.scored_tweets.query_transformer.earlybird.EarlybirdFrsQueryTransformer
+import com.ExTwitter.home_mixer.product.scored_tweets.response_transformer.earlybird.ScoredTweetsEarlybirdFrsResponseFeatureTransformer
+import com.ExTwitter.product_mixer.component_library.model.candidate.TweetCandidate
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
+import com.ExTwitter.product_mixer.core.functional_component.feature_hydrator.BaseQueryFeatureHydrator
+import com.ExTwitter.product_mixer.core.functional_component.filter.Filter
+import com.ExTwitter.product_mixer.core.functional_component.gate.Gate
+import com.ExTwitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
+import com.ExTwitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
+import com.ExTwitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
+import com.ExTwitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
+import com.ExTwitter.search.earlybird.{thriftscala => eb}
 import javax.inject.Inject
 import javax.inject.Singleton
 

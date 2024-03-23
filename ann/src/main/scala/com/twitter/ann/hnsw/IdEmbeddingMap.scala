@@ -1,6 +1,6 @@
-package com.twitter.ann.hnsw
+package com.ExTwitter.ann.hnsw
 
-import com.twitter.ann.common.EmbeddingType._
+import com.ExTwitter.ann.common.EmbeddingType._
 import java.io.OutputStream
 
 trait IdEmbeddingMap[T] {

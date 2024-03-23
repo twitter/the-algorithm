@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.tile
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.tile
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.tile.TileCandidateUrtItemBuilder.TopicTileClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.PromptCarouselTileCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tile.StandardTileContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tile.TileItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.tile.TileCandidateUrtItemBuilder.TopicTileClientEventInfoElement
+import com.ExTwitter.product_mixer.component_library.model.candidate.PromptCarouselTileCandidate
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.tile.StandardTileContent
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.tile.TileItem
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
 
 object TileCandidateUrtItemBuilder {
   val TopicTileClientEventInfoElement: String = "tile"

@@ -1,6 +1,6 @@
-package com.twitter.home_mixer.util.tweetypie
+package com.ExTwitter.home_mixer.util.tweetypie
 
-import com.twitter.tweetypie.{thriftscala => tp}
+import com.ExTwitter.tweetypie.{thriftscala => tp}
 
 object RequestFields {
 

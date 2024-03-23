@@ -1,10 +1,10 @@
-package com.twitter.ann.common
+package com.ExTwitter.ann.common
 
-import com.twitter.ann.common.EmbeddingType.EmbeddingVector
-import com.twitter.ml.api.embedding.Embedding
-import com.twitter.ml.api.embedding.EmbeddingMath
-import com.twitter.ml.api.embedding.EmbeddingSerDe
-import com.twitter.util.Future
+import com.ExTwitter.ann.common.EmbeddingType.EmbeddingVector
+import com.ExTwitter.ml.api.embedding.Embedding
+import com.ExTwitter.ml.api.embedding.EmbeddingMath
+import com.ExTwitter.ml.api.embedding.EmbeddingSerDe
+import com.ExTwitter.util.Future
 
 object EmbeddingType {
   type EmbeddingVector = Embedding[Float]

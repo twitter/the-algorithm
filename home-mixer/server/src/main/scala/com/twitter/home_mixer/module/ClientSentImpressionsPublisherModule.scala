@@ -1,18 +1,18 @@
-package com.twitter.home_mixer.module
+package com.ExTwitter.home_mixer.module
 
 import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.eventbus.client.EventBusPublisher
-import com.twitter.eventbus.client.EventBusPublisherBuilder
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.timelines.config.ConfigUtils
-import com.twitter.timelines.config.Env
-import com.twitter.timelines.impressionstore.thriftscala.PublishedImpressionList
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.eventbus.client.EventBusPublisher
+import com.ExTwitter.eventbus.client.EventBusPublisherBuilder
+import com.ExTwitter.finagle.mtls.authentication.ServiceIdentifier
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.timelines.config.ConfigUtils
+import com.ExTwitter.timelines.config.Env
+import com.ExTwitter.timelines.impressionstore.thriftscala.PublishedImpressionList
 import javax.inject.Singleton
 
-object ClientSentImpressionsPublisherModule extends TwitterModule with ConfigUtils {
+object ClientSentImpressionsPublisherModule extends ExTwitterModule with ConfigUtils {
   private val serviceName = "home-mixer"
 
   @Singleton

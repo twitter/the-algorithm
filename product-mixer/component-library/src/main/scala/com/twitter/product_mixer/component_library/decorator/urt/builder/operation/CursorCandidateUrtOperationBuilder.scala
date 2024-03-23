@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.operation
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.operation
 
-import com.twitter.product_mixer.component_library.model.candidate.CursorCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorDisplayTreatment
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorOperation
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorType
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.component_library.model.candidate.CursorCandidate
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.operation.CursorDisplayTreatment
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.operation.CursorOperation
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.operation.CursorType
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
 
 case class CursorCandidateUrtOperationBuilder[-Query <: PipelineQuery](
   cursorType: CursorType,

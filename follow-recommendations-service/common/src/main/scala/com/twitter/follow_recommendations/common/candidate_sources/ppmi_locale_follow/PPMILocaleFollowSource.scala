@@ -1,20 +1,20 @@
-package com.twitter.follow_recommendations.common.candidate_sources.ppmi_locale_follow
+package com.ExTwitter.follow_recommendations.common.candidate_sources.ppmi_locale_follow
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.candidate_sources.ppmi_locale_follow.PPMILocaleFollowSourceParams.CandidateSourceEnabled
-import com.twitter.follow_recommendations.common.candidate_sources.ppmi_locale_follow.PPMILocaleFollowSourceParams.LocaleToExcludeFromRecommendation
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.follow_recommendations.common.candidate_sources.ppmi_locale_follow.PPMILocaleFollowSourceParams.CandidateSourceEnabled
+import com.ExTwitter.follow_recommendations.common.candidate_sources.ppmi_locale_follow.PPMILocaleFollowSourceParams.LocaleToExcludeFromRecommendation
+import com.ExTwitter.follow_recommendations.common.models.CandidateUser
+import com.ExTwitter.hermit.model.Algorithm
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidateSource
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.ExTwitter.stitch.Stitch
 
 import javax.inject.Inject
 import javax.inject.Singleton
-import com.twitter.strato.generated.client.onboarding.UserPreferredLanguagesOnUserClientColumn
-import com.twitter.strato.generated.client.onboarding.userrecs.LocaleFollowPpmiClientColumn
-import com.twitter.timelines.configapi.HasParams
+import com.ExTwitter.strato.generated.client.onboarding.UserPreferredLanguagesOnUserClientColumn
+import com.ExTwitter.strato.generated.client.onboarding.userrecs.LocaleFollowPpmiClientColumn
+import com.ExTwitter.timelines.configapi.HasParams
 
 /**
  * Fetches candidates based on the Positive Pointwise Mutual Information (PPMI) statistic

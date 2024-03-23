@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.stringcenter
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.stringcenter
 
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseModuleStr
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.stringcenter.BaseModuleStringCenterPlaceholderBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stringcenter.client.StringCenter
-import com.twitter.stringcenter.client.core.ExternalString
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseModuleStr
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.stringcenter.BaseModuleStringCenterPlaceholderBuilder
+import com.ExTwitter.product_mixer.core.model.common.CandidateWithFeatures
+import com.ExTwitter.product_mixer.core.model.common.UniversalNoun
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.stringcenter.client.StringCenter
+import com.ExTwitter.stringcenter.client.core.ExternalString
 
 /**
  * This class works the same as [[Str]] but passes in a list of candidates to the

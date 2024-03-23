@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.flexible_injection_pipeline
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.flexible_injection_pipeline
 
-import com.twitter.onboarding.injections.{thriftscala => onboardingthrift}
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt.Compact
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt.Large
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt.Normal
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt.RelevancePromptContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt.RelevancePromptDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Callback
+import com.ExTwitter.onboarding.injections.{thriftscala => onboardingthrift}
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.prompt.Compact
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.prompt.Large
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.prompt.Normal
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.prompt.RelevancePromptContent
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.prompt.RelevancePromptDisplayType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.Callback
 
 /***
  * Helper class to convert Relevance Prompt related onboarding thrift to product-mixer models
@@ -27,7 +27,7 @@ object RelevancePromptConversions {
       notRelevantFollowUp = None 
     )
 
-  // Based on com.twitter.timelinemixer.injection.model.candidate.OnboardingRelevancePromptDisplayType#fromThrift
+  // Based on com.ExTwitter.timelinemixer.injection.model.candidate.OnboardingRelevancePromptDisplayType#fromThrift
   def convertDisplayType(
     displayType: onboardingthrift.RelevancePromptDisplayType
   ): RelevancePromptDisplayType =
@@ -40,7 +40,7 @@ object RelevancePromptConversions {
         throw new UnsupportedOperationException(s"Unknown display type: $value")
     }
 
-  // Based on com.twitter.timelinemixer.injection.model.injection.OnboardingRelevancePromptInjection#buildConfirmation
+  // Based on com.ExTwitter.timelinemixer.injection.model.injection.OnboardingRelevancePromptInjection#buildConfirmation
   def buildConfirmation(candidate: onboardingthrift.RelevancePrompt): String = {
     val isRelevantTextConfirmation =
       buttonToDismissFeedbackText(candidate.isRelevantButton).getOrElse("")
@@ -56,7 +56,7 @@ object RelevancePromptConversions {
     isRelevantTextConfirmation
   }
 
-  // Based on com.twitter.timelinemixer.injection.model.candidate.OnboardingInjectionAction#fromThrift
+  // Based on com.ExTwitter.timelinemixer.injection.model.candidate.OnboardingInjectionAction#fromThrift
   def buttonToDismissFeedbackText(button: onboardingthrift.ButtonAction): Option[String] = {
     button.buttonBehavior match {
       case onboardingthrift.ButtonBehavior.Dismiss(d) => d.feedbackMessage.map(_.text)
@@ -64,7 +64,7 @@ object RelevancePromptConversions {
     }
   }
 
-  // Based on com.twitter.timelinemixer.injection.model.injection.OnboardingRelevancePromptInjection#buildCallback
+  // Based on com.ExTwitter.timelinemixer.injection.model.injection.OnboardingRelevancePromptInjection#buildCallback
   def convertCallbacks(onboardingCallbacks: Option[Seq[onboardingthrift.Callback]]): Callback = {
     OnboardingInjectionConversions.convertCallback(
       onboardingCallbacks

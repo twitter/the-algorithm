@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.common.base
+package com.ExTwitter.follow_recommendations.common.base
 
-import com.twitter.follow_recommendations.common.models.FilterReason.ParamReason
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.timelines.configapi.Param
+import com.ExTwitter.follow_recommendations.common.models.FilterReason.ParamReason
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.timelines.configapi.HasParams
+import com.ExTwitter.timelines.configapi.Param
 
 case class ParamPredicate[Request <: HasParams](param: Param[Boolean]) extends Predicate[Request] {
 

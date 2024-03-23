@@ -1,8 +1,8 @@
-package com.twitter.follow_recommendations.common.rankers.ml_ranker.ranking
+package com.ExTwitter.follow_recommendations.common.rankers.ml_ranker.ranking
 
-import com.twitter.follow_recommendations.common.rankers.common.RankerId
-import com.twitter.timelines.configapi.FSEnumParam
-import com.twitter.timelines.configapi.FSParam
+import com.ExTwitter.follow_recommendations.common.rankers.common.RankerId
+import com.ExTwitter.timelines.configapi.FSEnumParam
+import com.ExTwitter.timelines.configapi.FSParam
 
 /**
  * When adding Producer side experiments, make sure to register the FS Key in [[ProducerFeatureFilter]]

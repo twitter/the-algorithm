@@ -1,57 +1,57 @@
-package com.twitter.follow_recommendations.common.feature_hydration.sources
+package com.ExTwitter.follow_recommendations.common.feature_hydration.sources
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.google.inject.Inject
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.TimeoutException
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.constants.CandidateAlgorithmTypeConstants
-import com.twitter.follow_recommendations.common.feature_hydration.adapters.CandidateAlgorithmAdapter.remapCandidateSource
-import com.twitter.follow_recommendations.common.feature_hydration.adapters.PostNuxAlgorithmIdAdapter
-import com.twitter.follow_recommendations.common.feature_hydration.adapters.PostNuxAlgorithmTypeAdapter
-import com.twitter.follow_recommendations.common.feature_hydration.common.FeatureSource
-import com.twitter.follow_recommendations.common.feature_hydration.common.FeatureSourceId
-import com.twitter.follow_recommendations.common.feature_hydration.common.HasPreFetchedFeature
-import com.twitter.follow_recommendations.common.feature_hydration.sources.Utils.adaptAdditionalFeaturesToDataRecord
-import com.twitter.follow_recommendations.common.feature_hydration.sources.Utils.randomizedTTL
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasDisplayLocation
-import com.twitter.follow_recommendations.common.models.HasSimilarToContext
-import com.twitter.hermit.constants.AlgorithmFeedbackTokens.AlgorithmToFeedbackTokenMap
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.DataRecordMerger
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.IRecordOneToOneAdapter
-import com.twitter.ml.featurestore.catalog.datasets.customer_journey.PostNuxAlgorithmIdAggregateDataset
-import com.twitter.ml.featurestore.catalog.datasets.customer_journey.PostNuxAlgorithmTypeAggregateDataset
-import com.twitter.ml.featurestore.catalog.entities.onboarding.{WtfAlgorithm => OnboardingWtfAlgoId}
-import com.twitter.ml.featurestore.catalog.entities.onboarding.{
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.finagle.TimeoutException
+import com.ExTwitter.finagle.mtls.authentication.ServiceIdentifier
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.follow_recommendations.common.constants.CandidateAlgorithmTypeConstants
+import com.ExTwitter.follow_recommendations.common.feature_hydration.adapters.CandidateAlgorithmAdapter.remapCandidateSource
+import com.ExTwitter.follow_recommendations.common.feature_hydration.adapters.PostNuxAlgorithmIdAdapter
+import com.ExTwitter.follow_recommendations.common.feature_hydration.adapters.PostNuxAlgorithmTypeAdapter
+import com.ExTwitter.follow_recommendations.common.feature_hydration.common.FeatureSource
+import com.ExTwitter.follow_recommendations.common.feature_hydration.common.FeatureSourceId
+import com.ExTwitter.follow_recommendations.common.feature_hydration.common.HasPreFetchedFeature
+import com.ExTwitter.follow_recommendations.common.feature_hydration.sources.Utils.adaptAdditionalFeaturesToDataRecord
+import com.ExTwitter.follow_recommendations.common.feature_hydration.sources.Utils.randomizedTTL
+import com.ExTwitter.follow_recommendations.common.models.CandidateUser
+import com.ExTwitter.follow_recommendations.common.models.HasDisplayLocation
+import com.ExTwitter.follow_recommendations.common.models.HasSimilarToContext
+import com.ExTwitter.hermit.constants.AlgorithmFeedbackTokens.AlgorithmToFeedbackTokenMap
+import com.ExTwitter.ml.api.DataRecord
+import com.ExTwitter.ml.api.DataRecordMerger
+import com.ExTwitter.ml.api.FeatureContext
+import com.ExTwitter.ml.api.IRecordOneToOneAdapter
+import com.ExTwitter.ml.featurestore.catalog.datasets.customer_journey.PostNuxAlgorithmIdAggregateDataset
+import com.ExTwitter.ml.featurestore.catalog.datasets.customer_journey.PostNuxAlgorithmTypeAggregateDataset
+import com.ExTwitter.ml.featurestore.catalog.entities.onboarding.{WtfAlgorithm => OnboardingWtfAlgoId}
+import com.ExTwitter.ml.featurestore.catalog.entities.onboarding.{
   WtfAlgorithmType => OnboardingWtfAlgoType
 }
-import com.twitter.ml.featurestore.catalog.features.customer_journey.CombineAllFeaturesPolicy
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.ml.featurestore.lib.WtfAlgorithmId
-import com.twitter.ml.featurestore.lib.WtfAlgorithmType
-import com.twitter.ml.featurestore.lib.data.PredictionRecord
-import com.twitter.ml.featurestore.lib.data.PredictionRecordAdapter
-import com.twitter.ml.featurestore.lib.dataset.DatasetId
-import com.twitter.ml.featurestore.lib.dataset.online.Hydrator.HydrationResponse
-import com.twitter.ml.featurestore.lib.dataset.online.OnlineAccessDataset
-import com.twitter.ml.featurestore.lib.dynamic.ClientConfig
-import com.twitter.ml.featurestore.lib.dynamic.DynamicFeatureStoreClient
-import com.twitter.ml.featurestore.lib.dynamic.DynamicHydrationConfig
-import com.twitter.ml.featurestore.lib.dynamic.FeatureStoreParamsConfig
-import com.twitter.ml.featurestore.lib.dynamic.GatedFeatures
-import com.twitter.ml.featurestore.lib.entity.EntityWithId
-import com.twitter.ml.featurestore.lib.feature.BoundFeature
-import com.twitter.ml.featurestore.lib.feature.BoundFeatureSet
-import com.twitter.ml.featurestore.lib.online.DatasetValuesCache
-import com.twitter.ml.featurestore.lib.online.FeatureStoreRequest
-import com.twitter.ml.featurestore.lib.online.OnlineFeatureGenerationStats
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
+import com.ExTwitter.ml.featurestore.catalog.features.customer_journey.CombineAllFeaturesPolicy
+import com.ExTwitter.ml.featurestore.lib.EntityId
+import com.ExTwitter.ml.featurestore.lib.WtfAlgorithmId
+import com.ExTwitter.ml.featurestore.lib.WtfAlgorithmType
+import com.ExTwitter.ml.featurestore.lib.data.PredictionRecord
+import com.ExTwitter.ml.featurestore.lib.data.PredictionRecordAdapter
+import com.ExTwitter.ml.featurestore.lib.dataset.DatasetId
+import com.ExTwitter.ml.featurestore.lib.dataset.online.Hydrator.HydrationResponse
+import com.ExTwitter.ml.featurestore.lib.dataset.online.OnlineAccessDataset
+import com.ExTwitter.ml.featurestore.lib.dynamic.ClientConfig
+import com.ExTwitter.ml.featurestore.lib.dynamic.DynamicFeatureStoreClient
+import com.ExTwitter.ml.featurestore.lib.dynamic.DynamicHydrationConfig
+import com.ExTwitter.ml.featurestore.lib.dynamic.FeatureStoreParamsConfig
+import com.ExTwitter.ml.featurestore.lib.dynamic.GatedFeatures
+import com.ExTwitter.ml.featurestore.lib.entity.EntityWithId
+import com.ExTwitter.ml.featurestore.lib.feature.BoundFeature
+import com.ExTwitter.ml.featurestore.lib.feature.BoundFeatureSet
+import com.ExTwitter.ml.featurestore.lib.online.DatasetValuesCache
+import com.ExTwitter.ml.featurestore.lib.online.FeatureStoreRequest
+import com.ExTwitter.ml.featurestore.lib.online.OnlineFeatureGenerationStats
+import com.ExTwitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.timelines.configapi.HasParams
 import java.util.concurrent.TimeUnit
 import scala.collection.JavaConverters._
 
@@ -190,7 +190,7 @@ class FeatureStorePostNuxAlgorithmSource @Inject() (
         Stitch
           .callFuture(candidateFeatureMap)
           .within(target.params(FeatureStoreSourceParams.GlobalFetchTimeout))(
-            com.twitter.finagle.util.DefaultTimer)
+            com.ExTwitter.finagle.util.DefaultTimer)
           .rescue {
             case _: TimeoutException =>
               Stitch.value(Map.empty[CandidateUser, DataRecord])

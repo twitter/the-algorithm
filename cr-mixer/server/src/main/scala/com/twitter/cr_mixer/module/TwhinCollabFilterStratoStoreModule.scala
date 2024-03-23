@@ -1,17 +1,17 @@
-package com.twitter.cr_mixer.module
+package com.ExTwitter.cr_mixer.module
 
 import com.google.inject.Provides
 import com.google.inject.Singleton
-import com.twitter.inject.TwitterModule
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.frigate.common.store.strato.StratoFetchableStore
-import com.twitter.cr_mixer.similarity_engine.TwhinCollabFilterSimilarityEngine.TwhinCollabFilterView
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.storehaus.ReadableStore
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.cr_mixer.model.ModuleNames
+import com.ExTwitter.frigate.common.store.strato.StratoFetchableStore
+import com.ExTwitter.cr_mixer.similarity_engine.TwhinCollabFilterSimilarityEngine.TwhinCollabFilterView
+import com.ExTwitter.strato.client.{Client => StratoClient}
+import com.ExTwitter.simclusters_v2.common.TweetId
+import com.ExTwitter.storehaus.ReadableStore
 import javax.inject.Named
 
-object TwhinCollabFilterStratoStoreModule extends TwitterModule {
+object TwhinCollabFilterStratoStoreModule extends ExTwitterModule {
 
   val stratoColumnPath: String = "cuad/twhin/getCollabFilterTweetCandidatesProd.User"
 

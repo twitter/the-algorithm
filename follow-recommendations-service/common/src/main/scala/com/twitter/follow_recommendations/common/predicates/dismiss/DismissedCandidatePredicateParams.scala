@@ -1,8 +1,8 @@
-package com.twitter.follow_recommendations.common.predicates.dismiss
+package com.ExTwitter.follow_recommendations.common.predicates.dismiss
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.timelines.configapi.Param
+import com.ExTwitter.util.Duration
 
 object DismissedCandidatePredicateParams {
   case object LookBackDuration extends Param[Duration](180.days)

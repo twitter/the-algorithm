@@ -5,17 +5,17 @@ scala_library(
     platform = "java8",
     tags = ["bazel-only"],
     dependencies = [
-        "ann/src/main/scala/com/twitter/ann/annoy",
-        "ann/src/main/scala/com/twitter/ann/brute_force",
-        "ann/src/main/scala/com/twitter/ann/common",
-        "ann/src/main/scala/com/twitter/ann/hnsw",
+        "ann/src/main/scala/com/ExTwitter/ann/annoy",
+        "ann/src/main/scala/com/ExTwitter/ann/brute_force",
+        "ann/src/main/scala/com/ExTwitter/ann/common",
+        "ann/src/main/scala/com/ExTwitter/ann/hnsw",
     ],
 )
 
 hadoop_binary(
     name = "benchmarking",
     basename = "benchmarking",
-    main = "com.twitter.ann.experimental.Runner",
+    main = "com.ExTwitter.ann.experimental.Runner",
     platform = "java8",
     runtime_platform = "java8",
     tags = [

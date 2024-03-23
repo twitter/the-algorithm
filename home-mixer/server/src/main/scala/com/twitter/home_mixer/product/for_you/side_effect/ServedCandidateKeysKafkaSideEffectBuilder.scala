@@ -1,7 +1,7 @@
-package com.twitter.home_mixer.product.for_you.side_effect
+package com.ExTwitter.home_mixer.product.for_you.side_effect
 
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
+import com.ExTwitter.finagle.mtls.authentication.ServiceIdentifier
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
 import javax.inject.Inject
 import javax.inject.Singleton
 

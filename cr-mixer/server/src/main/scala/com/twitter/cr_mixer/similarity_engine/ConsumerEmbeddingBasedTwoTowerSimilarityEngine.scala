@@ -1,8 +1,8 @@
-package com.twitter.cr_mixer.similarity_engine
+package com.ExTwitter.cr_mixer.similarity_engine
 
-import com.twitter.cr_mixer.param.ConsumerEmbeddingBasedTwoTowerParams
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.timelines.configapi
+import com.ExTwitter.cr_mixer.param.ConsumerEmbeddingBasedTwoTowerParams
+import com.ExTwitter.simclusters_v2.thriftscala.InternalId
+import com.ExTwitter.timelines.configapi
 
 object ConsumerEmbeddingBasedTwoTowerSimilarityEngine {
   def fromParams(

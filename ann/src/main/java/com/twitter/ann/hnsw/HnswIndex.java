@@ -1,4 +1,4 @@
-package com.twitter.ann.hnsw;
+package com.ExTwitter.ann.hnsw;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -26,12 +26,12 @@ import com.google.common.collect.ImmutableList;
 
 import org.apache.thrift.TException;
 
-import com.twitter.ann.common.IndexOutputFile;
-import com.twitter.ann.common.thriftjava.HnswInternalIndexMetadata;
-import com.twitter.bijection.Injection;
-import com.twitter.logging.Logger;
-import com.twitter.mediaservices.commons.codec.ArrayByteBufferCodec;
-import com.twitter.search.common.file.AbstractFile;
+import com.ExTwitter.ann.common.IndexOutputFile;
+import com.ExTwitter.ann.common.thriftjava.HnswInternalIndexMetadata;
+import com.ExTwitter.bijection.Injection;
+import com.ExTwitter.logging.Logger;
+import com.ExTwitter.mediaservices.commons.codec.ArrayByteBufferCodec;
+import com.ExTwitter.search.common.file.AbstractFile;
 
 /**
  * Typed multithreaded HNSW implementation supporting creation/querying of approximate nearest neighbour

@@ -1,16 +1,16 @@
-package com.twitter.home_mixer.functional_component.side_effect
+package com.ExTwitter.home_mixer.functional_component.side_effect
 
-import com.twitter.clientapp.thriftscala.LogEvent
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.home_mixer.util.CandidatesUtil
-import com.twitter.logpipeline.client.common.EventPublisher
-import com.twitter.product_mixer.component_library.side_effect.ScribeClientEventSideEffect
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.SideEffectIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.Timeline
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.clientapp.thriftscala.LogEvent
+import com.ExTwitter.home_mixer.service.HomeMixerAlertConfig
+import com.ExTwitter.home_mixer.util.CandidatesUtil
+import com.ExTwitter.logpipeline.client.common.EventPublisher
+import com.ExTwitter.product_mixer.component_library.side_effect.ScribeClientEventSideEffect
+import com.ExTwitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
+import com.ExTwitter.product_mixer.core.model.common.identifier.SideEffectIdentifier
+import com.ExTwitter.product_mixer.core.model.common.presentation.CandidateWithDetails
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.Timeline
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
 
 /**
  * Side effect that logs served tweet metrics to Scribe as client events.

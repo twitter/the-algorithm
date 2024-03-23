@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.component_library.candidate_source.timeline_scorer
+package com.ExTwitter.product_mixer.component_library.candidate_source.timeline_scorer
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSourceWithExtractedFeatures
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidatesWithSourceFeatures
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelinescorer.common.scoredtweetcandidate.thriftscala.v1
-import com.twitter.timelinescorer.common.scoredtweetcandidate.thriftscala.v1.Ancestor
-import com.twitter.timelinescorer.common.scoredtweetcandidate.{thriftscala => ct}
-import com.twitter.timelinescorer.{thriftscala => t}
-import com.twitter.timelineservice.suggests.logging.candidate_tweet_source_id.thriftscala.CandidateTweetSourceId
+import com.ExTwitter.product_mixer.core.feature.Feature
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidateSourceWithExtractedFeatures
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidatesWithSourceFeatures
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.timelinescorer.common.scoredtweetcandidate.thriftscala.v1
+import com.ExTwitter.timelinescorer.common.scoredtweetcandidate.thriftscala.v1.Ancestor
+import com.ExTwitter.timelinescorer.common.scoredtweetcandidate.{thriftscala => ct}
+import com.ExTwitter.timelinescorer.{thriftscala => t}
+import com.ExTwitter.timelineservice.suggests.logging.candidate_tweet_source_id.thriftscala.CandidateTweetSourceId
 import javax.inject.Inject
 import javax.inject.Singleton
 

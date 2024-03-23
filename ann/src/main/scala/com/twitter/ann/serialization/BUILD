@@ -4,11 +4,11 @@ scala_library(
     platform = "java8",
     tags = ["bazel-compatible"],
     dependencies = [
-        "3rdparty/jvm/com/twitter/bijection:core",
-        "ann/src/main/scala/com/twitter/ann/common",
-        "ann/src/main/thrift/com/twitter/ann/serialization:serialization-scala",
+        "3rdparty/jvm/com/ExTwitter/bijection:core",
+        "ann/src/main/scala/com/ExTwitter/ann/common",
+        "ann/src/main/thrift/com/ExTwitter/ann/serialization:serialization-scala",
         "mediaservices/commons",
         "scrooge/scrooge-core",
-        "src/scala/com/twitter/scalding_internal/multiformat/format",
+        "src/scala/com/ExTwitter/scalding_internal/multiformat/format",
     ],
 )

@@ -1,8 +1,8 @@
-package com.twitter.follow_recommendations.common.models
+package com.ExTwitter.follow_recommendations.common.models
 
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
-import com.twitter.follow_recommendations.{thriftscala => frs}
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
+import com.ExTwitter.follow_recommendations.logging.{thriftscala => offline}
+import com.ExTwitter.follow_recommendations.{thriftscala => frs}
+import com.ExTwitter.product_mixer.core.model.marshalling.request.ClientContext
 
 object ClientContextConverter {
   def toFRSOfflineClientContextThrift(

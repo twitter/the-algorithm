@@ -1,22 +1,22 @@
-package com.twitter.cr_mixer.similarity_engine
+package com.ExTwitter.cr_mixer.similarity_engine
 
-import com.twitter.cr_mixer.model.SimilarityEngineInfo
-import com.twitter.cr_mixer.model.TweetWithScore
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.Stats
-import com.twitter.product_mixer.core.thriftscala.ClientContext
-import com.twitter.qig_ranker.thriftscala.Product
-import com.twitter.qig_ranker.thriftscala.ProductContext
-import com.twitter.qig_ranker.thriftscala.QigRanker
-import com.twitter.qig_ranker.thriftscala.QigRankerProductResponse
-import com.twitter.qig_ranker.thriftscala.QigRankerRequest
-import com.twitter.qig_ranker.thriftscala.QigRankerResponse
-import com.twitter.qig_ranker.thriftscala.TwistlySimilarTweetsProductContext
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi
-import com.twitter.util.Future
+import com.ExTwitter.cr_mixer.model.SimilarityEngineInfo
+import com.ExTwitter.cr_mixer.model.TweetWithScore
+import com.ExTwitter.cr_mixer.thriftscala.SimilarityEngineType
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.frigate.common.base.Stats
+import com.ExTwitter.product_mixer.core.thriftscala.ClientContext
+import com.ExTwitter.qig_ranker.thriftscala.Product
+import com.ExTwitter.qig_ranker.thriftscala.ProductContext
+import com.ExTwitter.qig_ranker.thriftscala.QigRanker
+import com.ExTwitter.qig_ranker.thriftscala.QigRankerProductResponse
+import com.ExTwitter.qig_ranker.thriftscala.QigRankerRequest
+import com.ExTwitter.qig_ranker.thriftscala.QigRankerResponse
+import com.ExTwitter.qig_ranker.thriftscala.TwistlySimilarTweetsProductContext
+import com.ExTwitter.simclusters_v2.thriftscala.InternalId
+import com.ExTwitter.storehaus.ReadableStore
+import com.ExTwitter.timelines.configapi
+import com.ExTwitter.util.Future
 import javax.inject.Singleton
 
 /**

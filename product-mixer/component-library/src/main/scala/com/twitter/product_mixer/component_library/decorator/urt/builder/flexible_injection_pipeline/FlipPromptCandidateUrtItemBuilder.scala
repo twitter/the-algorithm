@@ -1,31 +1,31 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.flexible_injection_pipeline
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.flexible_injection_pipeline
 
-import com.twitter.onboarding.injections.thriftscala.Injection
-import com.twitter.onboarding.injections.{thriftscala => onboardingthrift}
-import com.twitter.product_mixer.component_library.decorator.urt.builder.flexible_injection_pipeline.OnboardingInjectionConversions._
-import com.twitter.product_mixer.component_library.model.candidate.BasePromptCandidate
-import com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer.FlipPromptCarouselTileFeature
-import com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer.FlipPromptInjectionsFeature
-import com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer.FlipPromptOffsetInModuleFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverFullCoverDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverHalfCoverDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.FullCover
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.FullCoverContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.HalfCover
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.HalfCoverContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.HeaderImagePromptMessageContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.InlinePromptMessageContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessagePromptItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt.PromptItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.TimelinesDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.onboarding.injections.thriftscala.Injection
+import com.ExTwitter.onboarding.injections.{thriftscala => onboardingthrift}
+import com.ExTwitter.product_mixer.component_library.decorator.urt.builder.flexible_injection_pipeline.OnboardingInjectionConversions._
+import com.ExTwitter.product_mixer.component_library.model.candidate.BasePromptCandidate
+import com.ExTwitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer.FlipPromptCarouselTileFeature
+import com.ExTwitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer.FlipPromptInjectionsFeature
+import com.ExTwitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer.FlipPromptOffsetInModuleFeature
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
+import com.ExTwitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.cover.CoverFullCoverDisplayType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.cover.CoverHalfCoverDisplayType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.cover.FullCover
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.cover.FullCoverContent
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.cover.HalfCover
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.cover.HalfCoverContent
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.message.HeaderImagePromptMessageContent
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.message.InlinePromptMessageContent
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageContent
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.message.MessagePromptItem
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.prompt.PromptItem
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventDetails
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.TimelinesDetails
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
 
 object FlipPromptCandidateUrtItemBuilder {
   val FlipPromptClientEventInfoElement: String = "flip-prompt-message"

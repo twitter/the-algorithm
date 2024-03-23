@@ -1,18 +1,18 @@
-package com.twitter.ann.annoy
+package com.ExTwitter.ann.annoy
 
 import com.spotify.annoy.jni.base.{Annoy => AnnoyLib}
-import com.twitter.ann.annoy.AnnoyCommon.IndexFileName
-import com.twitter.ann.annoy.AnnoyCommon.MetaDataFileName
-import com.twitter.ann.annoy.AnnoyCommon.MetadataCodec
-import com.twitter.ann.common.EmbeddingType._
-import com.twitter.ann.common._
-import com.twitter.ann.common.thriftscala.AnnoyIndexMetadata
-import com.twitter.concurrent.AsyncSemaphore
-import com.twitter.mediaservices.commons.codec.ArrayByteBufferCodec
-import com.twitter.search.common.file.AbstractFile
-import com.twitter.search.common.file.LocalFile
-import com.twitter.util.Future
-import com.twitter.util.FuturePool
+import com.ExTwitter.ann.annoy.AnnoyCommon.IndexFileName
+import com.ExTwitter.ann.annoy.AnnoyCommon.MetaDataFileName
+import com.ExTwitter.ann.annoy.AnnoyCommon.MetadataCodec
+import com.ExTwitter.ann.common.EmbeddingType._
+import com.ExTwitter.ann.common._
+import com.ExTwitter.ann.common.thriftscala.AnnoyIndexMetadata
+import com.ExTwitter.concurrent.AsyncSemaphore
+import com.ExTwitter.mediaservices.commons.codec.ArrayByteBufferCodec
+import com.ExTwitter.search.common.file.AbstractFile
+import com.ExTwitter.search.common.file.LocalFile
+import com.ExTwitter.util.Future
+import com.ExTwitter.util.FuturePool
 import java.io.File
 import java.nio.file.Files
 import org.apache.beam.sdk.io.fs.ResourceId

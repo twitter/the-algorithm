@@ -1,21 +1,21 @@
-package com.twitter.ann.scalding.offline.indexbuilder
+package com.ExTwitter.ann.scalding.offline.indexbuilder
 
-import com.twitter.ann.annoy.TypedAnnoyIndex
-import com.twitter.ann.brute_force.SerializableBruteForceIndex
-import com.twitter.ann.common.Distance
-import com.twitter.ann.common.Metric
-import com.twitter.ann.common.ReadWriteFuturePool
-import com.twitter.ann.hnsw.TypedHnswIndex
-import com.twitter.ann.serialization.thriftscala.PersistedEmbedding
-import com.twitter.ann.serialization.PersistedEmbeddingInjection
-import com.twitter.ann.serialization.ThriftIteratorIO
-import com.twitter.cortex.ml.embeddings.common._
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.scalding.Args
-import com.twitter.scalding.Execution
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.search.common.file.FileUtils
-import com.twitter.util.FuturePool
+import com.ExTwitter.ann.annoy.TypedAnnoyIndex
+import com.ExTwitter.ann.brute_force.SerializableBruteForceIndex
+import com.ExTwitter.ann.common.Distance
+import com.ExTwitter.ann.common.Metric
+import com.ExTwitter.ann.common.ReadWriteFuturePool
+import com.ExTwitter.ann.hnsw.TypedHnswIndex
+import com.ExTwitter.ann.serialization.thriftscala.PersistedEmbedding
+import com.ExTwitter.ann.serialization.PersistedEmbeddingInjection
+import com.ExTwitter.ann.serialization.ThriftIteratorIO
+import com.ExTwitter.cortex.ml.embeddings.common._
+import com.ExTwitter.ml.featurestore.lib.EntityId
+import com.ExTwitter.scalding.Args
+import com.ExTwitter.scalding.Execution
+import com.ExTwitter.scalding_internal.job.ExTwitterExecutionApp
+import com.ExTwitter.search.common.file.FileUtils
+import com.ExTwitter.util.FuturePool
 import java.util.concurrent.Executors
 
 trait IndexBuilderExecutable {
@@ -84,7 +84,7 @@ trait IndexBuilderExecutable {
   }
 }
 
-object IndexBuilderApp extends TwitterExecutionApp with IndexBuilderExecutable {
+object IndexBuilderApp extends ExTwitterExecutionApp with IndexBuilderExecutable {
   override def job: Execution[Unit] = Execution.getArgs.flatMap { args: Args =>
     indexBuilderExecution(args)
   }

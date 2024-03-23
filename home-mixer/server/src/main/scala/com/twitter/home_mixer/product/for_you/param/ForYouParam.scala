@@ -1,15 +1,15 @@
-package com.twitter.home_mixer.product.for_you.param
+package com.ExTwitter.home_mixer.product.for_you.param
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.param.decider.DeciderKey
-import com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module.WhoToFollowModuleDisplayType
-import com.twitter.timelines.configapi.DurationConversion
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSEnumParam
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.timelines.configapi.decider.BooleanDeciderParam
-import com.twitter.util.Duration
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.home_mixer.param.decider.DeciderKey
+import com.ExTwitter.product_mixer.component_library.decorator.urt.builder.timeline_module.WhoToFollowModuleDisplayType
+import com.ExTwitter.timelines.configapi.DurationConversion
+import com.ExTwitter.timelines.configapi.FSBoundedParam
+import com.ExTwitter.timelines.configapi.FSEnumParam
+import com.ExTwitter.timelines.configapi.FSParam
+import com.ExTwitter.timelines.configapi.HasDurationConversion
+import com.ExTwitter.timelines.configapi.decider.BooleanDeciderParam
+import com.ExTwitter.util.Duration
 
 object ForYouParam {
   val SupportedClientFSName = "for_you_supported_client"

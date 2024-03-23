@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.component_library.filter.list_visibility
+package com.ExTwitter.product_mixer.component_library.filter.list_visibility
 
-import com.twitter.product_mixer.component_library.model.candidate.TwitterListCandidate
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.socialgraph.thriftscala.SocialgraphList
-import com.twitter.stitch.Stitch
-import com.twitter.strato.catalog.Fetch
-import com.twitter.strato.generated.client.lists.reads.CoreOnListClientColumn
+import com.ExTwitter.product_mixer.component_library.model.candidate.ExTwitterListCandidate
+import com.ExTwitter.product_mixer.core.functional_component.filter.Filter
+import com.ExTwitter.product_mixer.core.functional_component.filter.FilterResult
+import com.ExTwitter.product_mixer.core.model.common.CandidateWithFeatures
+import com.ExTwitter.product_mixer.core.model.common.UniversalNoun
+import com.ExTwitter.product_mixer.core.model.common.identifier.FilterIdentifier
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.socialgraph.thriftscala.SocialgraphList
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.strato.catalog.Fetch
+import com.ExTwitter.strato.generated.client.lists.reads.CoreOnListClientColumn
 
 /* This Filter queries the core.List.strato column
  * on Strato, and filters out any lists that are not
@@ -29,7 +29,7 @@ class ListVisibilityFilter[Candidate <: UniversalNoun[Long]](
   ): Stitch[FilterResult[Candidate]] = {
 
     val listCandidates = candidates.collect {
-      case CandidateWithFeatures(candidate: TwitterListCandidate, _) => candidate
+      case CandidateWithFeatures(candidate: ExTwitterListCandidate, _) => candidate
     }
 
     Stitch
@@ -43,7 +43,7 @@ class ListVisibilityFilter[Candidate <: UniversalNoun[Long]](
         }
       }.map { allowedListIds =>
         val (kept, excluded) = candidates.map(_.candidate).partition {
-          case candidate: TwitterListCandidate => allowedListIds.contains(candidate.id)
+          case candidate: ExTwitterListCandidate => allowedListIds.contains(candidate.id)
           case _ => true
         }
         FilterResult(kept, excluded)

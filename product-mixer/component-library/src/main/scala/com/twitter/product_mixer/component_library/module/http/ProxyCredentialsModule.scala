@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.component_library.module.http
+package com.ExTwitter.product_mixer.component_library.module.http
 
 import com.google.inject.Provides
-import com.twitter.finagle.http.ProxyCredentials
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.util.security.{Credentials => CredentialsUtil}
+import com.ExTwitter.finagle.http.ProxyCredentials
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.inject.annotations.Flag
+import com.ExTwitter.util.security.{Credentials => CredentialsUtil}
 import java.io.File
 import javax.inject.Singleton
 
-object ProxyCredentialsModule extends TwitterModule {
+object ProxyCredentialsModule extends ExTwitterModule {
   final val HttpClientWithProxyCredentialsPath = "http_client.proxy.proxy_credentials_path"
 
   flag[String](HttpClientWithProxyCredentialsPath, "", "Path the load the proxy credentials")

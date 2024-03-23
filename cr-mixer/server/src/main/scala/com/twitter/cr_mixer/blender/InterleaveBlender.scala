@@ -1,10 +1,10 @@
-package com.twitter.cr_mixer.blender
+package com.ExTwitter.cr_mixer.blender
 
-import com.twitter.cr_mixer.model.BlendedCandidate
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.util.InterleaveUtil
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.Future
+import com.ExTwitter.cr_mixer.model.BlendedCandidate
+import com.ExTwitter.cr_mixer.model.InitialCandidate
+import com.ExTwitter.cr_mixer.util.InterleaveUtil
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.util.Future
 import javax.inject.Inject
 import javax.inject.Singleton
 

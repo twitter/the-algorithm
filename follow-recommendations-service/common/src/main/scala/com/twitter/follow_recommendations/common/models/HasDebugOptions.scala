@@ -1,6 +1,6 @@
-package com.twitter.follow_recommendations.common.models
+package com.ExTwitter.follow_recommendations.common.models
 
-import com.twitter.follow_recommendations.thriftscala.DebugParams
+import com.ExTwitter.follow_recommendations.thriftscala.DebugParams
 
 case class DebugOptions(
   randomizationSeed: Option[Long] = None,

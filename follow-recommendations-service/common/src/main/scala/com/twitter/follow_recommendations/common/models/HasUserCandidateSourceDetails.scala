@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.common.models
+package com.ExTwitter.follow_recommendations.common.models
 
-import com.twitter.hermit.ml.models.Feature
-import com.twitter.hermit.model.Algorithm
-import com.twitter.hermit.model.Algorithm.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.hermit.ml.models.Feature
+import com.ExTwitter.hermit.model.Algorithm
+import com.ExTwitter.hermit.model.Algorithm.Algorithm
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
 
 /**
  * Used to keep track of a candidate's source not so much as a feature but for filtering candidate

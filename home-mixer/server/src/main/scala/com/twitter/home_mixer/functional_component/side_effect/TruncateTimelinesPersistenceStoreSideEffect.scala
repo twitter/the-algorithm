@@ -1,19 +1,19 @@
-package com.twitter.home_mixer.functional_component.side_effect
+package com.ExTwitter.home_mixer.functional_component.side_effect
 
-import com.twitter.home_mixer.model.HomeFeatures.PersistenceEntriesFeature
-import com.twitter.home_mixer.model.request.FollowingProduct
-import com.twitter.home_mixer.model.request.ForYouProduct
-import com.twitter.home_mixer.param.HomeGlobalParams.TimelinesPersistenceStoreMaxEntriesPerClient
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.common.identifier.SideEffectIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.urt.Timeline
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelinemixer.clients.persistence.TimelineResponseBatchesClient
-import com.twitter.timelinemixer.clients.persistence.TimelineResponseV3
-import com.twitter.timelineservice.model.TimelineQuery
-import com.twitter.timelineservice.model.core.TimelineKind
+import com.ExTwitter.home_mixer.model.HomeFeatures.PersistenceEntriesFeature
+import com.ExTwitter.home_mixer.model.request.FollowingProduct
+import com.ExTwitter.home_mixer.model.request.ForYouProduct
+import com.ExTwitter.home_mixer.param.HomeGlobalParams.TimelinesPersistenceStoreMaxEntriesPerClient
+import com.ExTwitter.home_mixer.service.HomeMixerAlertConfig
+import com.ExTwitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
+import com.ExTwitter.product_mixer.core.model.common.identifier.SideEffectIdentifier
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.Timeline
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.timelinemixer.clients.persistence.TimelineResponseBatchesClient
+import com.ExTwitter.timelinemixer.clients.persistence.TimelineResponseV3
+import com.ExTwitter.timelineservice.model.TimelineQuery
+import com.ExTwitter.timelineservice.model.core.TimelineKind
 import javax.inject.Inject
 import javax.inject.Singleton
 

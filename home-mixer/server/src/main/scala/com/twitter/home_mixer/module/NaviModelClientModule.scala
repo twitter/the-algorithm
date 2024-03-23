@@ -1,18 +1,18 @@
-package com.twitter.home_mixer.module
+package com.ExTwitter.home_mixer.module
 
 import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.Http
-import com.twitter.finagle.grpc.FinagleChannelBuilder
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient.MtlsStackClientSyntax
-import com.twitter.inject.TwitterModule
-import com.twitter.timelines.clients.predictionservice.PredictionGRPCService
-import com.twitter.util.Duration
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.finagle.Http
+import com.ExTwitter.finagle.grpc.FinagleChannelBuilder
+import com.ExTwitter.finagle.mtls.authentication.ServiceIdentifier
+import com.ExTwitter.finagle.mtls.client.MtlsStackClient.MtlsStackClientSyntax
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.timelines.clients.predictionservice.PredictionGRPCService
+import com.ExTwitter.util.Duration
 import io.grpc.ManagedChannel
 import javax.inject.Singleton
 
-object NaviModelClientModule extends TwitterModule {
+object NaviModelClientModule extends ExTwitterModule {
 
   @Singleton
   @Provides

@@ -1,16 +1,16 @@
-package com.twitter.home_mixer.product.for_you.side_effect
+package com.ExTwitter.home_mixer.product.for_you.side_effect
 
-import com.twitter.home_mixer.model.HomeFeatures.IsReadFromCacheFeature
-import com.twitter.home_mixer.model.HomeFeatures.PredictionRequestIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.ServedIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.ServedRequestIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.StreamToKafkaFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.home_mixer.model.HomeFeatures.IsReadFromCacheFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.PredictionRequestIdFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.ServedIdFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.ServedRequestIdFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.StreamToKafkaFeature
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
+import com.ExTwitter.product_mixer.core.model.common.presentation.CandidateWithDetails
+import com.ExTwitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
+import com.ExTwitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
 
 object ServedCandidateKafkaSideEffect {
 

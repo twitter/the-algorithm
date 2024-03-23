@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.richtext
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.richtext
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseStr
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.richtext.BaseRichTextBuilder
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.UrlType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextAlignment
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseStr
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.richtext.BaseRichTextBuilder
+import com.ExTwitter.product_mixer.core.model.common.UniversalNoun
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.UrlType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextAlignment
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
 
 case class RichTextBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]](
   textBuilder: BaseStr[Query, Candidate],

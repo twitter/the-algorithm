@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.component_library.feature_hydrator.query.impressed_tweets
+package com.ExTwitter.product_mixer.component_library.feature_hydrator.query.impressed_tweets
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.impressionstore.thriftscala.ImpressionList
-import com.twitter.util.Future
+import com.ExTwitter.product_mixer.core.feature.Feature
+import com.ExTwitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
+import com.ExTwitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
+import com.ExTwitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.storehaus.ReadableStore
+import com.ExTwitter.timelines.impressionstore.thriftscala.ImpressionList
+import com.ExTwitter.util.Future
 import javax.inject.Inject
 import javax.inject.Singleton
 

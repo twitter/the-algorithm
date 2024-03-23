@@ -1,16 +1,16 @@
-package com.twitter.home_mixer.model
+package com.ExTwitter.home_mixer.model
 
-import com.twitter.home_mixer.functional_component.candidate_source.EarlybirdBottomTweetFeature
-import com.twitter.home_mixer.functional_component.candidate_source.EarlybirdResponseTruncatedFeature
-import com.twitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.IncludeInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineModule
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.GapCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.TopCursor
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.home_mixer.functional_component.candidate_source.EarlybirdBottomTweetFeature
+import com.ExTwitter.home_mixer.functional_component.candidate_source.EarlybirdResponseTruncatedFeature
+import com.ExTwitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
+import com.ExTwitter.product_mixer.component_library.premarshaller.urt.builder.IncludeInstruction
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.TimelineModule
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.operation.GapCursor
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.operation.TopCursor
+import com.ExTwitter.product_mixer.core.pipeline.HasPipelineCursor
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
 
 /**
  * Determine whether to include a Gap Cursor in the response based on whether a timeline

@@ -1,11 +1,11 @@
-package com.twitter.home_mixer.functional_component.decorator.urt.builder
+package com.ExTwitter.home_mixer.functional_component.decorator.urt.builder
 
-import com.twitter.home_mixer.model.HomeFeatures.RealNamesFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata._
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stringcenter.client.StringCenter
-import com.twitter.stringcenter.client.core.ExternalString
+import com.ExTwitter.home_mixer.model.HomeFeatures.RealNamesFeature
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata._
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.stringcenter.client.StringCenter
+import com.ExTwitter.stringcenter.client.core.ExternalString
 
 private[decorator] case class SocialContextIdAndScreenName(
   socialContextId: Long,

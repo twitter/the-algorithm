@@ -1,12 +1,12 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.adapters.twhin_embeddings
+package com.ExTwitter.home_mixer.product.scored_tweets.feature_hydrator.adapters.twhin_embeddings
 
-import com.twitter.ml.api.DataType
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.ml.api.util.ScalaToJavaDataRecordConversions
-import com.twitter.ml.api.{thriftscala => ml}
-import com.twitter.timelines.prediction.common.adapters.TimelinesMutatingAdapterBase
+import com.ExTwitter.ml.api.DataType
+import com.ExTwitter.ml.api.Feature
+import com.ExTwitter.ml.api.FeatureContext
+import com.ExTwitter.ml.api.RichDataRecord
+import com.ExTwitter.ml.api.util.ScalaToJavaDataRecordConversions
+import com.ExTwitter.ml.api.{thriftscala => ml}
+import com.ExTwitter.timelines.prediction.common.adapters.TimelinesMutatingAdapterBase
 
 sealed trait TwhinEmbeddingsAdapter extends TimelinesMutatingAdapterBase[Option[ml.FloatTensor]] {
   def twhinEmbeddingsFeature: Feature.Tensor

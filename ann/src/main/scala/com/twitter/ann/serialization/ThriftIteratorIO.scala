@@ -1,6 +1,6 @@
-package com.twitter.ann.serialization
+package com.ExTwitter.ann.serialization
 
-import com.twitter.scrooge.{ThriftStruct, ThriftStructCodec}
+import com.ExTwitter.scrooge.{ThriftStruct, ThriftStructCodec}
 import java.io.{InputStream, OutputStream}
 import org.apache.thrift.protocol.TBinaryProtocol
 import org.apache.thrift.transport.{TIOStreamTransport, TTransportException}

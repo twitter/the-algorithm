@@ -1,11 +1,11 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.generic_summary
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.generic_summary
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.richtext.BaseRichTextBuilder
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.icon.HorizonIcon
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.generic_summary.GenericSummaryContext
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.richtext.BaseRichTextBuilder
+import com.ExTwitter.product_mixer.core.model.common.UniversalNoun
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.icon.HorizonIcon
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.generic_summary.GenericSummaryContext
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
 
 case class GenericSummaryContextBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]](
   richTextBuilder: BaseRichTextBuilder[Query, Candidate],

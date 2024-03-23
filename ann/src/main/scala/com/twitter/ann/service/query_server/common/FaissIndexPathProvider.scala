@@ -1,8 +1,8 @@
-package com.twitter.ann.service.query_server.common
+package com.ExTwitter.ann.service.query_server.common
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.search.common.file.AbstractFile
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.logging.Logger
+import com.ExTwitter.search.common.file.AbstractFile
 
 case class FaissIndexPathProvider(
   override val minIndexSizeBytes: Long,

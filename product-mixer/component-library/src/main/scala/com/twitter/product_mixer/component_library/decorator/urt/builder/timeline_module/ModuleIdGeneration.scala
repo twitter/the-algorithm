@@ -1,4 +1,4 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.timeline_module
 
 /**
  *  This trait is used for Module ID generation. Clients are safe to ignore this code unless they

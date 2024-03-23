@@ -1,11 +1,11 @@
-package com.twitter.ann.annoy
+package com.ExTwitter.ann.annoy
 
-import com.twitter.ann.annoy.AnnoyCommon._
-import com.twitter.ann.common._
-import com.twitter.ann.file_store.ReadableIndexIdFileStore
-import com.twitter.bijection.Injection
-import com.twitter.search.common.file.AbstractFile
-import com.twitter.util.FuturePool
+import com.ExTwitter.ann.annoy.AnnoyCommon._
+import com.ExTwitter.ann.common._
+import com.ExTwitter.ann.file_store.ReadableIndexIdFileStore
+import com.ExTwitter.bijection.Injection
+import com.ExTwitter.search.common.file.AbstractFile
+import com.ExTwitter.util.FuturePool
 
 private[annoy] object TypedAnnoyQueryIndexWithFile {
   private[annoy] def apply[T, D <: Distance[D]](

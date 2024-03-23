@@ -1,13 +1,13 @@
-package com.twitter.ann.faiss
+package com.ExTwitter.ann.faiss
 
-import com.twitter.conversions.DurationOps.richDurationFromInt
-import com.twitter.search.common.file.AbstractFile
-import com.twitter.search.common.file.FileUtils
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Time
-import com.twitter.util.Try
-import com.twitter.util.logging.Logging
+import com.ExTwitter.conversions.DurationOps.richDurationFromInt
+import com.ExTwitter.search.common.file.AbstractFile
+import com.ExTwitter.search.common.file.FileUtils
+import com.ExTwitter.util.Return
+import com.ExTwitter.util.Throw
+import com.ExTwitter.util.Time
+import com.ExTwitter.util.Try
+import com.ExTwitter.util.logging.Logging
 import java.util.Locale
 
 object HourlyDirectoryWithSuccessFileListing extends Logging {

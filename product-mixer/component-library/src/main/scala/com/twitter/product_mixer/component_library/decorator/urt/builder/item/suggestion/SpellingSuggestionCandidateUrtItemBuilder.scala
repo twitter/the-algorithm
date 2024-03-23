@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.suggestion
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.suggestion
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.suggestion.SpellingSuggestionCandidateUrtItemBuilder.SpellingItemClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.suggestion.SpellingSuggestionCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.suggestion.SpellingItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.suggestion.SpellingSuggestionCandidateUrtItemBuilder.SpellingItemClientEventInfoElement
+import com.ExTwitter.product_mixer.component_library.model.candidate.suggestion.SpellingSuggestionCandidate
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.suggestion.SpellingItem
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
 
 object SpellingSuggestionCandidateUrtItemBuilder {
   val SpellingItemClientEventInfoElement: String = "spelling"

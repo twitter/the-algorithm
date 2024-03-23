@@ -1,27 +1,27 @@
-package com.twitter.follow_recommendations.common.predicates
+package com.ExTwitter.follow_recommendations.common.predicates
 
 import com.google.inject.name.Named
-import com.twitter.core_workflows.user_model.thriftscala.UserState
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.Predicate
-import com.twitter.follow_recommendations.common.base.PredicateResult
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FilterReason
-import com.twitter.follow_recommendations.common.predicates.InactivePredicateParams._
-import com.twitter.service.metastore.gen.thriftscala.UserRecommendabilityFeatures
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.util.Duration
-import com.twitter.util.Time
+import com.ExTwitter.core_workflows.user_model.thriftscala.UserState
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.follow_recommendations.common.base.Predicate
+import com.ExTwitter.follow_recommendations.common.base.PredicateResult
+import com.ExTwitter.follow_recommendations.common.constants.GuiceNamedConstants
+import com.ExTwitter.follow_recommendations.common.models.CandidateUser
+import com.ExTwitter.follow_recommendations.common.models.FilterReason
+import com.ExTwitter.follow_recommendations.common.predicates.InactivePredicateParams._
+import com.ExTwitter.service.metastore.gen.thriftscala.UserRecommendabilityFeatures
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.strato.client.Fetcher
+import com.ExTwitter.timelines.configapi.HasParams
+import com.ExTwitter.util.Duration
+import com.ExTwitter.util.Time
 import javax.inject.Inject
 import javax.inject.Singleton
-import com.twitter.conversions.DurationOps._
-import com.twitter.escherbird.util.stitchcache.StitchCache
-import com.twitter.follow_recommendations.common.models.HasUserState
-import com.twitter.follow_recommendations.common.predicates.InactivePredicateParams.DefaultInactivityThreshold
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.escherbird.util.stitchcache.StitchCache
+import com.ExTwitter.follow_recommendations.common.models.HasUserState
+import com.ExTwitter.follow_recommendations.common.predicates.InactivePredicateParams.DefaultInactivityThreshold
+import com.ExTwitter.product_mixer.core.model.marshalling.request.HasClientContext
 
 import java.lang.{Long => JLong}
 

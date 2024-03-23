@@ -1,39 +1,39 @@
-package com.twitter.cr_mixer.module
+package com.ExTwitter.cr_mixer.module
 
 import com.google.inject.Provides
 import com.google.inject.Singleton
-import com.twitter.bijection.thrift.CompactThriftCodec
-import com.twitter.ads.entities.db.thriftscala.LineItemObjective
-import com.twitter.bijection.Injection
-import com.twitter.conversions.DurationOps._
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.thriftscala.LineItemInfo
-import com.twitter.finagle.memcached.{Client => MemcachedClient}
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.hermit.store.common.ObservedCachedReadableStore
-import com.twitter.hermit.store.common.ObservedMemcachedReadableStore
-import com.twitter.inject.TwitterModule
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.DataType
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.GeneralTensor
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.relevance_platform.common.injection.LZ4Injection
-import com.twitter.relevance_platform.common.injection.SeqObjectInjection
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storehaus.ReadableStore
-import com.twitter.storehaus_internal.manhattan.ManhattanRO
-import com.twitter.storehaus_internal.manhattan.ManhattanROConfig
-import com.twitter.storehaus_internal.manhattan.Revenue
-import com.twitter.storehaus_internal.util.ApplicationID
-import com.twitter.storehaus_internal.util.DatasetName
-import com.twitter.storehaus_internal.util.HDFSPath
-import com.twitter.util.Future
+import com.ExTwitter.bijection.thrift.CompactThriftCodec
+import com.ExTwitter.ads.entities.db.thriftscala.LineItemObjective
+import com.ExTwitter.bijection.Injection
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.cr_mixer.model.ModuleNames
+import com.ExTwitter.cr_mixer.thriftscala.LineItemInfo
+import com.ExTwitter.finagle.memcached.{Client => MemcachedClient}
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.hermit.store.common.ObservedCachedReadableStore
+import com.ExTwitter.hermit.store.common.ObservedMemcachedReadableStore
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.ml.api.DataRecord
+import com.ExTwitter.ml.api.DataType
+import com.ExTwitter.ml.api.Feature
+import com.ExTwitter.ml.api.GeneralTensor
+import com.ExTwitter.ml.api.RichDataRecord
+import com.ExTwitter.relevance_platform.common.injection.LZ4Injection
+import com.ExTwitter.relevance_platform.common.injection.SeqObjectInjection
+import com.ExTwitter.simclusters_v2.common.TweetId
+import com.ExTwitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
+import com.ExTwitter.storehaus.ReadableStore
+import com.ExTwitter.storehaus_internal.manhattan.ManhattanRO
+import com.ExTwitter.storehaus_internal.manhattan.ManhattanROConfig
+import com.ExTwitter.storehaus_internal.manhattan.Revenue
+import com.ExTwitter.storehaus_internal.util.ApplicationID
+import com.ExTwitter.storehaus_internal.util.DatasetName
+import com.ExTwitter.storehaus_internal.util.HDFSPath
+import com.ExTwitter.util.Future
 import javax.inject.Named
 import scala.collection.JavaConverters._
 
-object ActivePromotedTweetStoreModule extends TwitterModule {
+object ActivePromotedTweetStoreModule extends ExTwitterModule {
 
   case class ActivePromotedTweetStore(
     activePromotedTweetMHStore: ReadableStore[String, DataRecord],

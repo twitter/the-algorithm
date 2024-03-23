@@ -1,15 +1,15 @@
-package com.twitter.home_mixer.product.list_recommended_users
+package com.ExTwitter.home_mixer.product.list_recommended_users
 
-import com.twitter.home_mixer.product.list_recommended_users.model.ListRecommendedUsersQuery
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
-import com.twitter.search.adaptive.adaptive_results.thriftscala.ResultType
-import com.twitter.search.blender.adaptive_search.thriftscala.AdaptiveSearchRequest
-import com.twitter.search.blender.thriftscala.ThriftBlenderRequest
-import com.twitter.search.blender.thriftscala.ThriftBlenderTweetypieOptions
-import com.twitter.search.blender.thriftscala.ThriftBlenderWorkflowID
-import com.twitter.search.common.constants.thriftscala.ThriftQuerySource
-import com.twitter.spam.rtf.thriftscala.SafetyLevel
+import com.ExTwitter.home_mixer.product.list_recommended_users.model.ListRecommendedUsersQuery
+import com.ExTwitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
+import com.ExTwitter.product_mixer.core.model.common.identifier.TransformerIdentifier
+import com.ExTwitter.search.adaptive.adaptive_results.thriftscala.ResultType
+import com.ExTwitter.search.blender.adaptive_search.thriftscala.AdaptiveSearchRequest
+import com.ExTwitter.search.blender.thriftscala.ThriftBlenderRequest
+import com.ExTwitter.search.blender.thriftscala.ThriftBlenderTweetypieOptions
+import com.ExTwitter.search.blender.thriftscala.ThriftBlenderWorkflowID
+import com.ExTwitter.search.common.constants.thriftscala.ThriftQuerySource
+import com.ExTwitter.spam.rtf.thriftscala.SafetyLevel
 
 object BlenderUsersCandidatePipelineQueryTransformer
     extends CandidatePipelineQueryTransformer[ListRecommendedUsersQuery, ThriftBlenderRequest] {

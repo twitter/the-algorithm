@@ -1,11 +1,11 @@
-package com.twitter.cr_mixer.featureswitch
+package com.ExTwitter.cr_mixer.featureswitch
 
-import com.twitter.finagle.Filter
+import com.ExTwitter.finagle.Filter
 import javax.inject.Inject
 import javax.inject.Singleton
 import scala.collection.concurrent.TrieMap
-import com.twitter.abdecider.Bucket
-import com.twitter.finagle.Service
+import com.ExTwitter.abdecider.Bucket
+import com.ExTwitter.finagle.Service
 
 @Singleton
 class SetImpressedBucketsLocalContextFilter @Inject() () extends Filter.TypeAgnostic {

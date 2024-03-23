@@ -1,33 +1,33 @@
-package com.twitter.ann.service.loadtest
+package com.ExTwitter.ann.service.loadtest
 
 import com.google.common.annotations.VisibleForTesting
-import com.twitter.ann.common.EmbeddingType.EmbeddingVector
-import com.twitter.ann.common.thriftscala.AnnQueryService
-import com.twitter.ann.common.thriftscala.NearestNeighborQuery
-import com.twitter.ann.common.thriftscala.NearestNeighborResult
-import com.twitter.ann.common.thriftscala.{Distance => ServiceDistance}
-import com.twitter.ann.common.thriftscala.{RuntimeParams => ServiceRuntimeParams}
-import com.twitter.ann.common.Distance
-import com.twitter.ann.common.EntityEmbedding
-import com.twitter.ann.common.Queryable
-import com.twitter.ann.common.RuntimeParams
-import com.twitter.ann.common.ServiceClientQueryable
-import com.twitter.bijection.Injection
-import com.twitter.cortex.ml.embeddings.common.EntityKind
-import com.twitter.finagle.builder.ClientBuilder
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient.MtlsThriftMuxClientSyntax
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finagle.Service
-import com.twitter.finagle.ThriftMux
-import com.twitter.ml.api.embedding.Embedding
-import com.twitter.search.common.file.AbstractFile.Filter
-import com.twitter.search.common.file.AbstractFile
-import com.twitter.search.common.file.FileUtils
-import com.twitter.search.common.file.LocalFile
-import com.twitter.util.Future
-import com.twitter.util.logging.Logger
+import com.ExTwitter.ann.common.EmbeddingType.EmbeddingVector
+import com.ExTwitter.ann.common.thriftscala.AnnQueryService
+import com.ExTwitter.ann.common.thriftscala.NearestNeighborQuery
+import com.ExTwitter.ann.common.thriftscala.NearestNeighborResult
+import com.ExTwitter.ann.common.thriftscala.{Distance => ServiceDistance}
+import com.ExTwitter.ann.common.thriftscala.{RuntimeParams => ServiceRuntimeParams}
+import com.ExTwitter.ann.common.Distance
+import com.ExTwitter.ann.common.EntityEmbedding
+import com.ExTwitter.ann.common.Queryable
+import com.ExTwitter.ann.common.RuntimeParams
+import com.ExTwitter.ann.common.ServiceClientQueryable
+import com.ExTwitter.bijection.Injection
+import com.ExTwitter.cortex.ml.embeddings.common.EntityKind
+import com.ExTwitter.finagle.builder.ClientBuilder
+import com.ExTwitter.finagle.mtls.authentication.ServiceIdentifier
+import com.ExTwitter.finagle.mtls.client.MtlsStackClient.MtlsThriftMuxClientSyntax
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.finagle.thrift.ClientId
+import com.ExTwitter.finagle.Service
+import com.ExTwitter.finagle.ThriftMux
+import com.ExTwitter.ml.api.embedding.Embedding
+import com.ExTwitter.search.common.file.AbstractFile.Filter
+import com.ExTwitter.search.common.file.AbstractFile
+import com.ExTwitter.search.common.file.FileUtils
+import com.ExTwitter.search.common.file.LocalFile
+import com.ExTwitter.util.Future
+import com.ExTwitter.util.logging.Logger
 import java.io.File
 import scala.collection.JavaConversions._
 import scala.collection.mutable

@@ -1,12 +1,12 @@
-package com.twitter.cr_mixer.module.core
+package com.ExTwitter.cr_mixer.module.core
 
 import com.google.inject.Provides
-import com.twitter.discovery.common.configapi.FeatureContextBuilder
-import com.twitter.featureswitches.v2.FeatureSwitches
-import com.twitter.inject.TwitterModule
+import com.ExTwitter.discovery.common.configapi.FeatureContextBuilder
+import com.ExTwitter.featureswitches.v2.FeatureSwitches
+import com.ExTwitter.inject.ExTwitterModule
 import javax.inject.Singleton
 
-object FeatureContextBuilderModule extends TwitterModule {
+object FeatureContextBuilderModule extends ExTwitterModule {
 
   @Provides
   @Singleton

@@ -1,7 +1,7 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims_expansion
+package com.ExTwitter.follow_recommendations.common.candidate_sources.sims_expansion
 
-import com.twitter.timelines.configapi.FSEnumParam
-import com.twitter.timelines.configapi.FSParam
+import com.ExTwitter.timelines.configapi.FSEnumParam
+import com.ExTwitter.timelines.configapi.FSParam
 
 object RecentEngagementSimilarUsersParams {
 

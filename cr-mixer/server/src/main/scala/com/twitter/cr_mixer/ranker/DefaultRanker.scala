@@ -1,8 +1,8 @@
-package com.twitter.cr_mixer.ranker
+package com.ExTwitter.cr_mixer.ranker
 
-import com.twitter.cr_mixer.model.BlendedCandidate
-import com.twitter.cr_mixer.model.RankedCandidate
-import com.twitter.util.Future
+import com.ExTwitter.cr_mixer.model.BlendedCandidate
+import com.ExTwitter.cr_mixer.model.RankedCandidate
+import com.ExTwitter.util.Future
 import javax.inject.Singleton
 
 /**

@@ -1,8 +1,8 @@
-package com.twitter.follow_recommendations.common.clients.phone_storage_service
+package com.ExTwitter.follow_recommendations.common.clients.phone_storage_service
 
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.follow_recommendations.common.clients.common.BaseClientModule
-import com.twitter.phonestorage.api.thriftscala.PhoneStorageService
+import com.ExTwitter.finatra.mtls.thriftmux.modules.MtlsClient
+import com.ExTwitter.follow_recommendations.common.clients.common.BaseClientModule
+import com.ExTwitter.phonestorage.api.thriftscala.PhoneStorageService
 
 object PhoneStorageServiceModule
     extends BaseClientModule[PhoneStorageService.MethodPerEndpoint]

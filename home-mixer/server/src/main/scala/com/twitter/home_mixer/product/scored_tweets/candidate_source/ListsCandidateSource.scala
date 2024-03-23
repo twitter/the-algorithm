@@ -1,10 +1,10 @@
-package com.twitter.home_mixer.product.scored_tweets.candidate_source
+package com.ExTwitter.home_mixer.product.scored_tweets.candidate_source
 
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.timelineservice.TimelineService
-import com.twitter.timelineservice.{thriftscala => tls}
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidateSource
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.stitch.timelineservice.TimelineService
+import com.ExTwitter.timelineservice.{thriftscala => tls}
 
 import javax.inject.Inject
 import javax.inject.Singleton

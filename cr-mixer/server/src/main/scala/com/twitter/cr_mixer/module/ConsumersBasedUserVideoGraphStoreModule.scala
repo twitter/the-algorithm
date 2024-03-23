@@ -1,17 +1,17 @@
-package com.twitter.cr_mixer.module
+package com.ExTwitter.cr_mixer.module
 
 import com.google.inject.Provides
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.inject.TwitterModule
-import com.twitter.recos.user_video_graph.thriftscala.ConsumersBasedRelatedTweetRequest
-import com.twitter.recos.user_video_graph.thriftscala.RelatedTweetResponse
-import com.twitter.recos.user_video_graph.thriftscala.UserVideoGraph
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+import com.ExTwitter.cr_mixer.model.ModuleNames
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.recos.user_video_graph.thriftscala.ConsumersBasedRelatedTweetRequest
+import com.ExTwitter.recos.user_video_graph.thriftscala.RelatedTweetResponse
+import com.ExTwitter.recos.user_video_graph.thriftscala.UserVideoGraph
+import com.ExTwitter.storehaus.ReadableStore
+import com.ExTwitter.util.Future
 import javax.inject.Named
 import javax.inject.Singleton
 
-object ConsumersBasedUserVideoGraphStoreModule extends TwitterModule {
+object ConsumersBasedUserVideoGraphStoreModule extends ExTwitterModule {
 
   @Provides
   @Singleton

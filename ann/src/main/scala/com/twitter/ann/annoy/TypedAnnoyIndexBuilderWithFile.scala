@@ -1,12 +1,12 @@
-package com.twitter.ann.annoy
+package com.ExTwitter.ann.annoy
 
-import com.twitter.ann.annoy.AnnoyCommon.IndexIdMappingFileName
-import com.twitter.ann.common._
-import com.twitter.ann.file_store.WritableIndexIdFileStore
-import com.twitter.bijection.Injection
-import com.twitter.search.common.file.AbstractFile
-import com.twitter.util.Future
-import com.twitter.util.FuturePool
+import com.ExTwitter.ann.annoy.AnnoyCommon.IndexIdMappingFileName
+import com.ExTwitter.ann.common._
+import com.ExTwitter.ann.file_store.WritableIndexIdFileStore
+import com.ExTwitter.bijection.Injection
+import com.ExTwitter.search.common.file.AbstractFile
+import com.ExTwitter.util.Future
+import com.ExTwitter.util.FuturePool
 import org.apache.beam.sdk.io.fs.ResourceId
 
 private[annoy] object TypedAnnoyIndexBuilderWithFile {

@@ -1,7 +1,7 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates
+package com.ExTwitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates
 
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates.EdgeAggregateFeatures._
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
+import com.ExTwitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates.EdgeAggregateFeatures._
+import com.ExTwitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
 import javax.inject.Inject
 import javax.inject.Singleton
 

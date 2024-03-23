@@ -1,26 +1,26 @@
-package com.twitter.graph_feature_service.scalding
+package com.ExTwitter.graph_feature_service.scalding
 
-import com.twitter.bijection.Injection
-import com.twitter.frigate.common.constdb_util.Injections
-import com.twitter.frigate.common.constdb_util.ScaldingUtil
-import com.twitter.graph_feature_service.common.Configs
-import com.twitter.graph_feature_service.common.Configs._
-import com.twitter.interaction_graph.scio.agg_all.InteractionGraphHistoryAggregatedEdgeSnapshotScalaDataset
-import com.twitter.interaction_graph.scio.ml.scores.RealGraphInScoresScalaDataset
-import com.twitter.interaction_graph.thriftscala.FeatureName
-import com.twitter.interaction_graph.thriftscala.{EdgeFeature => TEdgeFeature}
-import com.twitter.pluck.source.user_audits.UserAuditFinalScalaDataset
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Days
-import com.twitter.scalding.Execution
-import com.twitter.scalding.Stat
-import com.twitter.scalding.UniqueID
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.util.Time
-import com.twitter.wtf.candidate.thriftscala.CandidateSeq
+import com.ExTwitter.bijection.Injection
+import com.ExTwitter.frigate.common.constdb_util.Injections
+import com.ExTwitter.frigate.common.constdb_util.ScaldingUtil
+import com.ExTwitter.graph_feature_service.common.Configs
+import com.ExTwitter.graph_feature_service.common.Configs._
+import com.ExTwitter.interaction_graph.scio.agg_all.InteractionGraphHistoryAggregatedEdgeSnapshotScalaDataset
+import com.ExTwitter.interaction_graph.scio.ml.scores.RealGraphInScoresScalaDataset
+import com.ExTwitter.interaction_graph.thriftscala.FeatureName
+import com.ExTwitter.interaction_graph.thriftscala.{EdgeFeature => TEdgeFeature}
+import com.ExTwitter.pluck.source.user_audits.UserAuditFinalScalaDataset
+import com.ExTwitter.scalding.DateRange
+import com.ExTwitter.scalding.Days
+import com.ExTwitter.scalding.Execution
+import com.ExTwitter.scalding.Stat
+import com.ExTwitter.scalding.UniqueID
+import com.ExTwitter.scalding.typed.TypedPipe
+import com.ExTwitter.scalding_internal.dalv2.DAL
+import com.ExTwitter.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
+import com.ExTwitter.scalding_internal.multiformat.format.keyval.KeyVal
+import com.ExTwitter.util.Time
+import com.ExTwitter.wtf.candidate.thriftscala.CandidateSeq
 import java.nio.ByteBuffer
 import java.util.TimeZone
 

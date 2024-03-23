@@ -1,13 +1,13 @@
-package com.twitter.home_mixer.marshaller.request
+package com.ExTwitter.home_mixer.marshaller.request
 
-import com.twitter.home_mixer.model.request.FollowingProductContext
-import com.twitter.home_mixer.model.request.ForYouProductContext
-import com.twitter.home_mixer.model.request.ListRecommendedUsersProductContext
-import com.twitter.home_mixer.model.request.ListTweetsProductContext
-import com.twitter.home_mixer.model.request.ScoredTweetsProductContext
-import com.twitter.home_mixer.model.request.SubscribedProductContext
-import com.twitter.home_mixer.{thriftscala => t}
-import com.twitter.product_mixer.core.model.marshalling.request.ProductContext
+import com.ExTwitter.home_mixer.model.request.FollowingProductContext
+import com.ExTwitter.home_mixer.model.request.ForYouProductContext
+import com.ExTwitter.home_mixer.model.request.ListRecommendedUsersProductContext
+import com.ExTwitter.home_mixer.model.request.ListTweetsProductContext
+import com.ExTwitter.home_mixer.model.request.ScoredTweetsProductContext
+import com.ExTwitter.home_mixer.model.request.SubscribedProductContext
+import com.ExTwitter.home_mixer.{thriftscala => t}
+import com.ExTwitter.product_mixer.core.model.marshalling.request.ProductContext
 import javax.inject.Inject
 import javax.inject.Singleton
 

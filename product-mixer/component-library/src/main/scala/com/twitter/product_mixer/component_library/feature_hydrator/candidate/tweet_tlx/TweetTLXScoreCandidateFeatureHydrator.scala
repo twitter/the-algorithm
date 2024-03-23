@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.component_library.feature_hydrator.candidate.tweet_tlx
+package com.ExTwitter.product_mixer.component_library.feature_hydrator.candidate.tweet_tlx
 
-import com.twitter.ml.featurestore.timelines.thriftscala.TimelineScorerScoreView
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.component_library.scorer.tweet_tlx.TLXScore
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.ml.featureStore.TimelineScorerTweetScoresV1ClientColumn
-import com.twitter.timelinescorer.thriftscala.v1
+import com.ExTwitter.ml.featurestore.timelines.thriftscala.TimelineScorerScoreView
+import com.ExTwitter.product_mixer.component_library.model.candidate.TweetCandidate
+import com.ExTwitter.product_mixer.component_library.scorer.tweet_tlx.TLXScore
+import com.ExTwitter.product_mixer.core.feature.Feature
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
+import com.ExTwitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator
+import com.ExTwitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.strato.generated.client.ml.featureStore.TimelineScorerTweetScoresV1ClientColumn
+import com.ExTwitter.timelinescorer.thriftscala.v1
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -19,7 +19,7 @@ import javax.inject.Singleton
  * Hydrate Tweet Scores via Timeline Scorer (TLX)
  *
  * Note that this is the [[CandidateFeatureHydrator]] version of
- * [[com.twitter.product_mixer.component_library.scorer.tweet_tlx.TweetTLXStratoScorer]]
+ * [[com.ExTwitter.product_mixer.component_library.scorer.tweet_tlx.TweetTLXStratoScorer]]
  */
 @Singleton
 class TweetTLXScoreCandidateFeatureHydrator @Inject() (

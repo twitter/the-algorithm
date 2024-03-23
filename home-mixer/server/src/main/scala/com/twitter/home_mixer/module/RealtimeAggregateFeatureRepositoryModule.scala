@@ -1,42 +1,42 @@
-package com.twitter.home_mixer.module
+package com.ExTwitter.home_mixer.module
 
 import com.google.inject.Provides
 import com.google.inject.name.Named
-import com.twitter.bijection.Injection
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.bijection.thrift.ThriftCodec
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.EngagementsReceivedByAuthorCache
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.RealTimeInteractionGraphUserVertexCache
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.RealTimeInteractionGraphUserVertexClient
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TimelinesRealTimeAggregateClient
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TopicCountryEngagementCache
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TopicEngagementCache
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TweetCountryEngagementCache
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TweetEngagementCache
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TwitterListEngagementCache
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.UserAuthorEngagementCache
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.UserEngagementCache
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.UserTopicEngagementForNewUserCache
-import com.twitter.home_mixer.util.InjectionTransformerImplicits._
-import com.twitter.inject.TwitterModule
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.Feature
-import com.twitter.ml.{api => ml}
-import com.twitter.servo.cache.KeyValueTransformingReadCache
-import com.twitter.servo.cache.Memcache
-import com.twitter.servo.cache.ReadCache
-import com.twitter.servo.util.Transformer
-import com.twitter.storehaus_internal.memcache.MemcacheHelper
-import com.twitter.summingbird.batch.Batcher
-import com.twitter.summingbird_internal.bijection.BatchPairImplicits
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregationKey
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregationKeyInjection
-import com.twitter.wtf.real_time_interaction_graph.{thriftscala => ig}
+import com.ExTwitter.bijection.Injection
+import com.ExTwitter.bijection.scrooge.BinaryScalaCodec
+import com.ExTwitter.bijection.thrift.ThriftCodec
+import com.ExTwitter.home_mixer.param.HomeMixerInjectionNames.EngagementsReceivedByAuthorCache
+import com.ExTwitter.home_mixer.param.HomeMixerInjectionNames.RealTimeInteractionGraphUserVertexCache
+import com.ExTwitter.home_mixer.param.HomeMixerInjectionNames.RealTimeInteractionGraphUserVertexClient
+import com.ExTwitter.home_mixer.param.HomeMixerInjectionNames.TimelinesRealTimeAggregateClient
+import com.ExTwitter.home_mixer.param.HomeMixerInjectionNames.TopicCountryEngagementCache
+import com.ExTwitter.home_mixer.param.HomeMixerInjectionNames.TopicEngagementCache
+import com.ExTwitter.home_mixer.param.HomeMixerInjectionNames.TweetCountryEngagementCache
+import com.ExTwitter.home_mixer.param.HomeMixerInjectionNames.TweetEngagementCache
+import com.ExTwitter.home_mixer.param.HomeMixerInjectionNames.ExTwitterListEngagementCache
+import com.ExTwitter.home_mixer.param.HomeMixerInjectionNames.UserAuthorEngagementCache
+import com.ExTwitter.home_mixer.param.HomeMixerInjectionNames.UserEngagementCache
+import com.ExTwitter.home_mixer.param.HomeMixerInjectionNames.UserTopicEngagementForNewUserCache
+import com.ExTwitter.home_mixer.util.InjectionTransformerImplicits._
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.ml.api.DataRecord
+import com.ExTwitter.ml.api.Feature
+import com.ExTwitter.ml.{api => ml}
+import com.ExTwitter.servo.cache.KeyValueTransformingReadCache
+import com.ExTwitter.servo.cache.Memcache
+import com.ExTwitter.servo.cache.ReadCache
+import com.ExTwitter.servo.util.Transformer
+import com.ExTwitter.storehaus_internal.memcache.MemcacheHelper
+import com.ExTwitter.summingbird.batch.Batcher
+import com.ExTwitter.summingbird_internal.bijection.BatchPairImplicits
+import com.ExTwitter.timelines.data_processing.ml_util.aggregation_framework.AggregationKey
+import com.ExTwitter.timelines.data_processing.ml_util.aggregation_framework.AggregationKeyInjection
+import com.ExTwitter.wtf.real_time_interaction_graph.{thriftscala => ig}
 
 import javax.inject.Singleton
 
 object RealtimeAggregateFeatureRepositoryModule
-    extends TwitterModule
+    extends ExTwitterModule
     with RealtimeAggregateHelpers {
 
   private val authorIdFeature = new Feature.Discrete("entities.source_author_id").getFeatureId
@@ -61,8 +61,8 @@ object RealtimeAggregateFeatureRepositoryModule
 
   @Provides
   @Singleton
-  @Named(TwitterListEngagementCache)
-  def providesTwitterListEngagementCache(
+  @Named(ExTwitterListEngagementCache)
+  def providesExTwitterListEngagementCache(
     @Named(TimelinesRealTimeAggregateClient) client: Memcache
   ): ReadCache[Long, ml.DataRecord] = {
     new KeyValueTransformingReadCache(

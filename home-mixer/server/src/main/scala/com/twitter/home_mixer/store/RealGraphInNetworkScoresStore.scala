@@ -1,16 +1,16 @@
-package com.twitter.home_mixer.store
+package com.ExTwitter.home_mixer.store
 
-import com.twitter.bijection.Injection
-import com.twitter.home_mixer.store.ManhattanRealGraphKVDescriptor._
-import com.twitter.stitch.Stitch
-import com.twitter.storage.client.manhattan.bijections.Bijections
-import com.twitter.storage.client.manhattan.bijections.Bijections.BinaryScalaInjection
-import com.twitter.storage.client.manhattan.kv.ManhattanKVEndpoint
-import com.twitter.storage.client.manhattan.kv.impl.ReadOnlyKeyDescriptor
-import com.twitter.storage.client.manhattan.kv.impl.ValueDescriptor
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
-import com.twitter.wtf.candidate.{thriftscala => wtf}
+import com.ExTwitter.bijection.Injection
+import com.ExTwitter.home_mixer.store.ManhattanRealGraphKVDescriptor._
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.storage.client.manhattan.bijections.Bijections
+import com.ExTwitter.storage.client.manhattan.bijections.Bijections.BinaryScalaInjection
+import com.ExTwitter.storage.client.manhattan.kv.ManhattanKVEndpoint
+import com.ExTwitter.storage.client.manhattan.kv.impl.ReadOnlyKeyDescriptor
+import com.ExTwitter.storage.client.manhattan.kv.impl.ValueDescriptor
+import com.ExTwitter.storehaus.ReadableStore
+import com.ExTwitter.util.Future
+import com.ExTwitter.wtf.candidate.{thriftscala => wtf}
 
 object ManhattanRealGraphKVDescriptor {
   implicit val byteArray2Buf = Bijections.BytesBijection

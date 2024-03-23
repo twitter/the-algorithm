@@ -1,12 +1,12 @@
-package com.twitter.home_mixer.param.decider
+package com.ExTwitter.home_mixer.param.decider
 
-import com.twitter.servo.decider.DeciderKeyEnum
+import com.ExTwitter.servo.decider.DeciderKeyEnum
 
 /**
  * These values must correspond to the deciders configured in the
  * home-mixer/server/src/main/resources/config/decider.yml file
  *
- * @see [[com.twitter.product_mixer.core.product.ProductParamConfig.enabledDeciderKey]]
+ * @see [[com.ExTwitter.product_mixer.core.product.ProductParamConfig.enabledDeciderKey]]
  */
 object DeciderKey extends DeciderKeyEnum {
   // Products

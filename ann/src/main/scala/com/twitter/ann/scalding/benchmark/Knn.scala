@@ -1,26 +1,26 @@
-package com.twitter.ann.scalding.offline.com.twitter.ann.scalding.benchmark
+package com.ExTwitter.ann.scalding.offline.com.ExTwitter.ann.scalding.benchmark
 
 /*
 This job will generate KNN ground truth based user and item embeddings.
  */
 
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DALWrite.D
-import com.twitter.ann.knn.thriftscala.Knn
-import com.twitter.ann.knn.thriftscala.Neighbor
-import com.twitter.ann.scalding.offline.IndexingStrategy
-import com.twitter.ann.scalding.offline.KnnHelper
-import com.twitter.ann.common.Distance
-import com.twitter.ml.featurestore.lib.embedding.EmbeddingWithEntity
-import com.twitter.cortex.ml.embeddings.common.EmbeddingFormatArgsParser
-import com.twitter.cortex.ml.embeddings.common.EntityKind
+import com.ExTwitter.scalding.typed.TypedPipe
+import com.ExTwitter.scalding._
+import com.ExTwitter.scalding_internal.dalv2.DALWrite.D
+import com.ExTwitter.ann.knn.thriftscala.Knn
+import com.ExTwitter.ann.knn.thriftscala.Neighbor
+import com.ExTwitter.ann.scalding.offline.IndexingStrategy
+import com.ExTwitter.ann.scalding.offline.KnnHelper
+import com.ExTwitter.ann.common.Distance
+import com.ExTwitter.ml.featurestore.lib.embedding.EmbeddingWithEntity
+import com.ExTwitter.cortex.ml.embeddings.common.EmbeddingFormatArgsParser
+import com.ExTwitter.cortex.ml.embeddings.common.EntityKind
 import java.util.TimeZone
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.ann.scalding.benchmark.UserItemKnnScalaDataset
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.ml.featurestore.lib.UserId
+import com.ExTwitter.scalding_internal.dalv2.DALWrite._
+import com.ExTwitter.ann.scalding.benchmark.UserItemKnnScalaDataset
+import com.ExTwitter.scalding_internal.job.ExTwitterExecutionApp
+import com.ExTwitter.ml.featurestore.lib.EntityId
+import com.ExTwitter.ml.featurestore.lib.UserId
 
 /**
  * This job will take consumer and item embeddings(either url or tweet) and output Knn entities (user id, (distance, item id)).
@@ -28,12 +28,12 @@ import com.twitter.ml.featurestore.lib.UserId
  * Example command to run this adhoc job:
  *
  * scalding remote run \
- * --target ann/src/main/scala/com/twitter/ann/scalding/benchmark:benchmark-adhoc \
+ * --target ann/src/main/scala/com/ExTwitter/ann/scalding/benchmark:benchmark-adhoc \
  * --hadoop-properties "mapreduce.map.memory.mb=8192 mapreduce.map.java.opts='-Xmx7618M' mapreduce.reduce.memory.mb=8192 mapreduce.reduce.java.opts='-Xmx7618M' mapred.task.timeout=0" \
- * --submitter hadoopnest3.smf1.twitter.com \
+ * --submitter hadoopnest3.smf1.ExTwitter.com \
  * --user cortex-mlx \
  * --submitter-memory 8000.megabyte \
- * --main-class com.twitter.ann.scalding.offline.com.twitter.ann.scalding.benchmark.KnnJob -- \
+ * --main-class com.ExTwitter.ann.scalding.offline.com.ExTwitter.ann.scalding.benchmark.KnnJob -- \
  * --dalEnvironment Prod \
  * --search_space_entity_type user \
  * --user.feature_store_embedding ConsumerFollowEmbedding300Dataset \
@@ -104,7 +104,7 @@ trait KnnJobBase {
   }
 }
 
-object KnnJob extends TwitterExecutionApp with KnnJobBase {
+object KnnJob extends ExTwitterExecutionApp with KnnJobBase {
 
   val KnnPathSuffix: String = "/user/cortex-mlx/qualatative_analysis/knn_ground_truth/"
   val partitionKey: String = "version"

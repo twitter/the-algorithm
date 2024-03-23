@@ -1,7 +1,7 @@
-package com.twitter.follow_recommendations.common.predicates.user_activity
+package com.ExTwitter.follow_recommendations.common.predicates.user_activity
 
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.util.Duration
+import com.ExTwitter.timelines.configapi.FSParam
+import com.ExTwitter.util.Duration
 
 object UserActivityPredicateParams {
   case object HeavyTweeterEnabled

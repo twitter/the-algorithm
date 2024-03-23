@@ -1,13 +1,13 @@
-package com.twitter.home_mixer.product.scored_tweets.param
+package com.ExTwitter.home_mixer.product.scored_tweets.param
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.param.decider.DeciderKey
-import com.twitter.timelines.configapi.DurationConversion
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.timelines.configapi.decider.BooleanDeciderParam
-import com.twitter.util.Duration
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.home_mixer.param.decider.DeciderKey
+import com.ExTwitter.timelines.configapi.DurationConversion
+import com.ExTwitter.timelines.configapi.FSBoundedParam
+import com.ExTwitter.timelines.configapi.FSParam
+import com.ExTwitter.timelines.configapi.HasDurationConversion
+import com.ExTwitter.timelines.configapi.decider.BooleanDeciderParam
+import com.ExTwitter.util.Duration
 
 object ScoredTweetsParam {
   val SupportedClientFSName = "scored_tweets_supported_client"

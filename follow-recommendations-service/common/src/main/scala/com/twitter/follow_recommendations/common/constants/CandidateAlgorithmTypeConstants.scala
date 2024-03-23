@@ -1,8 +1,8 @@
-package com.twitter.follow_recommendations.common.constants
+package com.ExTwitter.follow_recommendations.common.constants
 
-import com.twitter.hermit.constants.AlgorithmFeedbackTokens.AlgorithmToFeedbackTokenMap
-import com.twitter.hermit.model.Algorithm._
-import com.twitter.follow_recommendations.common.models.AlgorithmType
+import com.ExTwitter.hermit.constants.AlgorithmFeedbackTokens.AlgorithmToFeedbackTokenMap
+import com.ExTwitter.hermit.model.Algorithm._
+import com.ExTwitter.follow_recommendations.common.models.AlgorithmType
 
 object CandidateAlgorithmTypeConstants {
 

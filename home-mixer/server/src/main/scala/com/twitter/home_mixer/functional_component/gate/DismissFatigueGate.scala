@@ -1,14 +1,14 @@
-package com.twitter.home_mixer.functional_component.gate
+package com.ExTwitter.home_mixer.functional_component.gate
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelinemixer.clients.manhattan.DismissInfo
-import com.twitter.timelineservice.suggests.thriftscala.SuggestType
-import com.twitter.util.Duration
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.product_mixer.core.feature.Feature
+import com.ExTwitter.product_mixer.core.functional_component.gate.Gate
+import com.ExTwitter.product_mixer.core.model.common.identifier.GateIdentifier
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.timelinemixer.clients.manhattan.DismissInfo
+import com.ExTwitter.timelineservice.suggests.thriftscala.SuggestType
+import com.ExTwitter.util.Duration
 
 object DismissFatigueGate {
   // how long a dismiss action from user needs to be respected

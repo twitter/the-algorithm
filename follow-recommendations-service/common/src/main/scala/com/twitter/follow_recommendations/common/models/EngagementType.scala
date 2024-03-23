@@ -1,7 +1,7 @@
-package com.twitter.follow_recommendations.common.models
+package com.ExTwitter.follow_recommendations.common.models
 
-import com.twitter.follow_recommendations.thriftscala.{EngagementType => TEngagementType}
-import com.twitter.follow_recommendations.logging.thriftscala.{
+import com.ExTwitter.follow_recommendations.thriftscala.{EngagementType => TEngagementType}
+import com.ExTwitter.follow_recommendations.logging.thriftscala.{
   EngagementType => OfflineEngagementType
 }
 sealed trait EngagementType {

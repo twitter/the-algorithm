@@ -1,12 +1,12 @@
-package com.twitter.follow_recommendations.common.clients.graph_feature_service
+package com.ExTwitter.follow_recommendations.common.clients.graph_feature_service
 
-import com.twitter.follow_recommendations.common.models.FollowProof
-import com.twitter.graph_feature_service.thriftscala.PresetFeatureTypes.WtfTwoHop
-import com.twitter.graph_feature_service.thriftscala.EdgeType
-import com.twitter.graph_feature_service.thriftscala.GfsIntersectionResponse
-import com.twitter.graph_feature_service.thriftscala.GfsPresetIntersectionRequest
-import com.twitter.graph_feature_service.thriftscala.{Server => GraphFeatureService}
-import com.twitter.stitch.Stitch
+import com.ExTwitter.follow_recommendations.common.models.FollowProof
+import com.ExTwitter.graph_feature_service.thriftscala.PresetFeatureTypes.WtfTwoHop
+import com.ExTwitter.graph_feature_service.thriftscala.EdgeType
+import com.ExTwitter.graph_feature_service.thriftscala.GfsIntersectionResponse
+import com.ExTwitter.graph_feature_service.thriftscala.GfsPresetIntersectionRequest
+import com.ExTwitter.graph_feature_service.thriftscala.{Server => GraphFeatureService}
+import com.ExTwitter.stitch.Stitch
 import javax.inject.{Inject, Singleton}
 
 @Singleton

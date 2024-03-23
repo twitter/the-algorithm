@@ -1,10 +1,10 @@
-package com.twitter.follow_recommendations.common.rankers.first_n_ranker
+package com.ExTwitter.follow_recommendations.common.rankers.first_n_ranker
 
 import javax.inject.Inject
 import javax.inject.Singleton
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
+import com.ExTwitter.follow_recommendations.configapi.common.FeatureSwitchConfig
+import com.ExTwitter.timelines.configapi.FSBoundedParam
+import com.ExTwitter.timelines.configapi.FSParam
 
 @Singleton
 class FirstNRankerFSConfig @Inject() extends FeatureSwitchConfig {

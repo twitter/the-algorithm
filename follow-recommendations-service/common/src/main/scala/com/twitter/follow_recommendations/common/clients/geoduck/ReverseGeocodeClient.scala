@@ -1,12 +1,12 @@
-package com.twitter.follow_recommendations.common.clients.geoduck
+package com.ExTwitter.follow_recommendations.common.clients.geoduck
 
-import com.twitter.follow_recommendations.common.models.GeohashAndCountryCode
-import com.twitter.geoduck.common.thriftscala.Location
-import com.twitter.geoduck.common.thriftscala.PlaceQuery
-import com.twitter.geoduck.common.thriftscala.ReverseGeocodeIPRequest
-import com.twitter.geoduck.service.thriftscala.GeoContext
-import com.twitter.geoduck.thriftscala.ReverseGeocoder
-import com.twitter.stitch.Stitch
+import com.ExTwitter.follow_recommendations.common.models.GeohashAndCountryCode
+import com.ExTwitter.geoduck.common.thriftscala.Location
+import com.ExTwitter.geoduck.common.thriftscala.PlaceQuery
+import com.ExTwitter.geoduck.common.thriftscala.ReverseGeocodeIPRequest
+import com.ExTwitter.geoduck.service.thriftscala.GeoContext
+import com.ExTwitter.geoduck.thriftscala.ReverseGeocoder
+import com.ExTwitter.stitch.Stitch
 import javax.inject.Inject
 import javax.inject.Singleton
 

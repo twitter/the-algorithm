@@ -1,10 +1,10 @@
-package com.twitter.follow_recommendations.common.predicates.hss
+package com.ExTwitter.follow_recommendations.common.predicates.hss
 
-import com.twitter.follow_recommendations.common.predicates.hss.HssPredicateParams._
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.util.Duration
+import com.ExTwitter.follow_recommendations.common.predicates.hss.HssPredicateParams._
+import com.ExTwitter.follow_recommendations.configapi.common.FeatureSwitchConfig
+import com.ExTwitter.timelines.configapi.FSBoundedParam
+import com.ExTwitter.timelines.configapi.HasDurationConversion
+import com.ExTwitter.util.Duration
 
 import javax.inject.Inject
 import javax.inject.Singleton

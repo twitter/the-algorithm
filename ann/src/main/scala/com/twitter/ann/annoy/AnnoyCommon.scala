@@ -1,10 +1,10 @@
-package com.twitter.ann.annoy
+package com.ExTwitter.ann.annoy
 
-import com.twitter.ann.common.RuntimeParams
-import com.twitter.ann.common.thriftscala.AnnoyIndexMetadata
-import com.twitter.bijection.Injection
-import com.twitter.mediaservices.commons.codec.ThriftByteBufferCodec
-import com.twitter.ann.common.thriftscala.{AnnoyRuntimeParam, RuntimeParams => ServiceRuntimeParams}
+import com.ExTwitter.ann.common.RuntimeParams
+import com.ExTwitter.ann.common.thriftscala.AnnoyIndexMetadata
+import com.ExTwitter.bijection.Injection
+import com.ExTwitter.mediaservices.commons.codec.ThriftByteBufferCodec
+import com.ExTwitter.ann.common.thriftscala.{AnnoyRuntimeParam, RuntimeParams => ServiceRuntimeParams}
 import scala.util.{Failure, Success, Try}
 
 object AnnoyCommon {

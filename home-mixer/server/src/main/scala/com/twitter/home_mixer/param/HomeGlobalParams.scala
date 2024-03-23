@@ -1,12 +1,12 @@
-package com.twitter.home_mixer.param
+package com.ExTwitter.home_mixer.param
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
+import com.ExTwitter.timelines.configapi.FSBoundedParam
+import com.ExTwitter.timelines.configapi.FSParam
 
 /**
  * Instantiate Params that do not relate to a specific product.
  *
- * @see [[com.twitter.product_mixer.core.product.ProductParamConfig.supportedClientFSName]]
+ * @see [[com.ExTwitter.product_mixer.core.product.ProductParamConfig.supportedClientFSName]]
  */
 object HomeGlobalParams {
 

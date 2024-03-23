@@ -1,10 +1,10 @@
-package com.twitter.follow_recommendations.common.clients.adserver
+package com.ExTwitter.follow_recommendations.common.clients.adserver
 
-import com.twitter.adserver.thriftscala.NewAdServer
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.ThriftMux
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.follow_recommendations.common.clients.common.BaseClientModule
+import com.ExTwitter.adserver.thriftscala.NewAdServer
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.finagle.ThriftMux
+import com.ExTwitter.finatra.mtls.thriftmux.modules.MtlsClient
+import com.ExTwitter.follow_recommendations.common.clients.common.BaseClientModule
 
 object AdserverModule extends BaseClientModule[NewAdServer.MethodPerEndpoint] with MtlsClient {
   override val label = "adserver"

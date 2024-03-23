@@ -1,7 +1,7 @@
-package com.twitter.home_mixer.service
+package com.ExTwitter.home_mixer.service
 
-import com.twitter.product_mixer.core.functional_component.common.access_policy.AccessPolicy
-import com.twitter.product_mixer.core.functional_component.common.access_policy.AllowedLdapGroups
+import com.ExTwitter.product_mixer.core.functional_component.common.access_policy.AccessPolicy
+import com.ExTwitter.product_mixer.core.functional_component.common.access_policy.AllowedLdapGroups
 
 object HomeMixerAccessPolicy {
 

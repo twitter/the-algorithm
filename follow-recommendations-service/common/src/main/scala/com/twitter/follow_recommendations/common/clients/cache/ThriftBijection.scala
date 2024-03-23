@@ -1,10 +1,10 @@
-package com.twitter.follow_recommendations.common.clients.cache
+package com.ExTwitter.follow_recommendations.common.clients.cache
 
-import com.twitter.bijection.Bijection
-import com.twitter.io.Buf
-import com.twitter.scrooge.CompactThriftSerializer
-import com.twitter.scrooge.ThriftEnum
-import com.twitter.scrooge.ThriftStruct
+import com.ExTwitter.bijection.Bijection
+import com.ExTwitter.io.Buf
+import com.ExTwitter.scrooge.CompactThriftSerializer
+import com.ExTwitter.scrooge.ThriftEnum
+import com.ExTwitter.scrooge.ThriftStruct
 import java.nio.ByteBuffer
 
 abstract class ThriftBijection[T <: ThriftStruct] extends Bijection[Buf, T] {

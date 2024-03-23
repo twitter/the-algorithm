@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.common.clients.phone_storage_service
+package com.ExTwitter.follow_recommendations.common.clients.phone_storage_service
 
-import com.twitter.cds.contact_consent_state.thriftscala.PurposeOfProcessing
-import com.twitter.phonestorage.api.thriftscala.GetUserPhonesByUsersRequest
-import com.twitter.phonestorage.api.thriftscala.PhoneStorageService
-import com.twitter.stitch.Stitch
+import com.ExTwitter.cds.contact_consent_state.thriftscala.PurposeOfProcessing
+import com.ExTwitter.phonestorage.api.thriftscala.GetUserPhonesByUsersRequest
+import com.ExTwitter.phonestorage.api.thriftscala.PhoneStorageService
+import com.ExTwitter.stitch.Stitch
 import javax.inject.Inject
 import javax.inject.Singleton
 

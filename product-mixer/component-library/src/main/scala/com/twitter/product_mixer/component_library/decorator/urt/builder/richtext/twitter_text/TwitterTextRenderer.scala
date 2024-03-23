@@ -1,38 +1,38 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.richtext.twitter_text
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.richtext.ExTwitter_text
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.ReferenceObject
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextAlignment
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextEntity
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextFormat
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.richtext.ReferenceObject
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextAlignment
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextEntity
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextFormat
 import scala.annotation.tailrec
 import scala.collection.mutable
 
-object TwitterTextRenderer {
+object ExTwitterTextRenderer {
 
   /**
-   * Creates a new [[TwitterTextRenderer]] instance.
+   * Creates a new [[ExTwitterTextRenderer]] instance.
    * @param text      The initial text representation
    * @param rtl       Defines whether this text is in an RTL language
    * @param alignment Assigns the [[RichTextAlignment]] of the given text for display
-   * @return          A new [[TwitterTextRenderer]] instance
+   * @return          A new [[ExTwitterTextRenderer]] instance
    */
   def apply(
     text: String,
     rtl: Option[Boolean] = None,
     alignment: Option[RichTextAlignment] = None
-  ): TwitterTextRenderer = {
-    TwitterTextRenderer(rtl, alignment).append(text)
+  ): ExTwitterTextRenderer = {
+    ExTwitterTextRenderer(rtl, alignment).append(text)
   }
 
   /**
-   * Creates a new [[TwitterTextRenderer]] instance from a product-mixer [[RichText]] object.
+   * Creates a new [[ExTwitterTextRenderer]] instance from a product-mixer [[RichText]] object.
    * Converts Unicode entity indexes into JVM String indexes.
    * @param richText  The product-mixer [[RichText]] representation
-   * @return          A new [[TwitterTextRenderer]] instance
+   * @return          A new [[ExTwitterTextRenderer]] instance
    */
-  def fromRichText(richText: RichText): TwitterTextRenderer = {
-    val builder = TwitterTextRenderer(richText.text, richText.rtl, richText.alignment)
+  def fromRichText(richText: RichText): ExTwitterTextRenderer = {
+    val builder = ExTwitterTextRenderer(richText.text, richText.rtl, richText.alignment)
     richText.entities.foreach { e =>
       val startIndex = richText.text.offsetByCodePoints(0, e.fromIndex)
       val endIndex = richText.text.offsetByCodePoints(0, e.toIndex)
@@ -48,7 +48,7 @@ object TwitterTextRenderer {
 
   private def buildRichTextEntity(
     text: String,
-    entity: TwitterTextRendererEntity[_]
+    entity: ExTwitterTextRendererEntity[_]
   ): RichTextEntity = {
     val fromIndex = text.codePointCount(0, entity.startIndex)
     val toIndex = text.codePointCount(0, entity.endIndex)
@@ -62,16 +62,16 @@ object TwitterTextRenderer {
   }
 }
 
-case class TwitterTextRenderer(
+case class ExTwitterTextRenderer(
   rtl: Option[Boolean],
   alignment: Option[RichTextAlignment],
 ) {
   private[this] val textBuilder = new mutable.StringBuilder()
 
   private[richtext] val formatBuffer =
-    mutable.ArrayBuffer[TwitterTextRendererEntity[RichTextFormat]]()
+    mutable.ArrayBuffer[ExTwitterTextRendererEntity[RichTextFormat]]()
   private[richtext] val refObjectBuffer =
-    mutable.ArrayBuffer[TwitterTextRendererEntity[ReferenceObject]]()
+    mutable.ArrayBuffer[ExTwitterTextRendererEntity[ReferenceObject]]()
 
   /**
    * Appends a string with attached [[RichTextFormat]] and [[ReferenceObject]] information.
@@ -84,15 +84,15 @@ case class TwitterTextRenderer(
     string: String,
     format: Option[RichTextFormat] = None,
     refObject: Option[ReferenceObject] = None
-  ): TwitterTextRenderer = {
+  ): ExTwitterTextRenderer = {
     if (string.nonEmpty) {
       val start = textBuilder.length
       val end = start + string.length
       format.foreach { f =>
-        formatBuffer.append(TwitterTextRendererEntity(start, end, f))
+        formatBuffer.append(ExTwitterTextRendererEntity(start, end, f))
       }
       refObject.foreach { r =>
-        refObjectBuffer.append(TwitterTextRendererEntity(start, end, r))
+        refObjectBuffer.append(ExTwitterTextRendererEntity(start, end, r))
       }
       textBuilder.append(string)
     }
@@ -106,7 +106,7 @@ case class TwitterTextRenderer(
     val richTextString = this.text
     val richTextEntities = this.entities
       .map { e =>
-        TwitterTextRenderer.buildRichTextEntity(richTextString, e)
+        ExTwitterTextRenderer.buildRichTextEntity(richTextString, e)
       }
 
     RichText(
@@ -118,16 +118,16 @@ case class TwitterTextRenderer(
   }
 
   /**
-   * Modifies the TwitterTextRenderer with the provided [[TwitterTextRendererProcessor]]
+   * Modifies the ExTwitterTextRenderer with the provided [[ExTwitterTextRendererProcessor]]
    */
-  def transform(twitterTextProcessor: TwitterTextRendererProcessor): TwitterTextRenderer = {
-    twitterTextProcessor.process(this)
+  def transform(ExTwitterTextProcessor: ExTwitterTextRendererProcessor): ExTwitterTextRenderer = {
+    ExTwitterTextProcessor.process(this)
   }
 
   /**
-   * Builds and returns a sorted list of [[TwitterTextRendererEntity]] with JVM String index entity ranges.
+   * Builds and returns a sorted list of [[ExTwitterTextRendererEntity]] with JVM String index entity ranges.
    */
-  def entities: Seq[TwitterTextRendererEntity[_]] = {
+  def entities: Seq[ExTwitterTextRendererEntity[_]] = {
     buildEntities(formatBuffer.toList, refObjectBuffer.toList)
   }
 
@@ -139,12 +139,12 @@ case class TwitterTextRenderer(
    * @param format The format to assign
    * @return       this
    */
-  def mergeFormat(start: Int, end: Int, format: RichTextFormat): TwitterTextRenderer = {
+  def mergeFormat(start: Int, end: Int, format: RichTextFormat): ExTwitterTextRenderer = {
     validateRange(start, end)
     var injectionIndex: Option[Int] = None
-    var entity = TwitterTextRendererEntity(start, end, format)
+    var entity = ExTwitterTextRendererEntity(start, end, format)
 
-    val buffer = mutable.ArrayBuffer[TwitterTextRendererEntity[RichTextFormat]]()
+    val buffer = mutable.ArrayBuffer[ExTwitterTextRendererEntity[RichTextFormat]]()
     val iterator = formatBuffer.zipWithIndex.reverseIterator
 
     while (iterator.hasNext && injectionIndex.isEmpty) {
@@ -197,7 +197,7 @@ case class TwitterTextRenderer(
    * @param end    End index to apply formatting (exclusive)
    * @return       this
    */
-  def remove(start: Int, end: Int): TwitterTextRenderer = replace(start, end, "")
+  def remove(start: Int, end: Int): ExTwitterTextRenderer = replace(start, end, "")
 
   /**
    * Replaces text, formatting, and refObject information in the given range.
@@ -214,17 +214,17 @@ case class TwitterTextRenderer(
     string: String,
     format: Option[RichTextFormat] = None,
     refObject: Option[ReferenceObject] = None
-  ): TwitterTextRenderer = {
+  ): ExTwitterTextRenderer = {
     validateRange(start, end)
 
     val newEnd = start + string.length
     val formatInjectIndex = removeAndOffsetFormats(start, end, string.length)
     val refObjectInjectIndex = removeAndOffsetRefObjects(start, end, string.length)
     format.foreach { f =>
-      formatBuffer.insert(formatInjectIndex, TwitterTextRendererEntity(start, newEnd, f))
+      formatBuffer.insert(formatInjectIndex, ExTwitterTextRendererEntity(start, newEnd, f))
     }
     refObject.foreach { r =>
-      refObjectBuffer.insert(refObjectInjectIndex, TwitterTextRendererEntity(start, newEnd, r))
+      refObjectBuffer.insert(refObjectInjectIndex, ExTwitterTextRendererEntity(start, newEnd, r))
     }
     textBuilder.replace(start, end, string)
 
@@ -239,10 +239,10 @@ case class TwitterTextRenderer(
    * @param format The format to assign
    * @return       this
    */
-  def setFormat(start: Int, end: Int, format: RichTextFormat): TwitterTextRenderer = {
+  def setFormat(start: Int, end: Int, format: RichTextFormat): ExTwitterTextRenderer = {
     validateRange(start, end)
     val bufferIndex = removeAndOffsetFormats(start, end, end - start)
-    formatBuffer.insert(bufferIndex, TwitterTextRendererEntity(start, end, format))
+    formatBuffer.insert(bufferIndex, ExTwitterTextRendererEntity(start, end, format))
 
     this
   }
@@ -252,7 +252,7 @@ case class TwitterTextRenderer(
     val offset = newEnd - end
     var injectionIndex: Option[Int] = None
 
-    val buffer = mutable.ArrayBuffer[TwitterTextRendererEntity[RichTextFormat]]()
+    val buffer = mutable.ArrayBuffer[ExTwitterTextRendererEntity[RichTextFormat]]()
     val iterator = formatBuffer.zipWithIndex.reverseIterator
 
     while (iterator.hasNext && injectionIndex.isEmpty) {
@@ -296,10 +296,10 @@ case class TwitterTextRenderer(
    * @param refObject The [[ReferenceObject]] to assign
    * @return          this
    */
-  def setRefObject(start: Int, end: Int, refObject: ReferenceObject): TwitterTextRenderer = {
+  def setRefObject(start: Int, end: Int, refObject: ReferenceObject): ExTwitterTextRenderer = {
     validateRange(start, end)
     val bufferIndex = removeAndOffsetRefObjects(start, end, end - start)
-    refObjectBuffer.insert(bufferIndex, TwitterTextRendererEntity(start, end, refObject))
+    refObjectBuffer.insert(bufferIndex, ExTwitterTextRendererEntity(start, end, refObject))
 
     this
   }
@@ -309,7 +309,7 @@ case class TwitterTextRenderer(
     val offset = newEnd - end
     var injectionIndex: Option[Int] = None
 
-    val buffer = mutable.ArrayBuffer[TwitterTextRendererEntity[ReferenceObject]]()
+    val buffer = mutable.ArrayBuffer[ExTwitterTextRendererEntity[ReferenceObject]]()
     val iterator = refObjectBuffer.zipWithIndex.reverseIterator
 
     while (iterator.hasNext && injectionIndex.isEmpty) {
@@ -327,7 +327,7 @@ case class TwitterTextRenderer(
   }
 
   /**
-   * Builds and returns the full TwitterTextRenderer text with any changes applied to the builder instance.
+   * Builds and returns the full ExTwitterTextRenderer text with any changes applied to the builder instance.
    */
   def text: String = {
     textBuilder.mkString
@@ -335,10 +335,10 @@ case class TwitterTextRenderer(
 
   @tailrec
   private def buildEntities(
-    formats: List[TwitterTextRendererEntity[RichTextFormat]],
-    refs: List[TwitterTextRendererEntity[ReferenceObject]],
-    acc: List[TwitterTextRendererEntity[_]] = List()
-  ): Seq[TwitterTextRendererEntity[_]] = {
+    formats: List[ExTwitterTextRendererEntity[RichTextFormat]],
+    refs: List[ExTwitterTextRendererEntity[ReferenceObject]],
+    acc: List[ExTwitterTextRendererEntity[_]] = List()
+  ): Seq[ExTwitterTextRendererEntity[_]] = {
     (formats, refs) match {
       case (Nil, Nil) => acc
       case (remainingFormats, Nil) => acc ++ remainingFormats
@@ -358,7 +358,7 @@ case class TwitterTextRenderer(
   }
 }
 
-case class TwitterTextRendererEntity[+T] private[richtext] (
+case class ExTwitterTextRendererEntity[+T] private[richtext] (
   startIndex: Int,
   endIndex: Int,
   value: T) {
@@ -380,7 +380,7 @@ case class TwitterTextRendererEntity[+T] private[richtext] (
     start < endIndex && endIndex <= end && startIndex < start
   }
 
-  private[richtext] def offset(num: Int): TwitterTextRendererEntity[T] = {
+  private[richtext] def offset(num: Int): ExTwitterTextRendererEntity[T] = {
     copy(startIndex = startIndex + num, endIndex = endIndex + num)
   }
 

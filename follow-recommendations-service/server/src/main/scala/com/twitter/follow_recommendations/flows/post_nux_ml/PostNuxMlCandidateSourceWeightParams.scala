@@ -1,7 +1,7 @@
-package com.twitter.follow_recommendations.flows.post_nux_ml
+package com.ExTwitter.follow_recommendations.flows.post_nux_ml
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.Param
+import com.ExTwitter.timelines.configapi.FSBoundedParam
+import com.ExTwitter.timelines.configapi.Param
 
 abstract class PostNuxMlCandidateSourceWeightParams[A](default: A) extends Param[A](default) {
   override val statName: String = "post_nux_ml/" + this.getClass.getSimpleName

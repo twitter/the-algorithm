@@ -1,29 +1,29 @@
-package com.twitter.cr_mixer.module.similarity_engine
+package com.ExTwitter.cr_mixer.module.similarity_engine
 
 import com.google.inject.Provides
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.model.TopicTweetWithScore
-import com.twitter.cr_mixer.param.decider.CrMixerDecider
-import com.twitter.cr_mixer.param.decider.DeciderConstants
-import com.twitter.cr_mixer.similarity_engine.EngineQuery
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.DeciderConfig
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.GatingConfig
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.SimilarityEngineConfig
-import com.twitter.cr_mixer.similarity_engine.SkitHighPrecisionTopicTweetSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.SkitTopicTweetSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.SkitTopicTweetSimilarityEngine.Query
-import com.twitter.cr_mixer.similarity_engine.StandardSimilarityEngine
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.storehaus.ReadableStore
-import com.twitter.topic_recos.thriftscala.TopicTweet
-import com.twitter.topic_recos.thriftscala.TopicTweetPartitionFlatKey
+import com.ExTwitter.cr_mixer.config.TimeoutConfig
+import com.ExTwitter.cr_mixer.model.ModuleNames
+import com.ExTwitter.cr_mixer.model.TopicTweetWithScore
+import com.ExTwitter.cr_mixer.param.decider.CrMixerDecider
+import com.ExTwitter.cr_mixer.param.decider.DeciderConstants
+import com.ExTwitter.cr_mixer.similarity_engine.EngineQuery
+import com.ExTwitter.cr_mixer.similarity_engine.SimilarityEngine.DeciderConfig
+import com.ExTwitter.cr_mixer.similarity_engine.SimilarityEngine.GatingConfig
+import com.ExTwitter.cr_mixer.similarity_engine.SimilarityEngine.SimilarityEngineConfig
+import com.ExTwitter.cr_mixer.similarity_engine.SkitHighPrecisionTopicTweetSimilarityEngine
+import com.ExTwitter.cr_mixer.similarity_engine.SkitTopicTweetSimilarityEngine
+import com.ExTwitter.cr_mixer.similarity_engine.SkitTopicTweetSimilarityEngine.Query
+import com.ExTwitter.cr_mixer.similarity_engine.StandardSimilarityEngine
+import com.ExTwitter.cr_mixer.thriftscala.SimilarityEngineType
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.storehaus.ReadableStore
+import com.ExTwitter.topic_recos.thriftscala.TopicTweet
+import com.ExTwitter.topic_recos.thriftscala.TopicTweetPartitionFlatKey
 import javax.inject.Named
 import javax.inject.Singleton
 
-object SkitTopicTweetSimilarityEngineModule extends TwitterModule {
+object SkitTopicTweetSimilarityEngineModule extends ExTwitterModule {
 
   @Provides
   @Singleton

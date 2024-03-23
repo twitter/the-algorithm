@@ -1,18 +1,18 @@
-package com.twitter.follow_recommendations.modules
+package com.ExTwitter.follow_recommendations.modules
 
 import com.google.inject.Provides
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.featureswitches.v2.Feature
-import com.twitter.featureswitches.v2.FeatureFilter
-import com.twitter.featureswitches.v2.FeatureSwitches
-import com.twitter.featureswitches.v2.builder.FeatureSwitchesBuilder
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants.PRODUCER_SIDE_FEATURE_SWITCHES
-import com.twitter.inject.TwitterModule
+import com.ExTwitter.abdecider.LoggingABDecider
+import com.ExTwitter.featureswitches.v2.Feature
+import com.ExTwitter.featureswitches.v2.FeatureFilter
+import com.ExTwitter.featureswitches.v2.FeatureSwitches
+import com.ExTwitter.featureswitches.v2.builder.FeatureSwitchesBuilder
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.follow_recommendations.common.constants.GuiceNamedConstants.PRODUCER_SIDE_FEATURE_SWITCHES
+import com.ExTwitter.inject.ExTwitterModule
 import javax.inject.Named
 import javax.inject.Singleton
 
-object FeaturesSwitchesModule extends TwitterModule {
+object FeaturesSwitchesModule extends ExTwitterModule {
   private val DefaultConfigRepoPath = "/usr/local/config"
   private val FeaturesPath = "/features/onboarding/follow-recommendations-service/main"
   val isLocal = flag("configrepo.local", false, "Is the server running locally or in a DC")

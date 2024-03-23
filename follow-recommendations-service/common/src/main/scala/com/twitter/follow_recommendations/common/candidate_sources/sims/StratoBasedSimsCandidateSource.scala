@@ -1,13 +1,13 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims
+package com.ExTwitter.follow_recommendations.common.candidate_sources.sims
 
-import com.twitter.follow_recommendations.common.candidate_sources.base.StratoFetcherSource
-import com.twitter.follow_recommendations.common.models.AccountProof
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.Reason
-import com.twitter.follow_recommendations.common.models.SimilarToProof
-import com.twitter.hermit.candidate.thriftscala.Candidates
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.client.Fetcher
+import com.ExTwitter.follow_recommendations.common.candidate_sources.base.StratoFetcherSource
+import com.ExTwitter.follow_recommendations.common.models.AccountProof
+import com.ExTwitter.follow_recommendations.common.models.CandidateUser
+import com.ExTwitter.follow_recommendations.common.models.Reason
+import com.ExTwitter.follow_recommendations.common.models.SimilarToProof
+import com.ExTwitter.hermit.candidate.thriftscala.Candidates
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.strato.client.Fetcher
 
 abstract class StratoBasedSimsCandidateSource[U](
   fetcher: Fetcher[Long, U, Candidates],

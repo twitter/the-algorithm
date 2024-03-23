@@ -1,4 +1,4 @@
-package com.twitter.follow_recommendations.models
+package com.ExTwitter.follow_recommendations.models
 
 object CandidateSourceType extends Enumeration {
   type CandidateSourceType = Value

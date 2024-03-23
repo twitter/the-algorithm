@@ -1,16 +1,16 @@
-package com.twitter.cr_mixer.module.core
+package com.ExTwitter.cr_mixer.module.core
 
 import com.google.inject.Provides
 import com.google.inject.name.Named
-import com.twitter.abdecider.ABDeciderFactory
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.logging.Logger
+import com.ExTwitter.abdecider.ABDeciderFactory
+import com.ExTwitter.abdecider.LoggingABDecider
+import com.ExTwitter.cr_mixer.model.ModuleNames
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.inject.annotations.Flag
+import com.ExTwitter.logging.Logger
 import javax.inject.Singleton
 
-object ABDeciderModule extends TwitterModule {
+object ABDeciderModule extends ExTwitterModule {
 
   flag(
     name = "abdecider.path",

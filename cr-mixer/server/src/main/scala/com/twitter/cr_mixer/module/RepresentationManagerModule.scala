@@ -1,24 +1,24 @@
-package com.twitter.cr_mixer.module
+package com.ExTwitter.cr_mixer.module
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.representation_manager.thriftscala.SimClustersEmbeddingView
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.simclusters_v2.common.SimClustersEmbedding
+import com.ExTwitter.simclusters_v2.common.TweetId
+import com.ExTwitter.simclusters_v2.common.UserId
+import com.ExTwitter.storehaus.ReadableStore
+import com.ExTwitter.strato.client.{Client => StratoClient}
+import com.ExTwitter.representation_manager.thriftscala.SimClustersEmbeddingView
+import com.ExTwitter.simclusters_v2.thriftscala.EmbeddingType
+import com.ExTwitter.simclusters_v2.thriftscala.ModelVersion
 import com.google.inject.Provides
 import com.google.inject.Singleton
 import javax.inject.Named
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.frigate.common.store.strato.StratoFetchableStore
-import com.twitter.hermit.store.common.ObservedReadableStore
-import com.twitter.simclusters_v2.thriftscala.{SimClustersEmbedding => ThriftSimClustersEmbedding}
+import com.ExTwitter.cr_mixer.model.ModuleNames
+import com.ExTwitter.frigate.common.store.strato.StratoFetchableStore
+import com.ExTwitter.hermit.store.common.ObservedReadableStore
+import com.ExTwitter.simclusters_v2.thriftscala.{SimClustersEmbedding => ThriftSimClustersEmbedding}
 
-object RepresentationManagerModule extends TwitterModule {
+object RepresentationManagerModule extends ExTwitterModule {
   private val ColPathPrefix = "recommendations/representation_manager/"
   private val SimclustersTweetColPath = ColPathPrefix + "simClustersEmbedding.Tweet"
   private val SimclustersUserColPath = ColPathPrefix + "simClustersEmbedding.User"

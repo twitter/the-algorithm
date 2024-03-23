@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer
+package com.ExTwitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer
 
-import com.twitter.onboarding.task.service.{thriftscala => flip}
+import com.ExTwitter.onboarding.task.service.{thriftscala => flip}
 
 trait HasFlipInjectionParams {
   def displayLocation: flip.DisplayLocation

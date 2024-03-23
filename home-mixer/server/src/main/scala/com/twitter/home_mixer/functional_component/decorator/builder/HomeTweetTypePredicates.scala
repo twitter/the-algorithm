@@ -1,12 +1,12 @@
-package com.twitter.home_mixer.functional_component.decorator.builder
+package com.ExTwitter.home_mixer.functional_component.decorator.builder
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.model.HomeFeatures._
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.BasicTopicContextFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RecommendationTopicContextFunctionalityType
-import com.twitter.timelinemixer.injection.model.candidate.SemanticCoreFeatures
-import com.twitter.tweetypie.{thriftscala => tpt}
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.home_mixer.model.HomeFeatures._
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.BasicTopicContextFunctionalityType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.RecommendationTopicContextFunctionalityType
+import com.ExTwitter.timelinemixer.injection.model.candidate.SemanticCoreFeatures
+import com.ExTwitter.tweetypie.{thriftscala => tpt}
 
 object HomeTweetTypePredicates {
 
@@ -85,7 +85,7 @@ object HomeTweetTypePredicates {
       "part_of_utt",
       _.getOrElse(EarlybirdFeature, None)
         .exists(_.semanticCoreAnnotations.exists(_.exists(annotation =>
-          annotation.domainId == SemanticCoreFeatures.UnifiedTwitterTaxonomy)))),
+          annotation.domainId == SemanticCoreFeatures.UnifiedExTwitterTaxonomy)))),
     (
       "has_home_latest_request_past_week",
       _.getOrElse(FollowingLastNonPollingTimeFeature, None).exists(_.untilNow < 7.days)),
@@ -140,7 +140,7 @@ object HomeTweetTypePredicates {
         _.semanticCoreAnnotations.exists(
           _.exists(annotation =>
             SemanticCoreFeatures.PoliticalDomains.contains(annotation.domainId) ||
-              (annotation.domainId == SemanticCoreFeatures.UnifiedTwitterTaxonomy &&
+              (annotation.domainId == SemanticCoreFeatures.UnifiedExTwitterTaxonomy &&
                 annotation.entityId == SemanticCoreFeatures.UttPoliticsEntityId))))),
     (
       "is_dont_at_me_by_invitation",
@@ -182,7 +182,7 @@ object HomeTweetTypePredicates {
       "has_us_political_annotation",
       _.getOrElse(EarlybirdFeature, None)
         .exists(_.semanticCoreAnnotations.exists(_.exists(annotation =>
-          annotation.domainId == SemanticCoreFeatures.UnifiedTwitterTaxonomy &&
+          annotation.domainId == SemanticCoreFeatures.UnifiedExTwitterTaxonomy &&
             annotation.entityId == SemanticCoreFeatures.usPoliticalTweetEntityId &&
             annotation.groupId == SemanticCoreFeatures.UsPoliticalTweetAnnotationGroupIds.BalancedV0)))),
     (

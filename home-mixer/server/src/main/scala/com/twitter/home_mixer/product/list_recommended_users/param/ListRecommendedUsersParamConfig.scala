@@ -1,11 +1,11 @@
-package com.twitter.home_mixer.product.list_recommended_users.param
+package com.ExTwitter.home_mixer.product.list_recommended_users.param
 
-import com.twitter.home_mixer.param.decider.DeciderKey
-import com.twitter.home_mixer.product.list_recommended_users.param.ListRecommendedUsersParam.ExcludedIdsMaxLengthParam
-import com.twitter.home_mixer.product.list_recommended_users.param.ListRecommendedUsersParam.ServerMaxResultsParam
-import com.twitter.home_mixer.product.list_recommended_users.param.ListRecommendedUsersParam.SupportedClientFSName
-import com.twitter.product_mixer.core.product.ProductParamConfig
-import com.twitter.servo.decider.DeciderKeyName
+import com.ExTwitter.home_mixer.param.decider.DeciderKey
+import com.ExTwitter.home_mixer.product.list_recommended_users.param.ListRecommendedUsersParam.ExcludedIdsMaxLengthParam
+import com.ExTwitter.home_mixer.product.list_recommended_users.param.ListRecommendedUsersParam.ServerMaxResultsParam
+import com.ExTwitter.home_mixer.product.list_recommended_users.param.ListRecommendedUsersParam.SupportedClientFSName
+import com.ExTwitter.product_mixer.core.product.ProductParamConfig
+import com.ExTwitter.servo.decider.DeciderKeyName
 
 import javax.inject.Inject
 import javax.inject.Singleton

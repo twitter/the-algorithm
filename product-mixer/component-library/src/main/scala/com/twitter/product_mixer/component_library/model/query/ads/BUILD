@@ -5,13 +5,13 @@ scala_library(
     strict_deps = True,
     tags = ["bazel-compatible"],
     dependencies = [
-        "dspbidder/thrift/src/main/thrift/com/twitter/dspbidder/commons:thrift-scala",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline",
-        "src/thrift/com/twitter/ads/adserver:adserver_rpc-scala",
+        "dspbidder/thrift/src/main/thrift/com/ExTwitter/dspbidder/commons:thrift-scala",
+        "product-mixer/core/src/main/scala/com/ExTwitter/product_mixer/core/pipeline",
+        "src/thrift/com/ExTwitter/ads/adserver:adserver_rpc-scala",
     ],
     exports = [
-        "dspbidder/thrift/src/main/thrift/com/twitter/dspbidder/commons:thrift-scala",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline",
-        "src/thrift/com/twitter/ads/adserver:adserver_rpc-scala",
+        "dspbidder/thrift/src/main/thrift/com/ExTwitter/dspbidder/commons:thrift-scala",
+        "product-mixer/core/src/main/scala/com/ExTwitter/product_mixer/core/pipeline",
+        "src/thrift/com/ExTwitter/ads/adserver:adserver_rpc-scala",
     ],
 )

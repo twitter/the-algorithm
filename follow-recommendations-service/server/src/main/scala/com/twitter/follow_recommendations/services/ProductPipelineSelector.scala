@@ -1,14 +1,14 @@
-package com.twitter.follow_recommendations.services
+package com.ExTwitter.follow_recommendations.services
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.StatsUtil
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.DebugOptions
-import com.twitter.follow_recommendations.models.DebugParams
-import com.twitter.follow_recommendations.models.RecommendationRequest
-import com.twitter.follow_recommendations.models.RecommendationResponse
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Params
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.follow_recommendations.common.base.StatsUtil
+import com.ExTwitter.follow_recommendations.common.models.CandidateUser
+import com.ExTwitter.follow_recommendations.common.models.DebugOptions
+import com.ExTwitter.follow_recommendations.models.DebugParams
+import com.ExTwitter.follow_recommendations.models.RecommendationRequest
+import com.ExTwitter.follow_recommendations.models.RecommendationResponse
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.timelines.configapi.Params
 import javax.inject.Inject
 import javax.inject.Singleton
 import scala.util.Random

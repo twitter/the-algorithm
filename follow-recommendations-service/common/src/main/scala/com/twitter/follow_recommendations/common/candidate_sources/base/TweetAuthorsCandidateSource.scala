@@ -1,8 +1,8 @@
-package com.twitter.follow_recommendations.common.candidate_sources.base
+package com.ExTwitter.follow_recommendations.common.candidate_sources.base
 
-import com.twitter.follow_recommendations.common.models.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.stitch.Stitch
+import com.ExTwitter.follow_recommendations.common.models.TweetCandidate
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidateSource
+import com.ExTwitter.stitch.Stitch
 
 /**
  * base trait for tweet authors based algorithms, e.g. topical tweet authors, twistly, ...

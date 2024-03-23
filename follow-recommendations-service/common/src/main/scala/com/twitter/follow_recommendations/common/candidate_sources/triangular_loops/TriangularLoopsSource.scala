@@ -1,18 +1,18 @@
-package com.twitter.follow_recommendations.common.candidate_sources.triangular_loops
+package com.ExTwitter.follow_recommendations.common.candidate_sources.triangular_loops
 
-import com.twitter.follow_recommendations.common.models.AccountProof
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FollowProof
-import com.twitter.follow_recommendations.common.models.HasRecentFollowedByUserIds
-import com.twitter.follow_recommendations.common.models.Reason
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.onboarding.userrecs.TriangularLoopsV2OnUserClientColumn
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.wtf.triangular_loop.thriftscala.Candidates
+import com.ExTwitter.follow_recommendations.common.models.AccountProof
+import com.ExTwitter.follow_recommendations.common.models.CandidateUser
+import com.ExTwitter.follow_recommendations.common.models.FollowProof
+import com.ExTwitter.follow_recommendations.common.models.HasRecentFollowedByUserIds
+import com.ExTwitter.follow_recommendations.common.models.Reason
+import com.ExTwitter.hermit.model.Algorithm
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidateSource
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.strato.generated.client.onboarding.userrecs.TriangularLoopsV2OnUserClientColumn
+import com.ExTwitter.timelines.configapi.HasParams
+import com.ExTwitter.wtf.triangular_loop.thriftscala.Candidates
 import javax.inject.Inject
 import javax.inject.Singleton
 

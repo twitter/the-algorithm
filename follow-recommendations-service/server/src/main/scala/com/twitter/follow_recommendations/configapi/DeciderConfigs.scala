@@ -1,15 +1,15 @@
-package com.twitter.follow_recommendations.configapi
+package com.ExTwitter.follow_recommendations.configapi
 
-import com.twitter.decider.Recipient
-import com.twitter.decider.SimpleRecipient
-import com.twitter.follow_recommendations.configapi.deciders.DeciderKey
-import com.twitter.follow_recommendations.configapi.deciders.DeciderParams
-import com.twitter.follow_recommendations.products.home_timeline_tweet_recs.configapi.HomeTimelineTweetRecsParams
-import com.twitter.servo.decider.DeciderGateBuilder
-import com.twitter.timelines.configapi._
-import com.twitter.timelines.configapi.decider.DeciderSwitchOverrideValue
-import com.twitter.timelines.configapi.decider.GuestRecipient
-import com.twitter.timelines.configapi.decider.RecipientBuilder
+import com.ExTwitter.decider.Recipient
+import com.ExTwitter.decider.SimpleRecipient
+import com.ExTwitter.follow_recommendations.configapi.deciders.DeciderKey
+import com.ExTwitter.follow_recommendations.configapi.deciders.DeciderParams
+import com.ExTwitter.follow_recommendations.products.home_timeline_tweet_recs.configapi.HomeTimelineTweetRecsParams
+import com.ExTwitter.servo.decider.DeciderGateBuilder
+import com.ExTwitter.timelines.configapi._
+import com.ExTwitter.timelines.configapi.decider.DeciderSwitchOverrideValue
+import com.ExTwitter.timelines.configapi.decider.GuestRecipient
+import com.ExTwitter.timelines.configapi.decider.RecipientBuilder
 import javax.inject.Inject
 import javax.inject.Singleton
 

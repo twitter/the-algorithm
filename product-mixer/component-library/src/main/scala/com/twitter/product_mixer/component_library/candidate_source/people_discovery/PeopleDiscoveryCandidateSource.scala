@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.component_library.candidate_source.people_discovery
+package com.ExTwitter.product_mixer.component_library.candidate_source.people_discovery
 
-import com.twitter.peoplediscovery.api.{thriftscala => t}
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSourceWithExtractedFeatures
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidatesWithSourceFeatures
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.UnexpectedCandidateResult
-import com.twitter.stitch.Stitch
-import com.twitter.util.logging.Logging
+import com.ExTwitter.peoplediscovery.api.{thriftscala => t}
+import com.ExTwitter.product_mixer.component_library.model.candidate.UserCandidate
+import com.ExTwitter.product_mixer.core.feature.Feature
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidateSourceWithExtractedFeatures
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidatesWithSourceFeatures
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
+import com.ExTwitter.product_mixer.core.pipeline.pipeline_failure.UnexpectedCandidateResult
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.util.logging.Logging
 import javax.inject.Inject
 import javax.inject.Singleton
 

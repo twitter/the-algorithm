@@ -1,6 +1,6 @@
-namespace java com.twitter.follow_recommendations.thriftjava
-#@namespace scala com.twitter.follow_recommendations.thriftscala
-#@namespace strato com.twitter.follow_recommendations
+namespace java com.ExTwitter.follow_recommendations.thriftjava
+#@namespace scala com.ExTwitter.follow_recommendations.thriftscala
+#@namespace strato com.ExTwitter.follow_recommendations
 
 include "assembler.thrift"
 include "client_context.thrift"
@@ -11,7 +11,7 @@ include "recommendations.thrift"
 include "recently_engaged_user_id.thrift"
 
 include "finatra-thrift/finatra_thrift_exceptions.thrift"
-include "com/twitter/product_mixer/core/pipeline_execution_result.thrift"
+include "com/ExTwitter/product_mixer/core/pipeline_execution_result.thrift"
 
 struct RecommendationRequest {
     1: required client_context.ClientContext clientContext

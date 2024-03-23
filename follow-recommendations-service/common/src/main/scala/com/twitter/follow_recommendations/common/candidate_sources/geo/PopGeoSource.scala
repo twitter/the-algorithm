@@ -1,20 +1,20 @@
-package com.twitter.follow_recommendations.common.candidate_sources.geo
+package com.ExTwitter.follow_recommendations.common.candidate_sources.geo
 
 import com.google.inject.Singleton
 import com.google.inject.name.Named
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.candidate_sources.base.CachedCandidateSource
-import com.twitter.follow_recommendations.common.candidate_sources.base.StratoFetcherWithUnitViewSource
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.follow_recommendations.common.models.AccountProof
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.PopularInGeoProof
-import com.twitter.follow_recommendations.common.models.Reason
-import com.twitter.hermit.pop_geo.thriftscala.PopUsersInPlace
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.client.Fetcher
-import com.twitter.util.Duration
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.follow_recommendations.common.candidate_sources.base.CachedCandidateSource
+import com.ExTwitter.follow_recommendations.common.candidate_sources.base.StratoFetcherWithUnitViewSource
+import com.ExTwitter.follow_recommendations.common.constants.GuiceNamedConstants
+import com.ExTwitter.follow_recommendations.common.models.AccountProof
+import com.ExTwitter.follow_recommendations.common.models.CandidateUser
+import com.ExTwitter.follow_recommendations.common.models.PopularInGeoProof
+import com.ExTwitter.follow_recommendations.common.models.Reason
+import com.ExTwitter.hermit.pop_geo.thriftscala.PopUsersInPlace
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.strato.client.Fetcher
+import com.ExTwitter.util.Duration
 import javax.inject.Inject
 
 @Singleton
