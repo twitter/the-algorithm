@@ -1,7 +1,7 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+package com.ExTwitter.follow_recommendations.common.candidate_sources.stp
 
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.Param
+import com.ExTwitter.timelines.configapi.FSParam
+import com.ExTwitter.timelines.configapi.Param
 
 object OnlineSTPSourceParams {
   // This replaces the old scorer module, located at EpStpScorer.scala, with the new scorer, located

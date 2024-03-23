@@ -1,17 +1,17 @@
-package com.twitter.follow_recommendations.common.feature_hydration.adapters
+package com.ExTwitter.follow_recommendations.common.feature_hydration.adapters
 
-import com.twitter.follow_recommendations.common.models.UserCandidateSourceDetails
-import com.twitter.hermit.constants.AlgorithmFeedbackTokens.AlgorithmToFeedbackTokenMap
-import com.twitter.hermit.model.Algorithm
-import com.twitter.hermit.model.Algorithm.Algorithm
-import com.twitter.hermit.model.Algorithm.UttProducerOfflineMbcgV1
-import com.twitter.hermit.model.Algorithm.UttProducerOnlineMbcgV1
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.Feature.SparseBinary
-import com.twitter.ml.api.Feature.SparseContinuous
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.IRecordOneToOneAdapter
-import com.twitter.ml.api.util.FDsl._
+import com.ExTwitter.follow_recommendations.common.models.UserCandidateSourceDetails
+import com.ExTwitter.hermit.constants.AlgorithmFeedbackTokens.AlgorithmToFeedbackTokenMap
+import com.ExTwitter.hermit.model.Algorithm
+import com.ExTwitter.hermit.model.Algorithm.Algorithm
+import com.ExTwitter.hermit.model.Algorithm.UttProducerOfflineMbcgV1
+import com.ExTwitter.hermit.model.Algorithm.UttProducerOnlineMbcgV1
+import com.ExTwitter.ml.api.DataRecord
+import com.ExTwitter.ml.api.Feature.SparseBinary
+import com.ExTwitter.ml.api.Feature.SparseContinuous
+import com.ExTwitter.ml.api.FeatureContext
+import com.ExTwitter.ml.api.IRecordOneToOneAdapter
+import com.ExTwitter.ml.api.util.FDsl._
 
 object CandidateAlgorithmAdapter
     extends IRecordOneToOneAdapter[Option[UserCandidateSourceDetails]] {

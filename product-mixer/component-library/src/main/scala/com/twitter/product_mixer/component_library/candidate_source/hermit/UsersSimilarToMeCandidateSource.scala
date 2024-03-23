@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.component_library.candidate_source.hermit
+package com.ExTwitter.product_mixer.component_library.candidate_source.hermit
 
-import com.twitter.hermit.thriftscala.RecommendationRequest
-import com.twitter.hermit.thriftscala.RecommendationResponse
-import com.twitter.hermit.thriftscala.RelatedUser
-import com.twitter.product_mixer.core.functional_component.candidate_source.strato.StratoKeyViewFetcherSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.generated.client.onboarding.HermitRecommendUsersClientColumn
+import com.ExTwitter.hermit.thriftscala.RecommendationRequest
+import com.ExTwitter.hermit.thriftscala.RecommendationResponse
+import com.ExTwitter.hermit.thriftscala.RelatedUser
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.strato.StratoKeyViewFetcherSource
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.strato.client.Fetcher
+import com.ExTwitter.strato.generated.client.onboarding.HermitRecommendUsersClientColumn
 import javax.inject.Inject
 import javax.inject.Singleton
 

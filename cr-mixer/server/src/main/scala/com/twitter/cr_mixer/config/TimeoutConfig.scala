@@ -1,6 +1,6 @@
-package com.twitter.cr_mixer.config
+package com.ExTwitter.cr_mixer.config
 
-import com.twitter.util.Duration
+import com.ExTwitter.util.Duration
 
 case class TimeoutConfig(
   /* Default timeouts for candidate generator */

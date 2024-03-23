@@ -1,11 +1,11 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline
+package com.ExTwitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline
 
-import com.twitter.product_mixer.component_library.candidate_source.flexible_injection_pipeline.PromptCandidateSource
-import com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer.HasFlipInjectionParams
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.decider.DeciderParam
+import com.ExTwitter.product_mixer.component_library.candidate_source.flexible_injection_pipeline.PromptCandidateSource
+import com.ExTwitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer.HasFlipInjectionParams
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.timelines.configapi.FSParam
+import com.ExTwitter.timelines.configapi.decider.DeciderParam
 import javax.inject.Inject
 import javax.inject.Singleton
 

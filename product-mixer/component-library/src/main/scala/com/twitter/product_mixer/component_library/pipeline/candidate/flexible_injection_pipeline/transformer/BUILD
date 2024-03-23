@@ -8,15 +8,15 @@ scala_library(
     dependencies = [
         "3rdparty/jvm/javax/inject:javax.inject",
         "onboarding/service/thrift/src/main/thrift:thrift-scala",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/candidate_source/flexible_injection_pipeline",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline/candidate",
+        "product-mixer/component-library/src/main/scala/com/ExTwitter/product_mixer/component_library/candidate_source/flexible_injection_pipeline",
+        "product-mixer/component-library/src/main/scala/com/ExTwitter/product_mixer/component_library/model/candidate",
+        "product-mixer/core/src/main/scala/com/ExTwitter/product_mixer/core/pipeline/candidate",
     ],
     exports = [
         "3rdparty/jvm/javax/inject:javax.inject",
         "onboarding/service/thrift/src/main/thrift:thrift-scala",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/candidate_source/flexible_injection_pipeline",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline/candidate",
+        "product-mixer/component-library/src/main/scala/com/ExTwitter/product_mixer/component_library/candidate_source/flexible_injection_pipeline",
+        "product-mixer/component-library/src/main/scala/com/ExTwitter/product_mixer/component_library/model/candidate",
+        "product-mixer/core/src/main/scala/com/ExTwitter/product_mixer/core/pipeline/candidate",
     ],
 )

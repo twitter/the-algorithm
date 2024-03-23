@@ -1,12 +1,12 @@
-package com.twitter.follow_recommendations.blenders
+package com.ExTwitter.follow_recommendations.blenders
 
 import com.google.common.annotations.VisibleForTesting
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.Transform
-import com.twitter.follow_recommendations.common.models.AdMetadata
-import com.twitter.follow_recommendations.common.models.Recommendation
-import com.twitter.inject.Logging
-import com.twitter.stitch.Stitch
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.follow_recommendations.common.base.Transform
+import com.ExTwitter.follow_recommendations.common.models.AdMetadata
+import com.ExTwitter.follow_recommendations.common.models.Recommendation
+import com.ExTwitter.inject.Logging
+import com.ExTwitter.stitch.Stitch
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -55,7 +55,7 @@ class PromotedAccountsBlender @Inject() (statsReceiver: StatsReceiver)
    * range, i.e, can not exceed the combined length if merge is successful, ok
    * to be at the last position, but not beyond.
    * For more detailed description of location position:
-   * http://confluence.local.twitter.com/display/ADS/Promoted+Tweets+in+Timeline+Design+Document
+   * http://confluence.local.ExTwitter.com/display/ADS/Promoted+Tweets+in+Timeline+Design+Document
    */
   @VisibleForTesting
   private[blenders] def mergePromotedAccounts(

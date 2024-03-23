@@ -1,7 +1,7 @@
-package com.twitter.follow_recommendations.common.clients.addressbook.models
+package com.ExTwitter.follow_recommendations.common.clients.addressbook.models
 
-import com.twitter.addressbook.{thriftscala => t}
-import com.twitter.util.Time
+import com.ExTwitter.addressbook.{thriftscala => t}
+import com.ExTwitter.util.Time
 
 case class Contact(
   id: Long,

@@ -1,13 +1,13 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+package com.ExTwitter.follow_recommendations.common.candidate_sources.stp
 
-import com.twitter.follow_recommendations.common.models.IntermediateSecondDegreeEdge
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.onboarding.userrecs.StrongTiePredictionFeaturesOnUserClientColumn
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.wtf.scalding.jobs.strong_tie_prediction.FirstDegreeEdge
-import com.twitter.wtf.scalding.jobs.strong_tie_prediction.SecondDegreeEdge
-import com.twitter.wtf.scalding.jobs.strong_tie_prediction.SecondDegreeEdgeInfo
+import com.ExTwitter.follow_recommendations.common.models.IntermediateSecondDegreeEdge
+import com.ExTwitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.strato.generated.client.onboarding.userrecs.StrongTiePredictionFeaturesOnUserClientColumn
+import com.ExTwitter.timelines.configapi.HasParams
+import com.ExTwitter.wtf.scalding.jobs.strong_tie_prediction.FirstDegreeEdge
+import com.ExTwitter.wtf.scalding.jobs.strong_tie_prediction.SecondDegreeEdge
+import com.ExTwitter.wtf.scalding.jobs.strong_tie_prediction.SecondDegreeEdgeInfo
 import javax.inject.Inject
 import javax.inject.Singleton
 

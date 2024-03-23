@@ -1,18 +1,18 @@
-package com.twitter.ann.scalding.offline.indexbuilderfrombq
+package com.ExTwitter.ann.scalding.offline.indexbuilderfrombq
 
-import com.twitter.ann.common.Appendable
-import com.twitter.ann.common.Distance
-import com.twitter.ann.common.EntityEmbedding
-import com.twitter.ann.common.Serialization
-import com.twitter.ann.util.IndexBuilderUtils
-import com.twitter.ml.api.embedding.Embedding
-import com.twitter.ml.featurestore.lib.embedding.EmbeddingWithEntity
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.scalding.Execution
-import com.twitter.scalding.TypedPipe
-import com.twitter.scalding_internal.job.FutureHelper
-import com.twitter.search.common.file.AbstractFile
-import com.twitter.util.logging.Logger
+import com.ExTwitter.ann.common.Appendable
+import com.ExTwitter.ann.common.Distance
+import com.ExTwitter.ann.common.EntityEmbedding
+import com.ExTwitter.ann.common.Serialization
+import com.ExTwitter.ann.util.IndexBuilderUtils
+import com.ExTwitter.ml.api.embedding.Embedding
+import com.ExTwitter.ml.featurestore.lib.embedding.EmbeddingWithEntity
+import com.ExTwitter.ml.featurestore.lib.EntityId
+import com.ExTwitter.scalding.Execution
+import com.ExTwitter.scalding.TypedPipe
+import com.ExTwitter.scalding_internal.job.FutureHelper
+import com.ExTwitter.search.common.file.AbstractFile
+import com.ExTwitter.util.logging.Logger
 
 object IndexBuilder {
   private[this] val Log = Logger.apply[IndexBuilder.type]

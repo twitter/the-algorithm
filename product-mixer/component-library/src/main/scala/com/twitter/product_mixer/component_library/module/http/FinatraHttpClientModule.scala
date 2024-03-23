@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.component_library.module.http
+package com.ExTwitter.product_mixer.component_library.module.http
 
 import com.google.inject.Provides
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.httpclient.HttpClient
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientModule.HttpClientAcquisitionTimeout
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientModule.HttpClientConnectTimeout
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientModule.HttpClientRequestTimeout
-import com.twitter.product_mixer.shared_library.http_client.FinagleHttpClientBuilder.buildFinagleHttpClientMutualTls
-import com.twitter.product_mixer.shared_library.http_client.HttpHostPort
-import com.twitter.util.Duration
-import com.twitter.util.jackson.ScalaObjectMapper
+import com.ExTwitter.finagle.mtls.authentication.ServiceIdentifier
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.finatra.httpclient.HttpClient
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.inject.annotations.Flag
+import com.ExTwitter.product_mixer.component_library.module.http.FinagleHttpClientModule.HttpClientAcquisitionTimeout
+import com.ExTwitter.product_mixer.component_library.module.http.FinagleHttpClientModule.HttpClientConnectTimeout
+import com.ExTwitter.product_mixer.component_library.module.http.FinagleHttpClientModule.HttpClientRequestTimeout
+import com.ExTwitter.product_mixer.shared_library.http_client.FinagleHttpClientBuilder.buildFinagleHttpClientMutualTls
+import com.ExTwitter.product_mixer.shared_library.http_client.HttpHostPort
+import com.ExTwitter.util.Duration
+import com.ExTwitter.util.jackson.ScalaObjectMapper
 import javax.inject.Named
 import javax.inject.Singleton
 
-object FinatraHttpClientModule extends TwitterModule {
+object FinatraHttpClientModule extends ExTwitterModule {
 
   final val HttpClientHost = "http_client.host"
   final val HttpClientPort = "http_client.port"

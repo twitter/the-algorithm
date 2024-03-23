@@ -1,12 +1,12 @@
-package com.twitter.follow_recommendations.controllers
+package com.ExTwitter.follow_recommendations.controllers
 
-import com.twitter.finatra.thrift.Controller
-import com.twitter.follow_recommendations.configapi.ParamsFactory
-import com.twitter.follow_recommendations.services.ProductPipelineSelector
-import com.twitter.follow_recommendations.services.UserScoringService
-import com.twitter.follow_recommendations.thriftscala.FollowRecommendationsThriftService
-import com.twitter.follow_recommendations.thriftscala.FollowRecommendationsThriftService._
-import com.twitter.stitch.Stitch
+import com.ExTwitter.finatra.thrift.Controller
+import com.ExTwitter.follow_recommendations.configapi.ParamsFactory
+import com.ExTwitter.follow_recommendations.services.ProductPipelineSelector
+import com.ExTwitter.follow_recommendations.services.UserScoringService
+import com.ExTwitter.follow_recommendations.thriftscala.FollowRecommendationsThriftService
+import com.ExTwitter.follow_recommendations.thriftscala.FollowRecommendationsThriftService._
+import com.ExTwitter.stitch.Stitch
 import javax.inject.Inject
 
 class ThriftController @Inject() (

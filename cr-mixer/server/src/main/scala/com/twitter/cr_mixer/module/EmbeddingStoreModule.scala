@@ -1,27 +1,27 @@
-package com.twitter.cr_mixer.module
+package com.ExTwitter.cr_mixer.module
 
 import com.google.inject.Provides
-import com.twitter.bijection.Injection
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.bijection.scrooge.CompactScalaCodec
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.inject.TwitterModule
-import com.twitter.ml.api.{thriftscala => api}
-import com.twitter.simclusters_v2.thriftscala.CandidateTweetsList
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storehaus.ReadableStore
-import com.twitter.storehaus_internal.manhattan.Apollo
-import com.twitter.storehaus_internal.manhattan.ManhattanRO
-import com.twitter.storehaus_internal.manhattan.ManhattanROConfig
-import com.twitter.storehaus_internal.util.ApplicationID
-import com.twitter.storehaus_internal.util.DatasetName
-import com.twitter.storehaus_internal.util.HDFSPath
+import com.ExTwitter.bijection.Injection
+import com.ExTwitter.bijection.scrooge.BinaryScalaCodec
+import com.ExTwitter.bijection.scrooge.CompactScalaCodec
+import com.ExTwitter.finagle.mtls.authentication.ServiceIdentifier
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.ml.api.{thriftscala => api}
+import com.ExTwitter.simclusters_v2.thriftscala.CandidateTweetsList
+import com.ExTwitter.simclusters_v2.common.TweetId
+import com.ExTwitter.simclusters_v2.thriftscala.InternalId
+import com.ExTwitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
+import com.ExTwitter.storehaus.ReadableStore
+import com.ExTwitter.storehaus_internal.manhattan.Apollo
+import com.ExTwitter.storehaus_internal.manhattan.ManhattanRO
+import com.ExTwitter.storehaus_internal.manhattan.ManhattanROConfig
+import com.ExTwitter.storehaus_internal.util.ApplicationID
+import com.ExTwitter.storehaus_internal.util.DatasetName
+import com.ExTwitter.storehaus_internal.util.HDFSPath
 import javax.inject.Named
 import javax.inject.Singleton
 
-object EmbeddingStoreModule extends TwitterModule {
+object EmbeddingStoreModule extends ExTwitterModule {
   type UserId = Long
   implicit val mbcgUserEmbeddingInjection: Injection[api.Embedding, Array[Byte]] =
     CompactScalaCodec(api.Embedding)
@@ -123,7 +123,7 @@ object EmbeddingStoreModule extends TwitterModule {
   def debuggerDemoUserEmbeddingStore(
     serviceIdentifier: ServiceIdentifier
   ): ReadableStore[InternalId, api.Embedding] = {
-    // This dataset is from src/scala/com/twitter/wtf/beam/bq_embedding_export/sql/MlfExperimentalUserEmbeddingScalaDataset.sql
+    // This dataset is from src/scala/com/ExTwitter/wtf/beam/bq_embedding_export/sql/MlfExperimentalUserEmbeddingScalaDataset.sql
     // Change the above sql if you want to use a diff embedding
     val manhattanROConfig = ManhattanROConfig(
       HDFSPath(""), // not needed
@@ -141,7 +141,7 @@ object EmbeddingStoreModule extends TwitterModule {
   def debuggerDemoTweetEmbeddingStore(
     serviceIdentifier: ServiceIdentifier
   ): ReadableStore[InternalId, api.Embedding] = {
-    // This dataset is from src/scala/com/twitter/wtf/beam/bq_embedding_export/sql/MlfExperimentalTweetEmbeddingScalaDataset.sql
+    // This dataset is from src/scala/com/ExTwitter/wtf/beam/bq_embedding_export/sql/MlfExperimentalTweetEmbeddingScalaDataset.sql
     // Change the above sql if you want to use a diff embedding
     val manhattanROConfig = ManhattanROConfig(
       HDFSPath(""), // not needed

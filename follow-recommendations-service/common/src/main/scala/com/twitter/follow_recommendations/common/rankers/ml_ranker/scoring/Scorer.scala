@@ -1,15 +1,15 @@
-package com.twitter.follow_recommendations.common.rankers.ml_ranker.scoring
+package com.ExTwitter.follow_recommendations.common.rankers.ml_ranker.scoring
 
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasDisplayLocation
-import com.twitter.follow_recommendations.common.models.HasDebugOptions
-import com.twitter.follow_recommendations.common.models.Score
-import com.twitter.follow_recommendations.common.models.ScoreType
-import com.twitter.follow_recommendations.common.rankers.common.RankerId
-import com.twitter.ml.api.DataRecord
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
+import com.ExTwitter.follow_recommendations.common.models.CandidateUser
+import com.ExTwitter.follow_recommendations.common.models.HasDisplayLocation
+import com.ExTwitter.follow_recommendations.common.models.HasDebugOptions
+import com.ExTwitter.follow_recommendations.common.models.Score
+import com.ExTwitter.follow_recommendations.common.models.ScoreType
+import com.ExTwitter.follow_recommendations.common.rankers.common.RankerId
+import com.ExTwitter.ml.api.DataRecord
+import com.ExTwitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.timelines.configapi.HasParams
 
 trait Scorer {
 

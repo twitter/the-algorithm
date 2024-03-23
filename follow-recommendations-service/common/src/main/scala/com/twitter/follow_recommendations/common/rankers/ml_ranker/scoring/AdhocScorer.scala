@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.common.rankers.ml_ranker.scoring
+package com.ExTwitter.follow_recommendations.common.rankers.ml_ranker.scoring
 
-import com.twitter.follow_recommendations.common.rankers.common.AdhocScoreModificationType.AdhocScoreModificationType
-import com.twitter.follow_recommendations.common.models.Score
-import com.twitter.ml.api.DataRecord
-import com.twitter.stitch.Stitch
+import com.ExTwitter.follow_recommendations.common.rankers.common.AdhocScoreModificationType.AdhocScoreModificationType
+import com.ExTwitter.follow_recommendations.common.models.Score
+import com.ExTwitter.ml.api.DataRecord
+import com.ExTwitter.stitch.Stitch
 
 trait AdhocScorer extends Scorer {
 

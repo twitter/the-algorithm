@@ -1,22 +1,22 @@
-package com.twitter.ann.service.query_server.hnsw
+package com.ExTwitter.ann.service.query_server.hnsw
 
-import com.twitter.ann.common.Distance
-import com.twitter.ann.common._
-import com.twitter.ann.common.thriftscala.{RuntimeParams => ServiceRuntimeParams}
-import com.twitter.ann.hnsw.HnswCommon
-import com.twitter.ann.hnsw.HnswParams
-import com.twitter.ann.hnsw.TypedHnswIndex
-import com.twitter.ann.service.query_server.common.QueryableProvider
-import com.twitter.ann.service.query_server.common.RefreshableQueryable
-import com.twitter.ann.service.query_server.common.UnsafeQueryIndexServer
-import com.twitter.ann.service.query_server.common.ValidatedIndexPathProvider
-import com.twitter.ann.service.query_server.common.warmup.Warmup
-import com.twitter.bijection.Injection
-import com.twitter.conversions.DurationOps.richDurationFromInt
-import com.twitter.search.common.file.AbstractFile
-import com.twitter.search.common.file.FileUtils
-import com.twitter.util.Duration
-import com.twitter.util.FuturePool
+import com.ExTwitter.ann.common.Distance
+import com.ExTwitter.ann.common._
+import com.ExTwitter.ann.common.thriftscala.{RuntimeParams => ServiceRuntimeParams}
+import com.ExTwitter.ann.hnsw.HnswCommon
+import com.ExTwitter.ann.hnsw.HnswParams
+import com.ExTwitter.ann.hnsw.TypedHnswIndex
+import com.ExTwitter.ann.service.query_server.common.QueryableProvider
+import com.ExTwitter.ann.service.query_server.common.RefreshableQueryable
+import com.ExTwitter.ann.service.query_server.common.UnsafeQueryIndexServer
+import com.ExTwitter.ann.service.query_server.common.ValidatedIndexPathProvider
+import com.ExTwitter.ann.service.query_server.common.warmup.Warmup
+import com.ExTwitter.bijection.Injection
+import com.ExTwitter.conversions.DurationOps.richDurationFromInt
+import com.ExTwitter.search.common.file.AbstractFile
+import com.ExTwitter.search.common.file.FileUtils
+import com.ExTwitter.util.Duration
+import com.ExTwitter.util.FuturePool
 
 // Creating a separate hnsw query server object, since unit test require non singleton server.
 object HnswQueryIndexServer extends HnswQueryableServer

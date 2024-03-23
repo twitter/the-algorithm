@@ -1,18 +1,18 @@
-package com.twitter.ann.service.query_server.common
+package com.ExTwitter.ann.service.query_server.common
 
-import com.twitter.ann.common._
-import com.twitter.ann.common.EmbeddingType._
-import com.twitter.ann.common.thriftscala.AnnQueryService.Query
-import com.twitter.ann.common.thriftscala.AnnQueryService
-import com.twitter.ann.common.thriftscala.NearestNeighbor
-import com.twitter.ann.common.thriftscala.NearestNeighborResult
-import com.twitter.ann.common.thriftscala.{Distance => ServiceDistance}
-import com.twitter.ann.common.thriftscala.{RuntimeParams => ServiceRuntimeParams}
-import com.twitter.bijection.Injection
-import com.twitter.finagle.Service
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.thrift.Controller
-import com.twitter.mediaservices.commons.{ThriftServer => TServer}
+import com.ExTwitter.ann.common._
+import com.ExTwitter.ann.common.EmbeddingType._
+import com.ExTwitter.ann.common.thriftscala.AnnQueryService.Query
+import com.ExTwitter.ann.common.thriftscala.AnnQueryService
+import com.ExTwitter.ann.common.thriftscala.NearestNeighbor
+import com.ExTwitter.ann.common.thriftscala.NearestNeighborResult
+import com.ExTwitter.ann.common.thriftscala.{Distance => ServiceDistance}
+import com.ExTwitter.ann.common.thriftscala.{RuntimeParams => ServiceRuntimeParams}
+import com.ExTwitter.bijection.Injection
+import com.ExTwitter.finagle.Service
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.finatra.thrift.Controller
+import com.ExTwitter.mediaservices.commons.{ThriftServer => TServer}
 import java.nio.ByteBuffer
 import javax.inject.Inject
 

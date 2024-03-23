@@ -1,41 +1,41 @@
-package com.twitter.cr_mixer.module
+package com.ExTwitter.cr_mixer.module
 
 import com.google.inject.Provides
 import com.google.inject.Singleton
-import com.twitter.bijection.Bufferable
-import com.twitter.bijection.Injection
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.memcached.{Client => MemcachedClient}
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.hermit.store.common.ObservedMemcachedReadableStore
-import com.twitter.inject.TwitterModule
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storehaus.ReadableStore
-import com.twitter.storehaus_internal.manhattan.ManhattanRO
-import com.twitter.storehaus_internal.manhattan.ManhattanROConfig
-import com.twitter.storehaus_internal.util.HDFSPath
-import com.twitter.core_workflows.user_model.thriftscala.UserState
-import com.twitter.core_workflows.user_model.thriftscala.CondensedUserState
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.param.decider.CrMixerDecider
-import com.twitter.cr_mixer.param.decider.DeciderKey
-import com.twitter.hermit.store.common.DeciderableReadableStore
-import com.twitter.storehaus_internal.manhattan.Apollo
-import com.twitter.storehaus_internal.util.ApplicationID
-import com.twitter.storehaus_internal.util.DatasetName
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.JavaTimer
-import com.twitter.util.Time
-import com.twitter.util.TimeoutException
-import com.twitter.util.Timer
+import com.ExTwitter.bijection.Bufferable
+import com.ExTwitter.bijection.Injection
+import com.ExTwitter.bijection.scrooge.BinaryScalaCodec
+import com.ExTwitter.cr_mixer.model.ModuleNames
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.finagle.memcached.{Client => MemcachedClient}
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.hermit.store.common.ObservedMemcachedReadableStore
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.simclusters_v2.common.UserId
+import com.ExTwitter.snowflake.id.SnowflakeId
+import com.ExTwitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
+import com.ExTwitter.storehaus.ReadableStore
+import com.ExTwitter.storehaus_internal.manhattan.ManhattanRO
+import com.ExTwitter.storehaus_internal.manhattan.ManhattanROConfig
+import com.ExTwitter.storehaus_internal.util.HDFSPath
+import com.ExTwitter.core_workflows.user_model.thriftscala.UserState
+import com.ExTwitter.core_workflows.user_model.thriftscala.CondensedUserState
+import com.ExTwitter.cr_mixer.config.TimeoutConfig
+import com.ExTwitter.cr_mixer.param.decider.CrMixerDecider
+import com.ExTwitter.cr_mixer.param.decider.DeciderKey
+import com.ExTwitter.hermit.store.common.DeciderableReadableStore
+import com.ExTwitter.storehaus_internal.manhattan.Apollo
+import com.ExTwitter.storehaus_internal.util.ApplicationID
+import com.ExTwitter.storehaus_internal.util.DatasetName
+import com.ExTwitter.util.Duration
+import com.ExTwitter.util.Future
+import com.ExTwitter.util.JavaTimer
+import com.ExTwitter.util.Time
+import com.ExTwitter.util.TimeoutException
+import com.ExTwitter.util.Timer
 import javax.inject.Named
 
-object UserStateStoreModule extends TwitterModule {
+object UserStateStoreModule extends ExTwitterModule {
   implicit val timer: Timer = new JavaTimer(true)
   final val NewUserCreateDaysThreshold = 7
   final val DefaultUnknownUserStateValue = 100

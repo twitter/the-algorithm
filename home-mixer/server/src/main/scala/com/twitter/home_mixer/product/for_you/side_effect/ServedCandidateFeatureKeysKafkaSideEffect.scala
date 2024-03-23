@@ -1,29 +1,29 @@
-package com.twitter.home_mixer.product.for_you.side_effect
+package com.ExTwitter.home_mixer.product.for_you.side_effect
 
-import com.twitter.home_mixer.model.HomeFeatures.CandidateSourceIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.InNetworkFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsReadFromCacheFeature
-import com.twitter.home_mixer.model.HomeFeatures.PredictionRequestIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.ServedIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.ServedRequestIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
-import com.twitter.home_mixer.product.for_you.param.ForYouParam.EnableServedCandidateKafkaPublishingParam
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.component_library.side_effect.KafkaPublishingSideEffect
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.common.identifier
-import com.twitter.product_mixer.core.model.common.identifier.SideEffectIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.Timeline
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.ml.cont_train.common.domain.non_scalding.ServedCandidateFeatureKeysAdapter
-import com.twitter.timelines.ml.cont_train.common.domain.non_scalding.ServedCandidateFeatureKeysFields
-import com.twitter.timelines.ml.kafka.serde.CandidateFeatureKeySerde
-import com.twitter.timelines.ml.kafka.serde.TBaseSerde
-import com.twitter.timelines.served_candidates_logging.{thriftscala => sc}
-import com.twitter.timelines.suggests.common.poly_data_record.{thriftjava => pldr}
-import com.twitter.timelineservice.suggests.{thriftscala => tls}
+import com.ExTwitter.home_mixer.model.HomeFeatures.CandidateSourceIdFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.InNetworkFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.IsReadFromCacheFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.PredictionRequestIdFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.ServedIdFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.ServedRequestIdFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
+import com.ExTwitter.home_mixer.product.for_you.param.ForYouParam.EnableServedCandidateKafkaPublishingParam
+import com.ExTwitter.home_mixer.service.HomeMixerAlertConfig
+import com.ExTwitter.product_mixer.component_library.side_effect.KafkaPublishingSideEffect
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
+import com.ExTwitter.product_mixer.core.model.common.identifier
+import com.ExTwitter.product_mixer.core.model.common.identifier.SideEffectIdentifier
+import com.ExTwitter.product_mixer.core.model.common.presentation.CandidateWithDetails
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.Timeline
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.timelines.ml.cont_train.common.domain.non_scalding.ServedCandidateFeatureKeysAdapter
+import com.ExTwitter.timelines.ml.cont_train.common.domain.non_scalding.ServedCandidateFeatureKeysFields
+import com.ExTwitter.timelines.ml.kafka.serde.CandidateFeatureKeySerde
+import com.ExTwitter.timelines.ml.kafka.serde.TBaseSerde
+import com.ExTwitter.timelines.served_candidates_logging.{thriftscala => sc}
+import com.ExTwitter.timelines.suggests.common.poly_data_record.{thriftjava => pldr}
+import com.ExTwitter.timelineservice.suggests.{thriftscala => tls}
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.serialization.Serializer
 import scala.collection.JavaConverters._

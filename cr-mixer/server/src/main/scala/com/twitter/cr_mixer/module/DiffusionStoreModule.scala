@@ -1,24 +1,24 @@
-package com.twitter.cr_mixer.module
+package com.ExTwitter.cr_mixer.module
 
 import com.google.inject.Provides
-import com.twitter.bijection.Injection
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.inject.TwitterModule
-import com.twitter.simclusters_v2.thriftscala.TweetsWithScore
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storehaus.ReadableStore
-import com.twitter.storehaus_internal.manhattan.Apollo
-import com.twitter.storehaus_internal.manhattan.ManhattanRO
-import com.twitter.storehaus_internal.manhattan.ManhattanROConfig
-import com.twitter.storehaus_internal.util.ApplicationID
-import com.twitter.storehaus_internal.util.DatasetName
-import com.twitter.storehaus_internal.util.HDFSPath
+import com.ExTwitter.bijection.Injection
+import com.ExTwitter.bijection.scrooge.BinaryScalaCodec
+import com.ExTwitter.cr_mixer.model.ModuleNames
+import com.ExTwitter.finagle.mtls.authentication.ServiceIdentifier
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.simclusters_v2.thriftscala.TweetsWithScore
+import com.ExTwitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
+import com.ExTwitter.storehaus.ReadableStore
+import com.ExTwitter.storehaus_internal.manhattan.Apollo
+import com.ExTwitter.storehaus_internal.manhattan.ManhattanRO
+import com.ExTwitter.storehaus_internal.manhattan.ManhattanROConfig
+import com.ExTwitter.storehaus_internal.util.ApplicationID
+import com.ExTwitter.storehaus_internal.util.DatasetName
+import com.ExTwitter.storehaus_internal.util.HDFSPath
 import javax.inject.Named
 import javax.inject.Singleton
 
-object DiffusionStoreModule extends TwitterModule {
+object DiffusionStoreModule extends ExTwitterModule {
   type UserId = Long
   implicit val longCodec = implicitly[Injection[Long, Array[Byte]]]
   implicit val tweetRecsInjection: Injection[TweetsWithScore, Array[Byte]] =

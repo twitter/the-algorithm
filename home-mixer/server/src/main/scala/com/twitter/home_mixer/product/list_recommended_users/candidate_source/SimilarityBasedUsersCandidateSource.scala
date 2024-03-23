@@ -1,11 +1,11 @@
-package com.twitter.home_mixer.product.list_recommended_users.candidate_source
+package com.ExTwitter.home_mixer.product.list_recommended_users.candidate_source
 
-import com.twitter.hermit.candidate.{thriftscala => t}
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.generated.client.recommendations.similarity.SimilarUsersBySimsOnUserClientColumn
+import com.ExTwitter.hermit.candidate.{thriftscala => t}
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidateSource
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.strato.client.Fetcher
+import com.ExTwitter.strato.generated.client.recommendations.similarity.SimilarUsersBySimsOnUserClientColumn
 
 import javax.inject.Inject
 import javax.inject.Singleton

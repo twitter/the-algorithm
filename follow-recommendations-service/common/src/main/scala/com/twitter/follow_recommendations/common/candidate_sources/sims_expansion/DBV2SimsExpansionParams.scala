@@ -1,7 +1,7 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims_expansion
+package com.ExTwitter.follow_recommendations.common.candidate_sources.sims_expansion
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
+import com.ExTwitter.timelines.configapi.FSBoundedParam
+import com.ExTwitter.timelines.configapi.FSParam
 
 object DBV2SimsExpansionParams {
   // Theses divisors are used to calibrate DBv2Sims extension candidates scores

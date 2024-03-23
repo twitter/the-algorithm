@@ -1,22 +1,22 @@
-package com.twitter.graph_feature_service.worker.modules
+package com.ExTwitter.graph_feature_service.worker.modules
 
 import com.google.inject.Provides
-import com.twitter.concurrent.AsyncSemaphore
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.graph_feature_service.common.Configs._
-import com.twitter.graph_feature_service.worker.util
-import com.twitter.graph_feature_service.worker.util.AutoUpdatingGraph
-import com.twitter.graph_feature_service.worker.util.FollowedByPartialValueGraph
-import com.twitter.graph_feature_service.worker.util.FollowingPartialValueGraph
-import com.twitter.graph_feature_service.worker.util.GraphContainer
-import com.twitter.graph_feature_service.worker.util.GraphKey
-import com.twitter.graph_feature_service.worker.util.MutualFollowPartialValueGraph
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.util.Timer
+import com.ExTwitter.concurrent.AsyncSemaphore
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.graph_feature_service.common.Configs._
+import com.ExTwitter.graph_feature_service.worker.util
+import com.ExTwitter.graph_feature_service.worker.util.AutoUpdatingGraph
+import com.ExTwitter.graph_feature_service.worker.util.FollowedByPartialValueGraph
+import com.ExTwitter.graph_feature_service.worker.util.FollowingPartialValueGraph
+import com.ExTwitter.graph_feature_service.worker.util.GraphContainer
+import com.ExTwitter.graph_feature_service.worker.util.GraphKey
+import com.ExTwitter.graph_feature_service.worker.util.MutualFollowPartialValueGraph
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.inject.annotations.Flag
+import com.ExTwitter.util.Timer
 import javax.inject.Singleton
 
-object GraphContainerProviderModule extends TwitterModule {
+object GraphContainerProviderModule extends ExTwitterModule {
 
   @Provides
   @Singleton

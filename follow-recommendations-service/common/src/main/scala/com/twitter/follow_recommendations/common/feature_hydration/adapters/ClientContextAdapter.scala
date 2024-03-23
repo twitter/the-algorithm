@@ -1,17 +1,17 @@
-package com.twitter.follow_recommendations.common.feature_hydration.adapters
+package com.ExTwitter.follow_recommendations.common.feature_hydration.adapters
 
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.ml.api.Feature.Binary
-import com.twitter.ml.api.Feature.Continuous
-import com.twitter.ml.api.Feature.Discrete
-import com.twitter.ml.api.Feature.Text
-import com.twitter.ml.api.util.FDsl._
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.IRecordOneToOneAdapter
-import com.twitter.onboarding.relevance.util.metadata.LanguageUtil
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
-import com.twitter.snowflake.id.SnowflakeId
+import com.ExTwitter.follow_recommendations.common.models.DisplayLocation
+import com.ExTwitter.ml.api.Feature.Binary
+import com.ExTwitter.ml.api.Feature.Continuous
+import com.ExTwitter.ml.api.Feature.Discrete
+import com.ExTwitter.ml.api.Feature.Text
+import com.ExTwitter.ml.api.util.FDsl._
+import com.ExTwitter.ml.api.DataRecord
+import com.ExTwitter.ml.api.FeatureContext
+import com.ExTwitter.ml.api.IRecordOneToOneAdapter
+import com.ExTwitter.onboarding.relevance.util.metadata.LanguageUtil
+import com.ExTwitter.product_mixer.core.model.marshalling.request.ClientContext
+import com.ExTwitter.snowflake.id.SnowflakeId
 
 object ClientContextAdapter extends IRecordOneToOneAdapter[(ClientContext, DisplayLocation)] {
 

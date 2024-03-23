@@ -1,13 +1,13 @@
-package com.twitter.follow_recommendations.utils
+package com.ExTwitter.follow_recommendations.utils
 
-import com.twitter.follow_recommendations.common.base.RecommendationFlow
-import com.twitter.follow_recommendations.common.base.SideEffectsUtil
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.stitch.Stitch
+import com.ExTwitter.follow_recommendations.common.base.RecommendationFlow
+import com.ExTwitter.follow_recommendations.common.base.SideEffectsUtil
+import com.ExTwitter.follow_recommendations.common.models.CandidateUser
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidateSource
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.ExTwitter.snowflake.id.SnowflakeId
+import com.ExTwitter.stitch.Stitch
 
 trait RecommendationFlowBaseSideEffectsUtil[Target <: HasClientContext, Candidate <: CandidateUser]
     extends SideEffectsUtil[Target, Candidate] {

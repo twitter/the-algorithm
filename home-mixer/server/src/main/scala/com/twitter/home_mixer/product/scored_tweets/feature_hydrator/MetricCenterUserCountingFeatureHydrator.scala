@@ -1,23 +1,23 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.ExTwitter.home_mixer.product.scored_tweets.feature_hydrator
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.MetricCenterUserCountingFeatureRepository
-import com.twitter.home_mixer.util.ObservedKeyValueResultHandler
-import com.twitter.onboarding.relevance.features.{thriftjava => rf}
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.util.OffloadFuturePools
-import com.twitter.servo.keyvalue.KeyValueResult
-import com.twitter.servo.repository.KeyValueRepository
-import com.twitter.stitch.Stitch
-import com.twitter.util.Future
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.home_mixer.model.HomeFeatures.AuthorIdFeature
+import com.ExTwitter.home_mixer.param.HomeMixerInjectionNames.MetricCenterUserCountingFeatureRepository
+import com.ExTwitter.home_mixer.util.ObservedKeyValueResultHandler
+import com.ExTwitter.onboarding.relevance.features.{thriftjava => rf}
+import com.ExTwitter.product_mixer.component_library.model.candidate.TweetCandidate
+import com.ExTwitter.product_mixer.core.feature.Feature
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
+import com.ExTwitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
+import com.ExTwitter.product_mixer.core.model.common.CandidateWithFeatures
+import com.ExTwitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.core.util.OffloadFuturePools
+import com.ExTwitter.servo.keyvalue.KeyValueResult
+import com.ExTwitter.servo.repository.KeyValueRepository
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.util.Future
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton

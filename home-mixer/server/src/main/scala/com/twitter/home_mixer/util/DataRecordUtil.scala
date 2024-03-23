@@ -1,9 +1,9 @@
-package com.twitter.home_mixer.util
+package com.ExTwitter.home_mixer.util
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.ml.api.Feature
+import com.ExTwitter.ml.api.DataRecord
+import com.ExTwitter.ml.api.FeatureContext
+import com.ExTwitter.ml.api.util.SRichDataRecord
+import com.ExTwitter.ml.api.Feature
 import java.lang.{Double => JDouble}
 
 object DataRecordUtil {

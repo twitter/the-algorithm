@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.common.candidate_sources.geo
+package com.ExTwitter.follow_recommendations.common.candidate_sources.geo
 
 import com.google.inject.Singleton
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.hermit.model.Algorithm
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
 import javax.inject.Inject
 
 @Singleton

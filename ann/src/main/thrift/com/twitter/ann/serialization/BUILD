@@ -4,7 +4,7 @@ create_thrift_libraries(
     platform = "java8",
     tags = ["bazel-compatible"],
     dependency_roots = [
-        "src/thrift/com/twitter/ml/api:embedding",
+        "src/thrift/com/ExTwitter/ml/api:embedding",
     ],
     generate_languages = [
         "java",

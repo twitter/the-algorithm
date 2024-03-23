@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.conversations
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.conversations
 
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleMetadataBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleConversationMetadata
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleMetadata
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
+import com.ExTwitter.product_mixer.core.feature.Feature
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleMetadataBuilder
+import com.ExTwitter.product_mixer.core.model.common.CandidateWithFeatures
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleConversationMetadata
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleMetadata
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
 
 case class ConversationModuleMetadataBuilder[
   Query <: PipelineQuery,

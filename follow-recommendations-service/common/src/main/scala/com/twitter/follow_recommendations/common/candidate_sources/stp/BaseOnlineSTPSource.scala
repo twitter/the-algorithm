@@ -1,18 +1,18 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+package com.ExTwitter.follow_recommendations.common.candidate_sources.stp
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasRecentFollowedUserIds
-import com.twitter.follow_recommendations.common.models.STPGraph
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.util.logging.Logging
-import com.twitter.wtf.scalding.jobs.strong_tie_prediction.STPFeatureGenerator
-import com.twitter.wtf.scalding.jobs.strong_tie_prediction.STPRecord
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.follow_recommendations.common.models.CandidateUser
+import com.ExTwitter.follow_recommendations.common.models.HasRecentFollowedUserIds
+import com.ExTwitter.follow_recommendations.common.models.STPGraph
+import com.ExTwitter.hermit.model.Algorithm
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidateSource
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.timelines.configapi.HasParams
+import com.ExTwitter.util.logging.Logging
+import com.ExTwitter.wtf.scalding.jobs.strong_tie_prediction.STPFeatureGenerator
+import com.ExTwitter.wtf.scalding.jobs.strong_tie_prediction.STPRecord
 
 abstract class BaseOnlineSTPSource(
   stpGraphBuilder: STPGraphBuilder,

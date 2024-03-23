@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module
+package com.ExTwitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module
 
-import com.twitter.product_mixer.component_library.candidate_source.people_discovery.WhoToFollowModuleHeaderFeature
-import com.twitter.product_mixer.component_library.candidate_source.people_discovery.WhoToFollowModuleShowMoreFeature
-import com.twitter.product_mixer.component_library.decorator.urt.UrtItemCandidateDecorator
-import com.twitter.product_mixer.component_library.decorator.urt.UrtItemInModuleDecorator
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.user.UserCandidateUrtItemBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.metadata.ClientEventInfoBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.metadata.StaticUrlBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.promoted.FeaturePromotedMetadataBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.social_context.WhoToFollowSocialContextBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.stringcenter.StrStatic
-import com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module.ModuleDynamicShowMoreBehaviorRevealByCountBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module.ModuleFooterBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module.ModuleHeaderBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module.TimelineModuleBuilder
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.decorator.Decoration
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleDisplayTypeBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.DeepLink
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+import com.ExTwitter.product_mixer.component_library.candidate_source.people_discovery.WhoToFollowModuleHeaderFeature
+import com.ExTwitter.product_mixer.component_library.candidate_source.people_discovery.WhoToFollowModuleShowMoreFeature
+import com.ExTwitter.product_mixer.component_library.decorator.urt.UrtItemCandidateDecorator
+import com.ExTwitter.product_mixer.component_library.decorator.urt.UrtItemInModuleDecorator
+import com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.user.UserCandidateUrtItemBuilder
+import com.ExTwitter.product_mixer.component_library.decorator.urt.builder.metadata.ClientEventInfoBuilder
+import com.ExTwitter.product_mixer.component_library.decorator.urt.builder.metadata.StaticUrlBuilder
+import com.ExTwitter.product_mixer.component_library.decorator.urt.builder.promoted.FeaturePromotedMetadataBuilder
+import com.ExTwitter.product_mixer.component_library.decorator.urt.builder.social_context.WhoToFollowSocialContextBuilder
+import com.ExTwitter.product_mixer.component_library.decorator.urt.builder.stringcenter.StrStatic
+import com.ExTwitter.product_mixer.component_library.decorator.urt.builder.timeline_module.ModuleDynamicShowMoreBehaviorRevealByCountBuilder
+import com.ExTwitter.product_mixer.component_library.decorator.urt.builder.timeline_module.ModuleFooterBuilder
+import com.ExTwitter.product_mixer.component_library.decorator.urt.builder.timeline_module.ModuleHeaderBuilder
+import com.ExTwitter.product_mixer.component_library.decorator.urt.builder.timeline_module.TimelineModuleBuilder
+import com.ExTwitter.product_mixer.component_library.model.candidate.UserCandidate
+import com.ExTwitter.product_mixer.core.functional_component.decorator.CandidateDecorator
+import com.ExTwitter.product_mixer.core.functional_component.decorator.Decoration
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleDisplayTypeBuilder
+import com.ExTwitter.product_mixer.core.model.common.CandidateWithFeatures
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.DeepLink
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.stitch.Stitch
 
 object WhoToFollowCandidateDecorator {
   val ClientEventComponent = "suggest_who_to_follow"

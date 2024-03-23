@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.component_library.gate
+package com.ExTwitter.product_mixer.component_library.gate
 
-import com.twitter.product_mixer.component_library.model.query.ads.AdsQuery
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+import com.ExTwitter.product_mixer.component_library.model.query.ads.AdsQuery
+import com.ExTwitter.product_mixer.core.functional_component.gate.Gate
+import com.ExTwitter.product_mixer.core.model.common.identifier.GateIdentifier
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.stitch.Stitch
 
 object NonEmptyAdsQueryStringGate extends Gate[PipelineQuery with AdsQuery] {
   override val identifier: GateIdentifier = GateIdentifier("NonEmptyAdsQueryString")

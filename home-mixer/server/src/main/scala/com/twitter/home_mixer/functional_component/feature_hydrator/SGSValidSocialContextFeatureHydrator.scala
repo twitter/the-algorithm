@@ -1,21 +1,21 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+package com.ExTwitter.home_mixer.functional_component.feature_hydrator
 
-import com.twitter.home_mixer.model.HomeFeatures.FavoritedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.FollowedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.SGSValidFollowedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.SGSValidLikedByUserIdsFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.util.OffloadFuturePools
-import com.twitter.socialgraph.{thriftscala => sg}
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.socialgraph.SocialGraph
+import com.ExTwitter.home_mixer.model.HomeFeatures.FavoritedByUserIdsFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.FollowedByUserIdsFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.SGSValidFollowedByUserIdsFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.SGSValidLikedByUserIdsFeature
+import com.ExTwitter.product_mixer.component_library.model.candidate.TweetCandidate
+import com.ExTwitter.product_mixer.core.feature.Feature
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
+import com.ExTwitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
+import com.ExTwitter.product_mixer.core.model.common.CandidateWithFeatures
+import com.ExTwitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.core.util.OffloadFuturePools
+import com.ExTwitter.socialgraph.{thriftscala => sg}
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.stitch.socialgraph.SocialGraph
 import javax.inject.Inject
 import javax.inject.Singleton
 

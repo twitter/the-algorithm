@@ -1,12 +1,12 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+package com.ExTwitter.follow_recommendations.common.candidate_sources.stp
 
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasRecentFollowedUserIds
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
+import com.ExTwitter.follow_recommendations.common.models.CandidateUser
+import com.ExTwitter.follow_recommendations.common.models.HasRecentFollowedUserIds
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidateSource
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.timelines.configapi.HasParams
 
 import javax.inject.Inject
 import javax.inject.Singleton

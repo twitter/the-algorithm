@@ -4,9 +4,9 @@ scala_library(
     strict_deps = True,
     tags = ["bazel-compatible"],
     dependencies = [
-        "3rdparty/jvm/com/twitter/bijection:scrooge",
-        "3rdparty/jvm/com/twitter/storehaus:core",
-        "src/thrift/com/twitter/wtf/candidate:wtf-candidate-scala",
+        "3rdparty/jvm/com/ExTwitter/bijection:scrooge",
+        "3rdparty/jvm/com/ExTwitter/storehaus:core",
+        "src/thrift/com/ExTwitter/wtf/candidate:wtf-candidate-scala",
         "stitch/stitch-core",
         "storage/clients/manhattan/client/src/main/scala",
     ],

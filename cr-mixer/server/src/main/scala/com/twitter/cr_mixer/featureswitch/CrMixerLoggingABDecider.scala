@@ -1,18 +1,18 @@
-package com.twitter.cr_mixer
+package com.ExTwitter.cr_mixer
 package featureswitch
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.abdecider.Recipient
-import com.twitter.abdecider.Bucket
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.util.Local
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.abdecider.LoggingABDecider
+import com.ExTwitter.abdecider.Recipient
+import com.ExTwitter.abdecider.Bucket
+import com.ExTwitter.frigate.common.util.StatsUtil
+import com.ExTwitter.util.Local
 import scala.collection.concurrent.{Map => ConcurrentMap}
 
 /**
  * Wraps a LoggingABDecider, so all impressed buckets are recorded to a 'LocalContext' on a given request.
  *
- * Contexts (https://twitter.github.io/finagle/guide/Contexts.html) are Finagle's mechanism for
+ * Contexts (https://ExTwitter.github.io/finagle/guide/Contexts.html) are Finagle's mechanism for
  * storing state/variables without having to pass these variables all around the request.
  *
  * In order for this class to be used the [[SetImpressedBucketsLocalContextFilter]] must be applied

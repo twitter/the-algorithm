@@ -1,12 +1,12 @@
-package com.twitter.follow_recommendations.flows.post_nux_ml
+package com.ExTwitter.follow_recommendations.flows.post_nux_ml
 
-import com.twitter.core_workflows.user_model.thriftscala.UserState
-import com.twitter.follow_recommendations.common.feature_hydration.common.HasPreFetchedFeature
-import com.twitter.follow_recommendations.common.models._
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.timelines.configapi.Params
+import com.ExTwitter.core_workflows.user_model.thriftscala.UserState
+import com.ExTwitter.follow_recommendations.common.feature_hydration.common.HasPreFetchedFeature
+import com.ExTwitter.follow_recommendations.common.models._
+import com.ExTwitter.product_mixer.core.model.marshalling.request.ClientContext
+import com.ExTwitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.ExTwitter.timelines.configapi.HasParams
+import com.ExTwitter.timelines.configapi.Params
 
 case class PostNuxMlRequest(
   override val params: Params,

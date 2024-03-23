@@ -1,17 +1,17 @@
-package com.twitter.cr_mixer.module.core
+package com.ExTwitter.cr_mixer.module.core
 
 import com.google.inject.Provides
-import com.twitter.cr_mixer.featureswitch.CrMixerLoggingABDecider
-import com.twitter.featureswitches.v2.FeatureSwitches
-import com.twitter.featureswitches.v2.builder.FeatureSwitchesBuilder
-import com.twitter.featureswitches.v2.experimentation.NullBucketImpressor
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.util.Duration
+import com.ExTwitter.cr_mixer.featureswitch.CrMixerLoggingABDecider
+import com.ExTwitter.featureswitches.v2.FeatureSwitches
+import com.ExTwitter.featureswitches.v2.builder.FeatureSwitchesBuilder
+import com.ExTwitter.featureswitches.v2.experimentation.NullBucketImpressor
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.inject.annotations.Flag
+import com.ExTwitter.util.Duration
 import javax.inject.Singleton
 
-object FeatureSwitchesModule extends TwitterModule {
+object FeatureSwitchesModule extends ExTwitterModule {
 
   flag(
     name = "featureswitches.path",

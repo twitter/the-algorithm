@@ -1,7 +1,7 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.adapters.offline_aggregates
+package com.ExTwitter.home_mixer.product.scored_tweets.feature_hydrator.adapters.offline_aggregates
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.IRecordOneToOneAdapter
+import com.ExTwitter.ml.api.DataRecord
+import com.ExTwitter.ml.api.IRecordOneToOneAdapter
 
 object PassThroughAdapter extends IRecordOneToOneAdapter[Seq[DataRecord]] {
   override def adaptToDataRecord(record: Seq[DataRecord]): DataRecord =

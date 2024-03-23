@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.timeline_module
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleDisplayTypeBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.VerticalConversation
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.core.feature.Feature
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleDisplayTypeBuilder
+import com.ExTwitter.product_mixer.core.model.common.CandidateWithFeatures
+import com.ExTwitter.product_mixer.core.model.common.UniversalNoun
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleDisplayType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.timeline_module.VerticalConversation
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
 
 case class FeatureModuleDisplayTypeBuilder(
   displayTypeFeature: Feature[_, Option[ModuleDisplayType]],

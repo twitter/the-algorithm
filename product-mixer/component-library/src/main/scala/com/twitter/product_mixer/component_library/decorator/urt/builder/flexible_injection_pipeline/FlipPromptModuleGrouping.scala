@@ -1,11 +1,11 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.flexible_injection_pipeline
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.flexible_injection_pipeline
 
-import com.twitter.product_mixer.component_library.decorator.urt.GroupByKey
-import com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer.FlipPromptInjectionsFeature
-import com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer.FlipPromptOffsetInModuleFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.component_library.decorator.urt.GroupByKey
+import com.ExTwitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer.FlipPromptInjectionsFeature
+import com.ExTwitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer.FlipPromptOffsetInModuleFeature
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.model.common.UniversalNoun
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
 
 object FlipPromptModuleGrouping extends GroupByKey[PipelineQuery, UniversalNoun[Any], Int] {
   override def apply(

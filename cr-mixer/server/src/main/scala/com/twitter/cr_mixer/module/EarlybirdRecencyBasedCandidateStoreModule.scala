@@ -1,34 +1,34 @@
-package com.twitter.cr_mixer.module
+package com.ExTwitter.cr_mixer.module
 
 import com.google.inject.Provides
 import com.google.inject.Singleton
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.util.EarlybirdSearchUtil.EarlybirdClientId
-import com.twitter.cr_mixer.util.EarlybirdSearchUtil.FacetsToFetch
-import com.twitter.cr_mixer.util.EarlybirdSearchUtil.GetCollectorTerminationParams
-import com.twitter.cr_mixer.util.EarlybirdSearchUtil.GetEarlybirdQuery
-import com.twitter.cr_mixer.util.EarlybirdSearchUtil.MetadataOptions
-import com.twitter.finagle.memcached.{Client => MemcachedClient}
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.SeqLongInjection
-import com.twitter.hashing.KeyHasher
-import com.twitter.hermit.store.common.ObservedMemcachedReadableStore
-import com.twitter.inject.TwitterModule
-import com.twitter.search.common.query.thriftjava.thriftscala.CollectorParams
-import com.twitter.search.earlybird.thriftscala.EarlybirdRequest
-import com.twitter.search.earlybird.thriftscala.EarlybirdResponseCode
-import com.twitter.search.earlybird.thriftscala.EarlybirdService
-import com.twitter.search.earlybird.thriftscala.ThriftSearchQuery
-import com.twitter.search.earlybird.thriftscala.ThriftSearchRankingMode
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Duration
-import com.twitter.util.Future
+import com.ExTwitter.cr_mixer.config.TimeoutConfig
+import com.ExTwitter.cr_mixer.model.ModuleNames
+import com.ExTwitter.cr_mixer.util.EarlybirdSearchUtil.EarlybirdClientId
+import com.ExTwitter.cr_mixer.util.EarlybirdSearchUtil.FacetsToFetch
+import com.ExTwitter.cr_mixer.util.EarlybirdSearchUtil.GetCollectorTerminationParams
+import com.ExTwitter.cr_mixer.util.EarlybirdSearchUtil.GetEarlybirdQuery
+import com.ExTwitter.cr_mixer.util.EarlybirdSearchUtil.MetadataOptions
+import com.ExTwitter.finagle.memcached.{Client => MemcachedClient}
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.frigate.common.util.SeqLongInjection
+import com.ExTwitter.hashing.KeyHasher
+import com.ExTwitter.hermit.store.common.ObservedMemcachedReadableStore
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.search.common.query.thriftjava.thriftscala.CollectorParams
+import com.ExTwitter.search.earlybird.thriftscala.EarlybirdRequest
+import com.ExTwitter.search.earlybird.thriftscala.EarlybirdResponseCode
+import com.ExTwitter.search.earlybird.thriftscala.EarlybirdService
+import com.ExTwitter.search.earlybird.thriftscala.ThriftSearchQuery
+import com.ExTwitter.search.earlybird.thriftscala.ThriftSearchRankingMode
+import com.ExTwitter.simclusters_v2.common.TweetId
+import com.ExTwitter.simclusters_v2.common.UserId
+import com.ExTwitter.storehaus.ReadableStore
+import com.ExTwitter.util.Duration
+import com.ExTwitter.util.Future
 import javax.inject.Named
 
-object EarlybirdRecencyBasedCandidateStoreModule extends TwitterModule {
+object EarlybirdRecencyBasedCandidateStoreModule extends ExTwitterModule {
 
   @Provides
   @Singleton

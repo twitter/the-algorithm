@@ -1,12 +1,12 @@
-package com.twitter.cr_mixer.blender
+package com.ExTwitter.cr_mixer.blender
 
-import com.twitter.cr_mixer.model.BlendedAdsCandidate
-import com.twitter.cr_mixer.model.CandidateGenerationInfo
-import com.twitter.cr_mixer.model.InitialAdsCandidate
-import com.twitter.cr_mixer.util.InterleaveUtil
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.util.Future
+import com.ExTwitter.cr_mixer.model.BlendedAdsCandidate
+import com.ExTwitter.cr_mixer.model.CandidateGenerationInfo
+import com.ExTwitter.cr_mixer.model.InitialAdsCandidate
+import com.ExTwitter.cr_mixer.util.InterleaveUtil
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.simclusters_v2.common.TweetId
+import com.ExTwitter.util.Future
 import javax.inject.Inject
 import javax.inject.Singleton
 import scala.collection.mutable

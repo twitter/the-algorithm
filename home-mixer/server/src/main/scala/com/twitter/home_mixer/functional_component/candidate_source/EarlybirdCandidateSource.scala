@@ -1,12 +1,12 @@
-package com.twitter.home_mixer.functional_component.candidate_source
+package com.ExTwitter.home_mixer.functional_component.candidate_source
 
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSourceWithExtractedFeatures
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidatesWithSourceFeatures
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.search.earlybird.{thriftscala => t}
-import com.twitter.stitch.Stitch
+import com.ExTwitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidateSourceWithExtractedFeatures
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidatesWithSourceFeatures
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.search.earlybird.{thriftscala => t}
+import com.ExTwitter.stitch.Stitch
 import javax.inject.Inject
 import javax.inject.Singleton
 

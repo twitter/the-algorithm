@@ -1,40 +1,40 @@
-package com.twitter.home_mixer.candidate_pipeline
+package com.ExTwitter.home_mixer.candidate_pipeline
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.functional_component.gate.RequestContextNotGate
-import com.twitter.home_mixer.model.HomeFeatures.GetNewerFeature
-import com.twitter.home_mixer.model.request.DeviceContext
-import com.twitter.home_mixer.model.request.HasDeviceContext
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.component_library.decorator.urt.UrtItemCandidateDecorator
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.alert.DurationParamBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.alert.ShowAlertCandidateUrtItemBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.alert.StaticShowAlertColorConfigurationBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.alert.StaticShowAlertDisplayLocationBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.alert.StaticShowAlertIconDisplayInfoBuilder
-import com.twitter.product_mixer.component_library.gate.FeatureGate
-import com.twitter.product_mixer.component_library.model.candidate.ShowAlertCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.functional_component.candidate_source.StaticCandidateSource
-import com.twitter.product_mixer.core.functional_component.configapi.StaticParam
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.alert.BaseDurationBuilder
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.NewTweets
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.ShowAlertColorConfiguration
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.ShowAlertIconDisplayInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.Top
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.UpArrow
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.TwitterBlueRosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.WhiteRosettaColor
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.candidate.DependentCandidatePipelineConfig
-import com.twitter.util.Duration
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.home_mixer.functional_component.gate.RequestContextNotGate
+import com.ExTwitter.home_mixer.model.HomeFeatures.GetNewerFeature
+import com.ExTwitter.home_mixer.model.request.DeviceContext
+import com.ExTwitter.home_mixer.model.request.HasDeviceContext
+import com.ExTwitter.home_mixer.service.HomeMixerAlertConfig
+import com.ExTwitter.product_mixer.component_library.decorator.urt.UrtItemCandidateDecorator
+import com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.alert.DurationParamBuilder
+import com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.alert.ShowAlertCandidateUrtItemBuilder
+import com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.alert.StaticShowAlertColorConfigurationBuilder
+import com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.alert.StaticShowAlertDisplayLocationBuilder
+import com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.alert.StaticShowAlertIconDisplayInfoBuilder
+import com.ExTwitter.product_mixer.component_library.gate.FeatureGate
+import com.ExTwitter.product_mixer.component_library.model.candidate.ShowAlertCandidate
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidateSource
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.StaticCandidateSource
+import com.ExTwitter.product_mixer.core.functional_component.configapi.StaticParam
+import com.ExTwitter.product_mixer.core.functional_component.decorator.CandidateDecorator
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.item.alert.BaseDurationBuilder
+import com.ExTwitter.product_mixer.core.functional_component.gate.Gate
+import com.ExTwitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
+import com.ExTwitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.alert.NewTweets
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.alert.ShowAlertColorConfiguration
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.alert.ShowAlertIconDisplayInfo
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.alert.Top
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.alert.UpArrow
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.color.ExTwitterBlueRosettaColor
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.color.WhiteRosettaColor
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.core.pipeline.candidate.DependentCandidatePipelineConfig
+import com.ExTwitter.util.Duration
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -109,7 +109,7 @@ class NewTweetsPillCandidatePipelineConfig[Query <: PipelineQuery with HasDevice
 
 object NewTweetsPillCandidatePipelineConfig {
   val DefaultColorConfig: ShowAlertColorConfiguration = ShowAlertColorConfiguration(
-    background = TwitterBlueRosettaColor,
+    background = ExTwitterBlueRosettaColor,
     text = WhiteRosettaColor,
     border = Some(WhiteRosettaColor)
   )

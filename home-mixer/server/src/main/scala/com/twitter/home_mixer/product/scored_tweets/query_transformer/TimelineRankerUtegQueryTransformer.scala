@@ -1,21 +1,21 @@
-package com.twitter.home_mixer.product.scored_tweets.query_transformer
+package com.ExTwitter.home_mixer.product.scored_tweets.query_transformer
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.model.HomeFeatures.RealGraphInNetworkScoresFeature
-import com.twitter.home_mixer.model.request.HasDeviceContext
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam
-import com.twitter.home_mixer.product.scored_tweets.query_transformer.TimelineRankerUtegQueryTransformer._
-import com.twitter.home_mixer.util.earlybird.EarlybirdRequestUtil
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.quality_factor.HasQualityFactorStatus
-import com.twitter.timelineranker.{model => tlr}
-import com.twitter.timelineranker.{thriftscala => t}
-import com.twitter.timelines.common.model.TweetKindOption
-import com.twitter.timelines.earlybird.common.options.EarlybirdScoringModelConfig
-import com.twitter.timelines.model.UserId
-import com.twitter.timelines.model.candidate.CandidateTweetSourceId
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.home_mixer.model.HomeFeatures.RealGraphInNetworkScoresFeature
+import com.ExTwitter.home_mixer.model.request.HasDeviceContext
+import com.ExTwitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam
+import com.ExTwitter.home_mixer.product.scored_tweets.query_transformer.TimelineRankerUtegQueryTransformer._
+import com.ExTwitter.home_mixer.util.earlybird.EarlybirdRequestUtil
+import com.ExTwitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.core.quality_factor.HasQualityFactorStatus
+import com.ExTwitter.timelineranker.{model => tlr}
+import com.ExTwitter.timelineranker.{thriftscala => t}
+import com.ExTwitter.timelines.common.model.TweetKindOption
+import com.ExTwitter.timelines.earlybird.common.options.EarlybirdScoringModelConfig
+import com.ExTwitter.timelines.model.UserId
+import com.ExTwitter.timelines.model.candidate.CandidateTweetSourceId
 
 object TimelineRankerUtegQueryTransformer {
   private val SinceDuration = 24.hours

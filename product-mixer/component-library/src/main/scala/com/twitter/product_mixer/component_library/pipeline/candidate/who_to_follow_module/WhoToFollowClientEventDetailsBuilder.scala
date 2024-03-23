@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module
+package com.ExTwitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module
 
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.bijection.Base64String
-import com.twitter.bijection.{Injection => Serializer}
-import com.twitter.hermit.internal.thriftscala.HermitTrackingToken
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventDetailsBuilder
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.TimelinesDetails
-import com.twitter.servo.cache.ThriftSerializer
-import com.twitter.suggests.controller_data.thriftscala.ControllerData
-import com.twitter.util.Try
+import com.ExTwitter.bijection.scrooge.BinaryScalaCodec
+import com.ExTwitter.bijection.Base64String
+import com.ExTwitter.bijection.{Injection => Serializer}
+import com.ExTwitter.hermit.internal.thriftscala.HermitTrackingToken
+import com.ExTwitter.product_mixer.component_library.model.candidate.UserCandidate
+import com.ExTwitter.product_mixer.core.feature.Feature
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventDetailsBuilder
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventDetails
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.TimelinesDetails
+import com.ExTwitter.servo.cache.ThriftSerializer
+import com.ExTwitter.suggests.controller_data.thriftscala.ControllerData
+import com.ExTwitter.util.Try
 import org.apache.thrift.protocol.TBinaryProtocol
 
 object WhoToFollowClientEventDetailsBuilder {

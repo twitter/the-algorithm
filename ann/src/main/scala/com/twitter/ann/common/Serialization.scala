@@ -1,6 +1,6 @@
-package com.twitter.ann.common
+package com.ExTwitter.ann.common
 
-import com.twitter.search.common.file.AbstractFile
+import com.ExTwitter.search.common.file.AbstractFile
 import org.apache.beam.sdk.io.fs.ResourceId
 
 /**

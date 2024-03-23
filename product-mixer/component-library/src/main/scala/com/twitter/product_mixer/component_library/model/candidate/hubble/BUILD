@@ -5,11 +5,11 @@ scala_library(
     strict_deps = True,
     tags = ["bazel-compatible"],
     dependencies = [
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/marshalling/response/slice",
+        "product-mixer/core/src/main/scala/com/ExTwitter/product_mixer/core/model/common",
+        "product-mixer/core/src/main/scala/com/ExTwitter/product_mixer/core/model/marshalling/response/slice",
     ],
     exports = [
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/marshalling/response/slice",
+        "product-mixer/core/src/main/scala/com/ExTwitter/product_mixer/core/model/common",
+        "product-mixer/core/src/main/scala/com/ExTwitter/product_mixer/core/model/marshalling/response/slice",
     ],
 )

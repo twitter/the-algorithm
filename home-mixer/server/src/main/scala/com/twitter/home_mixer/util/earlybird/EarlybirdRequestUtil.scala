@@ -1,16 +1,16 @@
-package com.twitter.home_mixer.util.earlybird
+package com.ExTwitter.home_mixer.util.earlybird
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.search.common.query.thriftjava.{thriftscala => scq}
-import com.twitter.search.common.ranking.{thriftscala => scr}
-import com.twitter.search.earlybird.{thriftscala => eb}
-import com.twitter.timelines.clients.relevance_search.SearchClient.TweetFeatures
-import com.twitter.timelines.clients.relevance_search.SearchClient.TweetTypes
-import com.twitter.timelines.clients.relevance_search.SearchQueryBuilder
-import com.twitter.timelines.clients.relevance_search.SearchQueryBuilder.QueryWithNamedDisjunctions
-import com.twitter.timelines.earlybird.common.options.EarlybirdScoringModelConfig
-import com.twitter.timelines.earlybird.common.utils.SearchOperator
-import com.twitter.util.Duration
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.search.common.query.thriftjava.{thriftscala => scq}
+import com.ExTwitter.search.common.ranking.{thriftscala => scr}
+import com.ExTwitter.search.earlybird.{thriftscala => eb}
+import com.ExTwitter.timelines.clients.relevance_search.SearchClient.TweetFeatures
+import com.ExTwitter.timelines.clients.relevance_search.SearchClient.TweetTypes
+import com.ExTwitter.timelines.clients.relevance_search.SearchQueryBuilder
+import com.ExTwitter.timelines.clients.relevance_search.SearchQueryBuilder.QueryWithNamedDisjunctions
+import com.ExTwitter.timelines.earlybird.common.options.EarlybirdScoringModelConfig
+import com.ExTwitter.timelines.earlybird.common.utils.SearchOperator
+import com.ExTwitter.util.Duration
 
 object EarlybirdRequestUtil {
 

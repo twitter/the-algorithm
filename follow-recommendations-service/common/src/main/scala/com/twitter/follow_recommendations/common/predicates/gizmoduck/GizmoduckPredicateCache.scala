@@ -1,19 +1,19 @@
-package com.twitter.follow_recommendations.common.predicates.gizmoduck
+package com.ExTwitter.follow_recommendations.common.predicates.gizmoduck
 
 import java.util.concurrent.TimeUnit
 
 import com.google.common.base.Ticker
 import com.google.common.cache.CacheBuilder
 import com.google.common.cache.Cache
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.Time
-import com.twitter.util.Duration
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.util.Time
+import com.ExTwitter.util.Duration
 
 /**
  * In-memory cache used for caching GizmoduckPredicate query calls in
- * com.twitter.follow_recommendations.common.predicates.gizmoduck.GizmoduckPredicate.
+ * com.ExTwitter.follow_recommendations.common.predicates.gizmoduck.GizmoduckPredicate.
  * 
- * References the cache implementation in com.twitter.escherbird.util.stitchcache,
+ * References the cache implementation in com.ExTwitter.escherbird.util.stitchcache,
  * but without the underlying Stitch call.
  */
 object GizmoduckPredicateCache {

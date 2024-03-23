@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.common.rankers.weighted_candidate_source_ranker
+package com.ExTwitter.follow_recommendations.common.rankers.weighted_candidate_source_ranker
 
-import com.twitter.follow_recommendations.common.utils.RandomUtil
-import com.twitter.follow_recommendations.common.utils.MergeUtil
-import com.twitter.follow_recommendations.common.utils.Weighted
-import com.twitter.follow_recommendations.common.rankers.weighted_candidate_source_ranker.WeightMethod._
+import com.ExTwitter.follow_recommendations.common.utils.RandomUtil
+import com.ExTwitter.follow_recommendations.common.utils.MergeUtil
+import com.ExTwitter.follow_recommendations.common.utils.Weighted
+import com.ExTwitter.follow_recommendations.common.rankers.weighted_candidate_source_ranker.WeightMethod._
 import scala.util.Random
 
 /**

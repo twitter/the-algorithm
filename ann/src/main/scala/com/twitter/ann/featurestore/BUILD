@@ -3,8 +3,8 @@ scala_library(
     compiler_option_sets = ["fatal_warnings"],
     tags = ["bazel-compatible"],
     dependencies = [
-        "ann/src/main/scala/com/twitter/ann/common",
-        "src/scala/com/twitter/ml/featurestore/lib",
-        "src/scala/com/twitter/ml/featurestore/lib/online",
+        "ann/src/main/scala/com/ExTwitter/ann/common",
+        "src/scala/com/ExTwitter/ml/featurestore/lib",
+        "src/scala/com/ExTwitter/ml/featurestore/lib/online",
     ],
 )

@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.common.stores
+package com.ExTwitter.follow_recommendations.common.stores
 
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasRecentFollowedUserIds
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.onboarding.userrecs.TweepCredOnUserClientColumn
+import com.ExTwitter.follow_recommendations.common.models.CandidateUser
+import com.ExTwitter.follow_recommendations.common.models.HasRecentFollowedUserIds
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.strato.generated.client.onboarding.userrecs.TweepCredOnUserClientColumn
 import javax.inject.Inject
 import javax.inject.Singleton
 

@@ -1,4 +1,4 @@
-package com.twitter.cr_mixer.model
+package com.ExTwitter.cr_mixer.model
 
 sealed trait EarlybirdSimilarityEngineType
 object EarlybirdSimilarityEngineType_RecencyBased extends EarlybirdSimilarityEngineType

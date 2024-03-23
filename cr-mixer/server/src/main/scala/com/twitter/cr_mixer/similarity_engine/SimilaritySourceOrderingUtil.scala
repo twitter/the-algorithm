@@ -1,7 +1,7 @@
-package com.twitter.cr_mixer.similarity_engine
+package com.ExTwitter.cr_mixer.similarity_engine
 
-import com.twitter.cr_mixer.model.TweetWithCandidateGenerationInfo
-import com.twitter.simclusters_v2.common.TweetId
+import com.ExTwitter.cr_mixer.model.TweetWithCandidateGenerationInfo
+import com.ExTwitter.simclusters_v2.common.TweetId
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 

@@ -1,20 +1,20 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.real_time_aggregates
+package com.ExTwitter.home_mixer.product.scored_tweets.feature_hydrator.real_time_aggregates
 
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.real_time_aggregates.BaseRealtimeAggregateHydrator._
-import com.twitter.home_mixer.util.DataRecordUtil
-import com.twitter.home_mixer.util.ObservedKeyValueResultHandler
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.DataRecordMerger
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.constant.SharedFeatures
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.ml.api.{Feature => MLApiFeature}
-import com.twitter.servo.cache.ReadCache
-import com.twitter.servo.keyvalue.KeyValueResult
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateGroup
-import com.twitter.util.Future
-import com.twitter.util.Time
-import com.twitter.util.Try
+import com.ExTwitter.home_mixer.product.scored_tweets.feature_hydrator.real_time_aggregates.BaseRealtimeAggregateHydrator._
+import com.ExTwitter.home_mixer.util.DataRecordUtil
+import com.ExTwitter.home_mixer.util.ObservedKeyValueResultHandler
+import com.ExTwitter.ml.api.DataRecord
+import com.ExTwitter.ml.api.DataRecordMerger
+import com.ExTwitter.ml.api.FeatureContext
+import com.ExTwitter.ml.api.constant.SharedFeatures
+import com.ExTwitter.ml.api.util.SRichDataRecord
+import com.ExTwitter.ml.api.{Feature => MLApiFeature}
+import com.ExTwitter.servo.cache.ReadCache
+import com.ExTwitter.servo.keyvalue.KeyValueResult
+import com.ExTwitter.timelines.data_processing.ml_util.aggregation_framework.AggregateGroup
+import com.ExTwitter.util.Future
+import com.ExTwitter.util.Time
+import com.ExTwitter.util.Try
 import java.lang.{Double => JDouble}
 import scala.collection.JavaConverters._
 
@@ -113,7 +113,7 @@ trait BaseRealtimeAggregateHydrator[K] extends ObservedKeyValueResultHandler {
 object BaseRealtimeAggregateHydrator {
   private val RequestBatchSize = 5
 
-  type TimeDecay = scala.Function2[com.twitter.ml.api.DataRecord, scala.Long, scala.Unit]
+  type TimeDecay = scala.Function2[com.ExTwitter.ml.api.DataRecord, scala.Long, scala.Unit]
 
   private def applyDecay(
     dataRecord: DataRecord,

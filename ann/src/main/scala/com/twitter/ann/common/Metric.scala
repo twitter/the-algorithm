@@ -1,14 +1,14 @@
-package com.twitter.ann.common
+package com.ExTwitter.ann.common
 
 import com.google.common.collect.ImmutableBiMap
-import com.twitter.ann.common.EmbeddingType._
-import com.twitter.ann.common.thriftscala.DistanceMetric
-import com.twitter.ann.common.thriftscala.{CosineDistance => ServiceCosineDistance}
-import com.twitter.ann.common.thriftscala.{Distance => ServiceDistance}
-import com.twitter.ann.common.thriftscala.{InnerProductDistance => ServiceInnerProductDistance}
-import com.twitter.ann.common.thriftscala.{EditDistance => ServiceEditDistance}
-import com.twitter.ann.common.thriftscala.{L2Distance => ServiceL2Distance}
-import com.twitter.bijection.Injection
+import com.ExTwitter.ann.common.EmbeddingType._
+import com.ExTwitter.ann.common.thriftscala.DistanceMetric
+import com.ExTwitter.ann.common.thriftscala.{CosineDistance => ServiceCosineDistance}
+import com.ExTwitter.ann.common.thriftscala.{Distance => ServiceDistance}
+import com.ExTwitter.ann.common.thriftscala.{InnerProductDistance => ServiceInnerProductDistance}
+import com.ExTwitter.ann.common.thriftscala.{EditDistance => ServiceEditDistance}
+import com.ExTwitter.ann.common.thriftscala.{L2Distance => ServiceL2Distance}
+import com.ExTwitter.bijection.Injection
 import scala.util.Failure
 import scala.util.Success
 import scala.util.Try

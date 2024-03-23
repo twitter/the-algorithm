@@ -1,41 +1,41 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.twitter_list
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.ExTwitter_list
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.twitter_list.TwitterListCandidateUrtItemBuilder.ListClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.TwitterListCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.twitter_list.TwitterListDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.twitter_list.TwitterListItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.ExTwitter_list.ExTwitterListCandidateUrtItemBuilder.ListClientEventInfoElement
+import com.ExTwitter.product_mixer.component_library.model.candidate.ExTwitterListCandidate
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.ExTwitter_list.ExTwitterListDisplayType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.ExTwitter_list.ExTwitterListItem
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
 
-object TwitterListCandidateUrtItemBuilder {
+object ExTwitterListCandidateUrtItemBuilder {
   val ListClientEventInfoElement: String = "list"
 }
 
-case class TwitterListCandidateUrtItemBuilder[-Query <: PipelineQuery](
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, TwitterListCandidate],
+case class ExTwitterListCandidateUrtItemBuilder[-Query <: PipelineQuery](
+  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, ExTwitterListCandidate],
   feedbackActionInfoBuilder: Option[
-    BaseFeedbackActionInfoBuilder[Query, TwitterListCandidate]
+    BaseFeedbackActionInfoBuilder[Query, ExTwitterListCandidate]
   ] = None,
-  displayType: Option[TwitterListDisplayType] = None)
-    extends CandidateUrtEntryBuilder[Query, TwitterListCandidate, TwitterListItem] {
+  displayType: Option[ExTwitterListDisplayType] = None)
+    extends CandidateUrtEntryBuilder[Query, ExTwitterListCandidate, ExTwitterListItem] {
 
   override def apply(
     query: Query,
-    twitterListCandidate: TwitterListCandidate,
+    ExTwitterListCandidate: ExTwitterListCandidate,
     candidateFeatures: FeatureMap
-  ): TwitterListItem = TwitterListItem(
-    id = twitterListCandidate.id,
+  ): ExTwitterListItem = ExTwitterListItem(
+    id = ExTwitterListCandidate.id,
     sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
     clientEventInfo = clientEventInfoBuilder(
       query,
-      twitterListCandidate,
+      ExTwitterListCandidate,
       candidateFeatures,
       Some(ListClientEventInfoElement)),
     feedbackActionInfo =
-      feedbackActionInfoBuilder.flatMap(_.apply(query, twitterListCandidate, candidateFeatures)),
+      feedbackActionInfoBuilder.flatMap(_.apply(query, ExTwitterListCandidate, candidateFeatures)),
     displayType = displayType
   )
 }

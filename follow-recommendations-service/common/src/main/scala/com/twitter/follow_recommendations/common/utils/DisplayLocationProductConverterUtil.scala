@@ -1,8 +1,8 @@
-package com.twitter.follow_recommendations.common.utils
+package com.ExTwitter.follow_recommendations.common.utils
 
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.follow_recommendations.common.models.Product
-import com.twitter.product_mixer.core.model.marshalling.request.Product
+import com.ExTwitter.follow_recommendations.common.models.DisplayLocation
+import com.ExTwitter.follow_recommendations.common.models.Product
+import com.ExTwitter.product_mixer.core.model.marshalling.request.Product
 
 object DisplayLocationProductConverterUtil {
   def productToDisplayLocation(product: Product): DisplayLocation = {

@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.commerce
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.commerce
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.commerce.CommerceProductGroupCandidateUrtItemBuilder.CommerceProductGroupClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.CommerceProductGroupCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.commerce.CommerceProductGroupItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.commerce.CommerceProductGroupCandidateUrtItemBuilder.CommerceProductGroupClientEventInfoElement
+import com.ExTwitter.product_mixer.component_library.model.candidate.CommerceProductGroupCandidate
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.commerce.CommerceProductGroupItem
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
 
 object CommerceProductGroupCandidateUrtItemBuilder {
   val CommerceProductGroupClientEventInfoElement: String = "commerce-product-group"

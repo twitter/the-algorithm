@@ -1,11 +1,11 @@
-package com.twitter.home_mixer.service
+package com.ExTwitter.home_mixer.service
 
-import com.twitter.home_mixer.{thriftscala => t}
-import com.twitter.product_mixer.core.model.marshalling.request.Request
-import com.twitter.product_mixer.core.pipeline.product.ProductPipelineRequest
-import com.twitter.product_mixer.core.product.registry.ProductPipelineRegistry
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Params
+import com.ExTwitter.home_mixer.{thriftscala => t}
+import com.ExTwitter.product_mixer.core.model.marshalling.request.Request
+import com.ExTwitter.product_mixer.core.pipeline.product.ProductPipelineRequest
+import com.ExTwitter.product_mixer.core.product.registry.ProductPipelineRegistry
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.timelines.configapi.Params
 import javax.inject.Inject
 import javax.inject.Singleton
 import scala.reflect.runtime.universe._

@@ -1,6 +1,6 @@
-package com.twitter.graph_feature_service.worker.util
+package com.ExTwitter.graph_feature_service.worker.util
 
-import com.twitter.graph_feature_service.thriftscala.EdgeType
+import com.ExTwitter.graph_feature_service.thriftscala.EdgeType
 
 sealed trait GfsQuery {
   def edgeType: EdgeType

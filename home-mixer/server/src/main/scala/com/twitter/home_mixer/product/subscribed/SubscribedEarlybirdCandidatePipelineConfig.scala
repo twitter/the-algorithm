@@ -1,24 +1,24 @@
-package com.twitter.home_mixer.product.subscribed
+package com.ExTwitter.home_mixer.product.subscribed
 
 import com.google.inject.Inject
-import com.twitter.home_mixer.functional_component.candidate_source.EarlybirdCandidateSource
-import com.twitter.home_mixer.product.subscribed.model.SubscribedQuery
-import com.twitter.product_mixer.component_library.feature_hydrator.query.social_graph.SGSSubscribedUsersFeature
-import com.twitter.product_mixer.component_library.filter.TweetVisibilityFilter
-import com.twitter.product_mixer.component_library.gate.NonEmptySeqFeatureGate
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.search.earlybird.{thriftscala => t}
-import com.twitter.spam.rtf.thriftscala.SafetyLevel.TimelineHomeSubscribed
-import com.twitter.stitch.tweetypie.{TweetyPie => TweetypieStitchClient}
-import com.twitter.tweetypie.thriftscala.TweetVisibilityPolicy
+import com.ExTwitter.home_mixer.functional_component.candidate_source.EarlybirdCandidateSource
+import com.ExTwitter.home_mixer.product.subscribed.model.SubscribedQuery
+import com.ExTwitter.product_mixer.component_library.feature_hydrator.query.social_graph.SGSSubscribedUsersFeature
+import com.ExTwitter.product_mixer.component_library.filter.TweetVisibilityFilter
+import com.ExTwitter.product_mixer.component_library.gate.NonEmptySeqFeatureGate
+import com.ExTwitter.product_mixer.component_library.model.candidate.TweetCandidate
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
+import com.ExTwitter.product_mixer.core.functional_component.filter.Filter
+import com.ExTwitter.product_mixer.core.functional_component.gate.Gate
+import com.ExTwitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
+import com.ExTwitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
+import com.ExTwitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
+import com.ExTwitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
+import com.ExTwitter.search.earlybird.{thriftscala => t}
+import com.ExTwitter.spam.rtf.thriftscala.SafetyLevel.TimelineHomeSubscribed
+import com.ExTwitter.stitch.tweetypie.{TweetyPie => TweetypieStitchClient}
+import com.ExTwitter.tweetypie.thriftscala.TweetVisibilityPolicy
 
 class SubscribedEarlybirdCandidatePipelineConfig @Inject() (
   earlybirdCandidateSource: EarlybirdCandidateSource,

@@ -1,12 +1,12 @@
-package com.twitter.follow_recommendations.products.home_timeline.configapi
+package com.ExTwitter.follow_recommendations.products.home_timeline.configapi
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.follow_recommendations.products.home_timeline.configapi.HomeTimelineParams._
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
+import com.ExTwitter.follow_recommendations.configapi.common.FeatureSwitchConfig
+import com.ExTwitter.follow_recommendations.products.home_timeline.configapi.HomeTimelineParams._
+import com.ExTwitter.timelines.configapi.FSBoundedParam
+import com.ExTwitter.timelines.configapi.FSName
+import com.ExTwitter.timelines.configapi.HasDurationConversion
+import com.ExTwitter.timelines.configapi.Param
+import com.ExTwitter.util.Duration
 import javax.inject.Inject
 import javax.inject.Singleton
 

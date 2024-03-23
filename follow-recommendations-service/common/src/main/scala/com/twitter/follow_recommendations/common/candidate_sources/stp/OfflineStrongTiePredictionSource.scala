@@ -1,17 +1,17 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+package com.ExTwitter.follow_recommendations.common.candidate_sources.stp
 
 import com.google.inject.Singleton
-import com.twitter.follow_recommendations.common.candidate_sources.stp.OfflineStpSourceParams.UseDenserPmiMatrix
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.util.logging.Logging
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
+import com.ExTwitter.follow_recommendations.common.candidate_sources.stp.OfflineStpSourceParams.UseDenserPmiMatrix
+import com.ExTwitter.follow_recommendations.common.models.CandidateUser
+import com.ExTwitter.hermit.model.Algorithm
+import com.ExTwitter.product_mixer.component_library.model.candidate.UserCandidate
+import com.ExTwitter.product_mixer.core.feature.Feature
+import com.ExTwitter.util.logging.Logging
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidateSource
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.timelines.configapi.HasParams
 import javax.inject.Inject
 
 object OfflineStpScore extends Feature[UserCandidate, Option[Double]]

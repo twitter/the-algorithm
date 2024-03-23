@@ -1,15 +1,15 @@
-package com.twitter.home_mixer.product.scored_tweets.filter
+package com.ExTwitter.home_mixer.product.scored_tweets.filter
 
-import com.twitter.home_mixer.model.HomeFeatures._
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelineservice.suggests.{thriftscala => st}
+import com.ExTwitter.home_mixer.model.HomeFeatures._
+import com.ExTwitter.product_mixer.component_library.model.candidate.TweetCandidate
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.functional_component.filter.Filter
+import com.ExTwitter.product_mixer.core.functional_component.filter.FilterResult
+import com.ExTwitter.product_mixer.core.model.common.CandidateWithFeatures
+import com.ExTwitter.product_mixer.core.model.common.identifier.FilterIdentifier
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.timelineservice.suggests.{thriftscala => st}
 
 object ScoredTweetsSocialContextFilter extends Filter[PipelineQuery, TweetCandidate] {
 

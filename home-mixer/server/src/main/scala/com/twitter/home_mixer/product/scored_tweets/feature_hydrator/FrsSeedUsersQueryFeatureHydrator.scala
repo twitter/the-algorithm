@@ -1,16 +1,16 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.ExTwitter.home_mixer.product.scored_tweets.feature_hydrator
 
-import com.twitter.follow_recommendations.{thriftscala => frs}
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.product_mixer.component_library.candidate_source.recommendations.UserFollowRecommendationsCandidateSource
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.candidate_source.strato.StratoKeyView
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.stitch.Stitch
+import com.ExTwitter.follow_recommendations.{thriftscala => frs}
+import com.ExTwitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
+import com.ExTwitter.product_mixer.component_library.candidate_source.recommendations.UserFollowRecommendationsCandidateSource
+import com.ExTwitter.product_mixer.component_library.model.candidate.TweetCandidate
+import com.ExTwitter.product_mixer.core.feature.Feature
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.strato.StratoKeyView
+import com.ExTwitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
+import com.ExTwitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
+import com.ExTwitter.stitch.Stitch
 import javax.inject.Inject
 import javax.inject.Singleton
 

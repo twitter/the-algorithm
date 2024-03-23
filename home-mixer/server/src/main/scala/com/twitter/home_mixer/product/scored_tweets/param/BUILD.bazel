@@ -4,8 +4,8 @@ scala_library(
     strict_deps = True,
     tags = ["bazel-compatible"],
     dependencies = [
-        "configapi/configapi-core/src/main/scala/com/twitter/timelines/configapi",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/param/decider",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/product",
+        "configapi/configapi-core/src/main/scala/com/ExTwitter/timelines/configapi",
+        "home-mixer/server/src/main/scala/com/ExTwitter/home_mixer/param/decider",
+        "product-mixer/core/src/main/scala/com/ExTwitter/product_mixer/core/product",
     ],
 )

@@ -1,24 +1,24 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.ExTwitter.home_mixer.product.scored_tweets.feature_hydrator
 
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.DirectedAtUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.MentionUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceUserIdFeature
-import com.twitter.home_mixer.util.CandidatesUtil
-import com.twitter.ml.api.DataRecord
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.util.OffloadFuturePools
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.prediction.adapters.real_graph.RealGraphEdgeFeaturesCombineAdapter
-import com.twitter.timelines.real_graph.v1.{thriftscala => v1}
+import com.ExTwitter.home_mixer.model.HomeFeatures.AuthorIdFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.DirectedAtUserIdFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.MentionUserIdFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.SourceUserIdFeature
+import com.ExTwitter.home_mixer.util.CandidatesUtil
+import com.ExTwitter.ml.api.DataRecord
+import com.ExTwitter.product_mixer.component_library.model.candidate.TweetCandidate
+import com.ExTwitter.product_mixer.core.feature.Feature
+import com.ExTwitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
+import com.ExTwitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
+import com.ExTwitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator
+import com.ExTwitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.core.util.OffloadFuturePools
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.timelines.prediction.adapters.real_graph.RealGraphEdgeFeaturesCombineAdapter
+import com.ExTwitter.timelines.real_graph.v1.{thriftscala => v1}
 import javax.inject.Inject
 import javax.inject.Singleton
 import scala.collection.JavaConverters._

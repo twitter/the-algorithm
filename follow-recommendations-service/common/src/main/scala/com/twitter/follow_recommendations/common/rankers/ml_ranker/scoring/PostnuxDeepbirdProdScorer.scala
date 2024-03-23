@@ -1,10 +1,10 @@
-package com.twitter.follow_recommendations.common.rankers.ml_ranker.scoring
+package com.ExTwitter.follow_recommendations.common.rankers.ml_ranker.scoring
 
-import com.twitter.cortex.deepbird.thriftjava.DeepbirdPredictionService
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.follow_recommendations.common.rankers.common.RankerId
-import com.twitter.ml.api.Feature
+import com.ExTwitter.cortex.deepbird.thriftjava.DeepbirdPredictionService
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.follow_recommendations.common.constants.GuiceNamedConstants
+import com.ExTwitter.follow_recommendations.common.rankers.common.RankerId
+import com.ExTwitter.ml.api.Feature
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton

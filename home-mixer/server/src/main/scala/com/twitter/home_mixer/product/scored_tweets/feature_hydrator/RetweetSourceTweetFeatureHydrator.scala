@@ -1,18 +1,18 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.ExTwitter.home_mixer.product.scored_tweets.feature_hydrator
 
-import com.twitter.home_mixer.model.HomeFeatures._
-import com.twitter.product_mixer.component_library.candidate_source.timeline_ranker.TimelineRankerInNetworkSourceTweetsByTweetIdMapFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.search.common.features.thriftscala.ThriftTweetFeatures
-import com.twitter.stitch.Stitch
-import com.twitter.timelineranker.thriftscala.CandidateTweet
+import com.ExTwitter.home_mixer.model.HomeFeatures._
+import com.ExTwitter.product_mixer.component_library.candidate_source.timeline_ranker.TimelineRankerInNetworkSourceTweetsByTweetIdMapFeature
+import com.ExTwitter.product_mixer.component_library.model.candidate.TweetCandidate
+import com.ExTwitter.product_mixer.core.feature.Feature
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
+import com.ExTwitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
+import com.ExTwitter.product_mixer.core.model.common.CandidateWithFeatures
+import com.ExTwitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.search.common.features.thriftscala.ThriftTweetFeatures
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.timelineranker.thriftscala.CandidateTweet
 
 object SourceTweetEarlybirdFeature extends Feature[TweetCandidate, Option[ThriftTweetFeatures]]
 

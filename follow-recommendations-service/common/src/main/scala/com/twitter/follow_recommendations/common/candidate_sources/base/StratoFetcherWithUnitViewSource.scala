@@ -1,7 +1,7 @@
-package com.twitter.follow_recommendations.common.candidate_sources.base
+package com.ExTwitter.follow_recommendations.common.candidate_sources.base
 
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.client.Fetcher
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.strato.client.Fetcher
 
 abstract class StratoFetcherWithUnitViewSource[K, V](
   fetcher: Fetcher[K, Unit, V],

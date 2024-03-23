@@ -1,11 +1,11 @@
-package com.twitter.follow_recommendations.common.models
+package com.ExTwitter.follow_recommendations.common.models
 
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
-import com.twitter.follow_recommendations.{thriftscala => t}
-import com.twitter.hermit.constants.AlgorithmFeedbackTokens._
-import com.twitter.hermit.ml.models.Feature
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.follow_recommendations.logging.{thriftscala => offline}
+import com.ExTwitter.follow_recommendations.{thriftscala => t}
+import com.ExTwitter.hermit.constants.AlgorithmFeedbackTokens._
+import com.ExTwitter.hermit.ml.models.Feature
+import com.ExTwitter.hermit.model.Algorithm
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
 
 /**
  * primaryCandidateSource param is showing the candidate source that responsible for generating this

@@ -1,18 +1,18 @@
-package com.twitter.home_mixer.product.list_tweets.model
+package com.ExTwitter.home_mixer.product.list_tweets.model
 
-import com.twitter.adserver.thriftscala.HomeTimelineType
-import com.twitter.adserver.thriftscala.TimelineRequestParams
-import com.twitter.dspbidder.commons.{thriftscala => dsp}
-import com.twitter.home_mixer.model.HomeAdsQuery
-import com.twitter.home_mixer.model.request.DeviceContext
-import com.twitter.home_mixer.model.request.HasListId
-import com.twitter.home_mixer.model.request.ListTweetsProduct
-import com.twitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.marshalling.request._
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Params
+import com.ExTwitter.adserver.thriftscala.HomeTimelineType
+import com.ExTwitter.adserver.thriftscala.TimelineRequestParams
+import com.ExTwitter.dspbidder.commons.{thriftscala => dsp}
+import com.ExTwitter.home_mixer.model.HomeAdsQuery
+import com.ExTwitter.home_mixer.model.request.DeviceContext
+import com.ExTwitter.home_mixer.model.request.HasListId
+import com.ExTwitter.home_mixer.model.request.ListTweetsProduct
+import com.ExTwitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.model.marshalling.request._
+import com.ExTwitter.product_mixer.core.pipeline.HasPipelineCursor
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.timelines.configapi.Params
 
 case class ListTweetsQuery(
   override val params: Params,

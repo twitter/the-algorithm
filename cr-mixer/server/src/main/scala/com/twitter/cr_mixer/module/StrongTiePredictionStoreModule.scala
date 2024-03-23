@@ -1,20 +1,20 @@
-package com.twitter.cr_mixer.module
+package com.ExTwitter.cr_mixer.module
 
 import com.google.inject.Provides
 import com.google.inject.Singleton
-import com.twitter.app.Flag
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.store.strato.StratoFetchableStore
-import com.twitter.hermit.store.common.ObservedReadableStore
-import com.twitter.inject.TwitterModule
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.hermit.stp.thriftscala.STPResult
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.{Client => StratoClient}
+import com.ExTwitter.app.Flag
+import com.ExTwitter.cr_mixer.model.ModuleNames
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.frigate.common.store.strato.StratoFetchableStore
+import com.ExTwitter.hermit.store.common.ObservedReadableStore
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.simclusters_v2.common.UserId
+import com.ExTwitter.hermit.stp.thriftscala.STPResult
+import com.ExTwitter.storehaus.ReadableStore
+import com.ExTwitter.strato.client.{Client => StratoClient}
 import javax.inject.Named
 
-object StrongTiePredictionStoreModule extends TwitterModule {
+object StrongTiePredictionStoreModule extends ExTwitterModule {
 
   private val strongTiePredictionColumnPath: Flag[String] = flag[String](
     name = "crMixer.strongTiePredictionColumnPath",

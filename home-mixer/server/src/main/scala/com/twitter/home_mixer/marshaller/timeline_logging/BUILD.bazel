@@ -4,10 +4,10 @@ scala_library(
     strict_deps = True,
     tags = ["bazel-compatible"],
     dependencies = [
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/model",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/presentation/urt",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/pipeline/candidate/who_to_follow_module",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/marshalling/response/urt/item",
-        "src/thrift/com/twitter/timelines/timeline_logging:thrift-scala",
+        "home-mixer/server/src/main/scala/com/ExTwitter/home_mixer/model",
+        "product-mixer/component-library/src/main/scala/com/ExTwitter/product_mixer/component_library/model/presentation/urt",
+        "product-mixer/component-library/src/main/scala/com/ExTwitter/product_mixer/component_library/pipeline/candidate/who_to_follow_module",
+        "product-mixer/core/src/main/scala/com/ExTwitter/product_mixer/core/model/marshalling/response/urt/item",
+        "src/thrift/com/ExTwitter/timelines/timeline_logging:thrift-scala",
     ],
 )

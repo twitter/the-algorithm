@@ -1,20 +1,20 @@
-package com.twitter.cr_mixer.module.grpc_client
+package com.ExTwitter.cr_mixer.module.grpc_client
 
 import com.google.inject.Provides
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.finagle.Http
-import com.twitter.finagle.grpc.FinagleChannelBuilder
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient.MtlsStackClientSyntax
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.util.Duration
+import com.ExTwitter.cr_mixer.config.TimeoutConfig
+import com.ExTwitter.cr_mixer.model.ModuleNames
+import com.ExTwitter.finagle.Http
+import com.ExTwitter.finagle.grpc.FinagleChannelBuilder
+import com.ExTwitter.finagle.mtls.authentication.ServiceIdentifier
+import com.ExTwitter.finagle.mtls.client.MtlsStackClient.MtlsStackClientSyntax
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.util.Duration
 import io.grpc.ManagedChannel
 import javax.inject.Named
 import javax.inject.Singleton
 
-object NaviGRPCClientModule extends TwitterModule {
+object NaviGRPCClientModule extends ExTwitterModule {
 
   val maxRetryAttempts = 3
 

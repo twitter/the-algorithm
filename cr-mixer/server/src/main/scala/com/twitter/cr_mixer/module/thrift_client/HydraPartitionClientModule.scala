@@ -1,11 +1,11 @@
-package com.twitter.cr_mixer.module.thrift_client
+package com.ExTwitter.cr_mixer.module.thrift_client
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.hydra.partition.{thriftscala => ht}
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.finagle.thriftmux.MethodBuilder
+import com.ExTwitter.finatra.mtls.thriftmux.modules.MtlsClient
+import com.ExTwitter.inject.Injector
+import com.ExTwitter.inject.thrift.modules.ThriftMethodBuilderClientModule
+import com.ExTwitter.hydra.partition.{thriftscala => ht}
 
 object HydraPartitionClientModule
     extends ThriftMethodBuilderClientModule[

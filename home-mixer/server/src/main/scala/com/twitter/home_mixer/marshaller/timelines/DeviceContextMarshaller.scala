@@ -1,8 +1,8 @@
-package com.twitter.home_mixer.marshaller.timelines
+package com.ExTwitter.home_mixer.marshaller.timelines
 
-import com.twitter.home_mixer.model.request.DeviceContext
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
-import com.twitter.timelineservice.{thriftscala => t}
+import com.ExTwitter.home_mixer.model.request.DeviceContext
+import com.ExTwitter.product_mixer.core.model.marshalling.request.ClientContext
+import com.ExTwitter.timelineservice.{thriftscala => t}
 import javax.inject.Inject
 import javax.inject.Singleton
 

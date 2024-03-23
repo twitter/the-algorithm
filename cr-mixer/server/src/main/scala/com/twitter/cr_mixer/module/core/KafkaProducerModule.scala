@@ -1,13 +1,13 @@
-package com.twitter.cr_mixer.module.core
+package com.ExTwitter.cr_mixer.module.core
 
 import com.google.inject.Provides
-import com.twitter.cr_mixer.thriftscala.GetTweetsRecommendationsScribe
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finatra.kafka.producers.FinagleKafkaProducerBuilder
-import com.twitter.finatra.kafka.producers.KafkaProducerBase
-import com.twitter.finatra.kafka.producers.NullKafkaProducer
-import com.twitter.finatra.kafka.serde.ScalaSerdes
-import com.twitter.inject.TwitterModule
+import com.ExTwitter.cr_mixer.thriftscala.GetTweetsRecommendationsScribe
+import com.ExTwitter.finagle.mtls.authentication.ServiceIdentifier
+import com.ExTwitter.finatra.kafka.producers.FinagleKafkaProducerBuilder
+import com.ExTwitter.finatra.kafka.producers.KafkaProducerBase
+import com.ExTwitter.finatra.kafka.producers.NullKafkaProducer
+import com.ExTwitter.finatra.kafka.serde.ScalaSerdes
+import com.ExTwitter.inject.ExTwitterModule
 import javax.inject.Singleton
 import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.common.config.SaslConfigs
@@ -16,7 +16,7 @@ import org.apache.kafka.common.record.CompressionType
 import org.apache.kafka.common.security.auth.SecurityProtocol
 import org.apache.kafka.common.serialization.Serdes
 
-object KafkaProducerModule extends TwitterModule {
+object KafkaProducerModule extends ExTwitterModule {
 
   @Provides
   @Singleton
@@ -31,7 +31,7 @@ object KafkaProducerFactory {
   private val jaasConfig =
     """com.sun.security.auth.module.Krb5LoginModule
       |required 
-      |principal="cr-mixer@TWITTER.BIZ" 
+      |principal="cr-mixer@ExTwitter.BIZ" 
       |debug=true 
       |useKeyTab=true 
       |storeKey=true 

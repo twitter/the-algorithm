@@ -1,6 +1,6 @@
-package com.twitter.follow_recommendations.configapi.deciders
+package com.ExTwitter.follow_recommendations.configapi.deciders
 
-import com.twitter.servo.decider.DeciderKeyEnum
+import com.ExTwitter.servo.decider.DeciderKeyEnum
 
 object DeciderKey extends DeciderKeyEnum {
   val EnableDiffyModuleDarkReading = Value("enable_diffy_module_dark_reading")

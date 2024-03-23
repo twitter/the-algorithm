@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.component_library.candidate_source.recommendations
+package com.ExTwitter.product_mixer.component_library.candidate_source.recommendations
 
-import com.twitter.follow_recommendations.{thriftscala => fr}
-import com.twitter.product_mixer.core.functional_component.candidate_source.strato.StratoKeyViewFetcherSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.generated.client.onboarding.follow_recommendations_service.GetRecommendationsClientColumn
+import com.ExTwitter.follow_recommendations.{thriftscala => fr}
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.strato.StratoKeyViewFetcherSource
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.strato.client.Fetcher
+import com.ExTwitter.strato.generated.client.onboarding.follow_recommendations_service.GetRecommendationsClientColumn
 import javax.inject.Inject
 import javax.inject.Singleton
 

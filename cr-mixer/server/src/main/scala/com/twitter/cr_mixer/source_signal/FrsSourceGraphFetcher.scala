@@ -1,15 +1,15 @@
-package com.twitter.cr_mixer.source_signal
+package com.ExTwitter.cr_mixer.source_signal
 
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.model.GraphSourceInfo
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.param.FrsParams
-import com.twitter.cr_mixer.source_signal.FrsStore.FrsQueryResult
-import com.twitter.cr_mixer.source_signal.SourceFetcher.FetcherQuery
-import com.twitter.cr_mixer.thriftscala.SourceType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+import com.ExTwitter.cr_mixer.config.TimeoutConfig
+import com.ExTwitter.cr_mixer.model.GraphSourceInfo
+import com.ExTwitter.cr_mixer.model.ModuleNames
+import com.ExTwitter.cr_mixer.param.FrsParams
+import com.ExTwitter.cr_mixer.source_signal.FrsStore.FrsQueryResult
+import com.ExTwitter.cr_mixer.source_signal.SourceFetcher.FetcherQuery
+import com.ExTwitter.cr_mixer.thriftscala.SourceType
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.storehaus.ReadableStore
+import com.ExTwitter.util.Future
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton

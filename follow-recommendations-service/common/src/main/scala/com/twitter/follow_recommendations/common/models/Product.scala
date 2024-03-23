@@ -1,7 +1,7 @@
-package com.twitter.follow_recommendations.common.models
+package com.ExTwitter.follow_recommendations.common.models
 
-import com.twitter.product_mixer.core.model.common.identifier.ProductIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.{Product => ProductMixerProduct}
+import com.ExTwitter.product_mixer.core.model.common.identifier.ProductIdentifier
+import com.ExTwitter.product_mixer.core.model.marshalling.request.{Product => ProductMixerProduct}
 
 object Product {
   case object MagicRecs extends ProductMixerProduct {

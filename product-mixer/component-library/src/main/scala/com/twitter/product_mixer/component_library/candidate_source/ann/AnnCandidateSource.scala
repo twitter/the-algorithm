@@ -1,11 +1,11 @@
-package com.twitter.product_mixer.component_library.candidate_source.ann
+package com.ExTwitter.product_mixer.component_library.candidate_source.ann
 
-import com.twitter.ann.common._
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.util.{Time => _, _}
-import com.twitter.finagle.util.DefaultTimer
+import com.ExTwitter.ann.common._
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidateSource
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.util.{Time => _, _}
+import com.ExTwitter.finagle.util.DefaultTimer
 
 /**
  * @param annQueryableById Ann Queryable by Id client that returns nearest neighbors for a sequence of queries

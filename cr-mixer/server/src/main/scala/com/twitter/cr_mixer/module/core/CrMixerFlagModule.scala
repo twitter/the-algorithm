@@ -1,13 +1,13 @@
-package com.twitter.cr_mixer.module.core
+package com.ExTwitter.cr_mixer.module.core
 
-import com.twitter.inject.TwitterModule
+import com.ExTwitter.inject.ExTwitterModule
 
 object CrMixerFlagName {
   val SERVICE_FLAG = "cr_mixer.flag"
   val DarkTrafficFilterDeciderKey = "thrift.dark.traffic.filter.decider_key"
 }
 
-object CrMixerFlagModule extends TwitterModule {
+object CrMixerFlagModule extends ExTwitterModule {
   import CrMixerFlagName._
 
   flag[Boolean](name = SERVICE_FLAG, default = false, help = "This is a CR Mixer flag")

@@ -1,16 +1,16 @@
-package com.twitter.follow_recommendations.common.rankers.first_n_ranker
+package com.ExTwitter.follow_recommendations.common.rankers.first_n_ranker
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.Ranker
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasQualityFactor
-import com.twitter.follow_recommendations.common.rankers.utils.Utils
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.follow_recommendations.common.base.Ranker
+import com.ExTwitter.follow_recommendations.common.models.CandidateUser
+import com.ExTwitter.follow_recommendations.common.models.HasQualityFactor
+import com.ExTwitter.follow_recommendations.common.rankers.utils.Utils
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.timelines.configapi.HasParams
 
 /**
  * This class is meant to filter candidates between stages of our ranker by taking the first N

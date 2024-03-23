@@ -1,6 +1,6 @@
-package com.twitter.cr_mixer.param
+package com.ExTwitter.cr_mixer.param
 
-import com.twitter.timelines.configapi._
+import com.ExTwitter.timelines.configapi._
 
 object RealGraphInParams {
   object EnableSourceGraphParam

@@ -1,12 +1,12 @@
-package com.twitter.home_mixer.functional_component.decorator.builder
+package com.ExTwitter.home_mixer.functional_component.decorator.builder
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventDetailsBuilder
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.TimelinesDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelineservice.suggests.{thriftscala => st}
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventDetailsBuilder
+import com.ExTwitter.product_mixer.core.model.common.UniversalNoun
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventDetails
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.TimelinesDetails
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.timelineservice.suggests.{thriftscala => st}
 
 case class ListClientEventDetailsBuilder(suggestType: st.SuggestType)
     extends BaseClientEventDetailsBuilder[PipelineQuery, UniversalNoun[Any]] {

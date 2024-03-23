@@ -1,12 +1,12 @@
-namespace java com.twitter.cr_mixer.thriftjava
-#@namespace scala com.twitter.cr_mixer.thriftscala
-#@namespace strato com.twitter.cr_mixer
+namespace java com.ExTwitter.cr_mixer.thriftjava
+#@namespace scala com.ExTwitter.cr_mixer.thriftscala
+#@namespace strato com.ExTwitter.cr_mixer
 
 include "product.thrift"
 include "product_context.thrift"
 
-include "com/twitter/product_mixer/core/client_context.thrift"
-include "com/twitter/recos/recos_common.thrift"
+include "com/ExTwitter/product_mixer/core/client_context.thrift"
+include "com/ExTwitter/recos/recos_common.thrift"
 
 struct UtegTweetRequest {
 	1: required client_context.ClientContext clientContext

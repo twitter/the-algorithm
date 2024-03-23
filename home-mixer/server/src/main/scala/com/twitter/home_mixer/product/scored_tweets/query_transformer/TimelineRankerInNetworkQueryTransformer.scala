@@ -1,18 +1,18 @@
-package com.twitter.home_mixer.product.scored_tweets.query_transformer
+package com.ExTwitter.home_mixer.product.scored_tweets.query_transformer
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.core_workflows.user_model.{thriftscala => um}
-import com.twitter.home_mixer.model.HomeFeatures.UserStateFeature
-import com.twitter.home_mixer.model.request.HasDeviceContext
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam
-import com.twitter.home_mixer.product.scored_tweets.query_transformer.TimelineRankerInNetworkQueryTransformer._
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.quality_factor.HasQualityFactorStatus
-import com.twitter.timelineranker.{thriftscala => t}
-import com.twitter.timelines.common.model.TweetKindOption
-import com.twitter.timelines.model.candidate.CandidateTweetSourceId
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.core_workflows.user_model.{thriftscala => um}
+import com.ExTwitter.home_mixer.model.HomeFeatures.UserStateFeature
+import com.ExTwitter.home_mixer.model.request.HasDeviceContext
+import com.ExTwitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam
+import com.ExTwitter.home_mixer.product.scored_tweets.query_transformer.TimelineRankerInNetworkQueryTransformer._
+import com.ExTwitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.core.quality_factor.HasQualityFactorStatus
+import com.ExTwitter.timelineranker.{thriftscala => t}
+import com.ExTwitter.timelines.common.model.TweetKindOption
+import com.ExTwitter.timelines.model.candidate.CandidateTweetSourceId
 
 object TimelineRankerInNetworkQueryTransformer {
   private val DefaultSinceDuration = 24.hours

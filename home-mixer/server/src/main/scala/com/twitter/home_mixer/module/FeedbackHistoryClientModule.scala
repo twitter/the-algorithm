@@ -1,18 +1,18 @@
-package com.twitter.home_mixer.module
+package com.ExTwitter.home_mixer.module
 
 import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.timelinemixer.clients.feedback.FeedbackHistoryManhattanClient
-import com.twitter.timelinemixer.clients.feedback.FeedbackHistoryManhattanClientConfig
-import com.twitter.timelines.clients.manhattan.mhv3.ManhattanClientBuilder
-import com.twitter.util.Duration
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.finagle.mtls.authentication.ServiceIdentifier
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.inject.annotations.Flag
+import com.ExTwitter.timelinemixer.clients.feedback.FeedbackHistoryManhattanClient
+import com.ExTwitter.timelinemixer.clients.feedback.FeedbackHistoryManhattanClientConfig
+import com.ExTwitter.timelines.clients.manhattan.mhv3.ManhattanClientBuilder
+import com.ExTwitter.util.Duration
 import javax.inject.Singleton
 
-object FeedbackHistoryClientModule extends TwitterModule {
+object FeedbackHistoryClientModule extends ExTwitterModule {
   private val ProdDataset = "feedback_history"
   private val StagingDataset = "feedback_history_nonprod"
   private final val Timeout = "mh_feedback_history.timeout"

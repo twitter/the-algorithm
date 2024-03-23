@@ -6,7 +6,7 @@
  * the SWIG interface file instead.
  * ----------------------------------------------------------------------------- */
 
-package com.twitter.ann.faiss;
+package com.ExTwitter.ann.faiss;
 
 public class MultiIndexQuantizer2 extends MultiIndexQuantizer {
   private transient long swigCPtr;

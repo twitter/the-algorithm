@@ -1,6 +1,6 @@
-package com.twitter.ann.common
+package com.ExTwitter.ann.common
 import com.google.common.annotations.VisibleForTesting
-import com.twitter.util.{Future, FuturePool}
+import com.ExTwitter.util.{Future, FuturePool}
 
 trait ReadWriteFuturePool {
   def read[T](f: => T): Future[T]

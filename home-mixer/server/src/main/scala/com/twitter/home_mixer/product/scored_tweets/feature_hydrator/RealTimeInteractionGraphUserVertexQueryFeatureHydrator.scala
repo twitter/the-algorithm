@@ -1,18 +1,18 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.ExTwitter.home_mixer.product.scored_tweets.feature_hydrator
 
 import com.google.inject.name.Named
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.RealTimeInteractionGraphUserVertexCache
-import com.twitter.home_mixer.util.ObservedKeyValueResultHandler
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.servo.cache.ReadCache
-import com.twitter.stitch.Stitch
-import com.twitter.wtf.real_time_interaction_graph.{thriftscala => ig}
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.home_mixer.param.HomeMixerInjectionNames.RealTimeInteractionGraphUserVertexCache
+import com.ExTwitter.home_mixer.util.ObservedKeyValueResultHandler
+import com.ExTwitter.product_mixer.core.feature.Feature
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
+import com.ExTwitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
+import com.ExTwitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.servo.cache.ReadCache
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.wtf.real_time_interaction_graph.{thriftscala => ig}
 import javax.inject.Inject
 import javax.inject.Singleton
 

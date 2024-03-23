@@ -1,24 +1,24 @@
-package com.twitter.home_mixer.product.scored_tweets.candidate_pipeline
+package com.ExTwitter.home_mixer.product.scored_tweets.candidate_pipeline
 
-import com.twitter.home_mixer.product.scored_tweets.feature_hydrator.FrsSeedUsersQueryFeatureHydrator
-import com.twitter.home_mixer.product.scored_tweets.gate.MinCachedTweetsGate
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.CachedScoredTweets
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.CandidatePipeline
-import com.twitter.home_mixer.product.scored_tweets.query_transformer.TimelineRankerFrsQueryTransformer
-import com.twitter.home_mixer.product.scored_tweets.response_transformer.ScoredTweetsFrsResponseFeatureTransformer
-import com.twitter.product_mixer.component_library.candidate_source.timeline_ranker.TimelineRankerRecapCandidateSource
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseQueryFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.timelineranker.{thriftscala => tlr}
-import com.twitter.timelines.configapi.decider.DeciderParam
+import com.ExTwitter.home_mixer.product.scored_tweets.feature_hydrator.FrsSeedUsersQueryFeatureHydrator
+import com.ExTwitter.home_mixer.product.scored_tweets.gate.MinCachedTweetsGate
+import com.ExTwitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
+import com.ExTwitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.CachedScoredTweets
+import com.ExTwitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.CandidatePipeline
+import com.ExTwitter.home_mixer.product.scored_tweets.query_transformer.TimelineRankerFrsQueryTransformer
+import com.ExTwitter.home_mixer.product.scored_tweets.response_transformer.ScoredTweetsFrsResponseFeatureTransformer
+import com.ExTwitter.product_mixer.component_library.candidate_source.timeline_ranker.TimelineRankerRecapCandidateSource
+import com.ExTwitter.product_mixer.component_library.model.candidate.TweetCandidate
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
+import com.ExTwitter.product_mixer.core.functional_component.feature_hydrator.BaseQueryFeatureHydrator
+import com.ExTwitter.product_mixer.core.functional_component.gate.Gate
+import com.ExTwitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
+import com.ExTwitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
+import com.ExTwitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
+import com.ExTwitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
+import com.ExTwitter.timelineranker.{thriftscala => tlr}
+import com.ExTwitter.timelines.configapi.decider.DeciderParam
 import javax.inject.Inject
 import javax.inject.Singleton
 

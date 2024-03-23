@@ -1,8 +1,8 @@
-package com.twitter.follow_recommendations.services
+package com.ExTwitter.follow_recommendations.services
 
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.Param
+import com.ExTwitter.follow_recommendations.common.models.DisplayLocation
+import com.ExTwitter.timelines.configapi.FSParam
+import com.ExTwitter.timelines.configapi.Param
 import javax.inject.Singleton
 
 @Singleton

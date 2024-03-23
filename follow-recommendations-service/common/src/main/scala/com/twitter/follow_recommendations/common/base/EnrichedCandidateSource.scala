@@ -1,10 +1,10 @@
-package com.twitter.follow_recommendations.common.base
+package com.ExTwitter.follow_recommendations.common.base
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.stitch.Stitch
-import com.twitter.util.Duration
-import com.twitter.util.TimeoutException
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidateSource
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.util.Duration
+import com.ExTwitter.util.TimeoutException
 import scala.language.implicitConversions
 
 class EnrichedCandidateSource[Target, Candidate](original: CandidateSource[Target, Candidate]) {
@@ -119,7 +119,7 @@ class EnrichedCandidateSource[Target, Candidate](original: CandidateSource[Targe
       override def apply(target: Target): Stitch[Seq[Candidate]] = {
         original
           .apply(target)
-          .within(candidateTimeout)(com.twitter.finagle.util.DefaultTimer)
+          .within(candidateTimeout)(com.ExTwitter.finagle.util.DefaultTimer)
           .rescue {
             case _: TimeoutException =>
               timeoutCounter.incr()
@@ -142,7 +142,7 @@ class EnrichedCandidateSource[Target, Candidate](original: CandidateSource[Targe
       override def apply(target: Target): Stitch[Seq[Candidate]] = {
         original
           .apply(target)
-          .within(candidateTimeout)(com.twitter.finagle.util.DefaultTimer)
+          .within(candidateTimeout)(com.ExTwitter.finagle.util.DefaultTimer)
           .handle {
             case _: TimeoutException =>
               timeoutCounter.incr()

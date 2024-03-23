@@ -1,10 +1,10 @@
-package com.twitter.cr_mixer
+package com.ExTwitter.cr_mixer
 
-import com.twitter.finatra.http.routing.HttpWarmup
-import com.twitter.finatra.httpclient.RequestBuilder._
-import com.twitter.inject.Logging
-import com.twitter.inject.utils.Handler
-import com.twitter.util.Try
+import com.ExTwitter.finatra.http.routing.HttpWarmup
+import com.ExTwitter.finatra.httpclient.RequestBuilder._
+import com.ExTwitter.inject.Logging
+import com.ExTwitter.inject.utils.Handler
+import com.ExTwitter.util.Try
 import javax.inject.Inject
 import javax.inject.Singleton
 

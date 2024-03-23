@@ -1,9 +1,9 @@
-package com.twitter.ann.hnsw
+package com.ExTwitter.ann.hnsw
 
-import com.twitter.ann.common.EmbeddingType.EmbeddingVector
-import com.twitter.bijection.Injection
-import com.twitter.ml.api.embedding.Embedding
-import com.twitter.search.common.file.AbstractFile
+import com.ExTwitter.ann.common.EmbeddingType.EmbeddingVector
+import com.ExTwitter.bijection.Injection
+import com.ExTwitter.ml.api.embedding.Embedding
+import com.ExTwitter.search.common.file.AbstractFile
 import java.io.OutputStream
 import org.mapdb.DBMaker
 import org.mapdb.HTreeMap

@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.relevance_prompt
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.relevance_prompt
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.relevance_prompt.RelevancePromptCandidateUrtItemStringCenterBuilder.RelevancePromptClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.RelevancePromptCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseStr
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt.PromptItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt.RelevancePromptContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt.RelevancePromptDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt.RelevancePromptFollowUpFeedbackType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Callback
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.relevance_prompt.RelevancePromptCandidateUrtItemStringCenterBuilder.RelevancePromptClientEventInfoElement
+import com.ExTwitter.product_mixer.component_library.model.candidate.RelevancePromptCandidate
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseStr
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.prompt.PromptItem
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.prompt.RelevancePromptContent
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.prompt.RelevancePromptDisplayType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.prompt.RelevancePromptFollowUpFeedbackType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.Callback
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
 
 object RelevancePromptCandidateUrtItemStringCenterBuilder {
   val RelevancePromptClientEventInfoElement: String = "relevance_prompt"

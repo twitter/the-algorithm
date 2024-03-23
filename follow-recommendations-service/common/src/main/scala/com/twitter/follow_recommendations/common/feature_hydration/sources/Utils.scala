@@ -1,8 +1,8 @@
-package com.twitter.follow_recommendations.common.feature_hydration.sources
+package com.ExTwitter.follow_recommendations.common.feature_hydration.sources
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.IRecordOneToOneAdapter
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.ml.api.DataRecord
+import com.ExTwitter.ml.api.IRecordOneToOneAdapter
 import scala.util.Random
 
 /**

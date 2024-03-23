@@ -1,13 +1,13 @@
-package com.twitter.follow_recommendations.configapi.candidates
+package com.ExTwitter.follow_recommendations.configapi.candidates
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasDisplayLocation
-import com.twitter.follow_recommendations.configapi.params.GlobalParams
-import com.twitter.servo.util.MemoizingStatsReceiver
-import com.twitter.timelines.configapi.Config
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.timelines.configapi.Params
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.follow_recommendations.common.models.CandidateUser
+import com.ExTwitter.follow_recommendations.common.models.HasDisplayLocation
+import com.ExTwitter.follow_recommendations.configapi.params.GlobalParams
+import com.ExTwitter.servo.util.MemoizingStatsReceiver
+import com.ExTwitter.timelines.configapi.Config
+import com.ExTwitter.timelines.configapi.HasParams
+import com.ExTwitter.timelines.configapi.Params
 import javax.inject.Inject
 import javax.inject.Singleton
 

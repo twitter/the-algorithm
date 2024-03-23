@@ -1,9 +1,9 @@
-package com.twitter.product_mixer.component_library.candidate_source.timeline_ranker
+package com.ExTwitter.product_mixer.component_library.candidate_source.timeline_ranker
 
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.timelineranker.{thriftscala => t}
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidateSource
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.timelineranker.{thriftscala => t}
 
 import javax.inject.Inject
 import javax.inject.Singleton

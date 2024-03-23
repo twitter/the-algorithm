@@ -1,8 +1,8 @@
-package com.twitter.ann.common
+package com.ExTwitter.ann.common
 
-import com.twitter.search.common.file.AbstractFile
-import com.twitter.search.common.file.AbstractFile.Filter
-import com.twitter.util.Future
+import com.ExTwitter.search.common.file.AbstractFile
+import com.ExTwitter.search.common.file.AbstractFile.Filter
+import com.ExTwitter.util.Future
 import org.apache.beam.sdk.io.fs.ResourceId
 import scala.collection.JavaConverters._
 

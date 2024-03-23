@@ -1,7 +1,7 @@
-package com.twitter.ann.service.query_server.common
+package com.ExTwitter.ann.service.query_server.common
 
-import com.twitter.logging.Logger
-import com.twitter.search.common.file.AbstractFile
+import com.ExTwitter.logging.Logger
+import com.ExTwitter.search.common.file.AbstractFile
 import scala.collection.JavaConverters._
 
 object QueryServerUtil {

@@ -1,14 +1,14 @@
-package com.twitter.follow_recommendations.common.transforms.weighted_sampling
-import com.twitter.follow_recommendations.common.base.GatedTransform
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasDebugOptions
-import com.twitter.follow_recommendations.common.models.Score
-import com.twitter.follow_recommendations.common.models.Scores
-import com.twitter.follow_recommendations.common.rankers.common.RankerId
-import com.twitter.follow_recommendations.common.rankers.utils.Utils
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
+package com.ExTwitter.follow_recommendations.common.transforms.weighted_sampling
+import com.ExTwitter.follow_recommendations.common.base.GatedTransform
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.timelines.configapi.HasParams
+import com.ExTwitter.follow_recommendations.common.models.CandidateUser
+import com.ExTwitter.follow_recommendations.common.models.HasDebugOptions
+import com.ExTwitter.follow_recommendations.common.models.Score
+import com.ExTwitter.follow_recommendations.common.models.Scores
+import com.ExTwitter.follow_recommendations.common.rankers.common.RankerId
+import com.ExTwitter.follow_recommendations.common.rankers.utils.Utils
+import com.ExTwitter.product_mixer.core.model.marshalling.request.HasClientContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -41,7 +41,7 @@ class SamplingTransform @Inject() ()
                 request) each of which has a score
 
   inputs accessed through feature switches, i.e. through target.params (see the following file:
-  "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/
+  "follow-recommendations-service/common/src/main/scala/com/ExTwitter/follow_recommendations/common/
   transforms/weighted_sampling/SamplingTransformParams.scala"):
   - topKFixed: the first k positions of the who-to-follow ranking correspond to the users with the k
                highest scores and are not sampled from the Placket-Luce distribution

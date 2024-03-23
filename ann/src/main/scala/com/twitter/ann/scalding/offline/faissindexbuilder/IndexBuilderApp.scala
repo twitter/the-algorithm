@@ -1,17 +1,17 @@
-package com.twitter.ann.scalding.offline.faissindexbuilder
+package com.ExTwitter.ann.scalding.offline.faissindexbuilder
 
-import com.twitter.ann.common.Distance
-import com.twitter.ann.common.Metric
-import com.twitter.cortex.ml.embeddings.common._
-import com.twitter.ml.featurestore.lib.UserId
-import com.twitter.scalding.Args
-import com.twitter.scalding.DateOps
-import com.twitter.scalding.DateParser
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Execution
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.search.common.file.FileUtils
-import com.twitter.util.logging.Logging
+import com.ExTwitter.ann.common.Distance
+import com.ExTwitter.ann.common.Metric
+import com.ExTwitter.cortex.ml.embeddings.common._
+import com.ExTwitter.ml.featurestore.lib.UserId
+import com.ExTwitter.scalding.Args
+import com.ExTwitter.scalding.DateOps
+import com.ExTwitter.scalding.DateParser
+import com.ExTwitter.scalding.DateRange
+import com.ExTwitter.scalding.Execution
+import com.ExTwitter.scalding_internal.job.ExTwitterExecutionApp
+import com.ExTwitter.search.common.file.FileUtils
+import com.ExTwitter.util.logging.Logging
 import java.util.Calendar
 import java.util.TimeZone
 
@@ -68,7 +68,7 @@ trait IndexBuilderExecutable extends Logging {
   }
 }
 
-object IndexBuilderApp extends TwitterExecutionApp with IndexBuilderExecutable {
+object IndexBuilderApp extends ExTwitterExecutionApp with IndexBuilderExecutable {
   override def job: Execution[Unit] = Execution.getArgs.flatMap { args: Args =>
     indexBuilderExecution(args)
   }

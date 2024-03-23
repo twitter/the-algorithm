@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.component_library.filter
+package com.ExTwitter.product_mixer.component_library.filter
 
-import com.twitter.util.logging.Logging
-import com.twitter.product_mixer.component_library.filter.TweetVisibilityFilter._
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.spam.rtf.thriftscala.SafetyLevel
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.tweetypie.{TweetyPie => TweetypieStitchClient}
-import com.twitter.tweetypie.{thriftscala => TP}
-import com.twitter.util.Return
-import com.twitter.util.Try
+import com.ExTwitter.util.logging.Logging
+import com.ExTwitter.product_mixer.component_library.filter.TweetVisibilityFilter._
+import com.ExTwitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
+import com.ExTwitter.product_mixer.core.functional_component.filter.Filter
+import com.ExTwitter.product_mixer.core.functional_component.filter.FilterResult
+import com.ExTwitter.product_mixer.core.model.common.CandidateWithFeatures
+import com.ExTwitter.product_mixer.core.model.common.identifier.FilterIdentifier
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.spam.rtf.thriftscala.SafetyLevel
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.stitch.tweetypie.{TweetyPie => TweetypieStitchClient}
+import com.ExTwitter.tweetypie.{thriftscala => TP}
+import com.ExTwitter.util.Return
+import com.ExTwitter.util.Try
 
 object TweetVisibilityFilter {
   val DefaultTweetIncludes = Set(TP.TweetInclude.TweetFieldId(TP.Tweet.IdField.id))

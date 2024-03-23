@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.component_library.model.cursor
+package com.ExTwitter.product_mixer.component_library.model.cursor
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.model.marshalling.response.slice.CursorType
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.UrtPipelineCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.{
+import com.ExTwitter.product_mixer.core.feature.Feature
+import com.ExTwitter.product_mixer.core.model.marshalling.response.slice.CursorType
+import com.ExTwitter.product_mixer.core.pipeline.HasPipelineCursor
+import com.ExTwitter.product_mixer.core.pipeline.PipelineCursor
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.core.pipeline.UrtPipelineCursor
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.operation.{
   CursorType => UrtCursorType
 }
 

@@ -1,7 +1,7 @@
-package com.twitter.home_mixer.marshaller.timeline_logging
+package com.ExTwitter.home_mixer.marshaller.timeline_logging
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
-import com.twitter.timelines.timeline_logging.{thriftscala => thriftlog}
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
+import com.ExTwitter.timelines.timeline_logging.{thriftscala => thriftlog}
 
 object PromotedTweetDetailsMarshaller {
 

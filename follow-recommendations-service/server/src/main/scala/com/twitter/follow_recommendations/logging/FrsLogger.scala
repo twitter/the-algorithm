@@ -1,25 +1,25 @@
-package com.twitter.follow_recommendations.logging
+package com.ExTwitter.follow_recommendations.logging
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.follow_recommendations.common.models.HasIsSoftUser
-import com.twitter.follow_recommendations.configapi.params.GlobalParams
-import com.twitter.follow_recommendations.logging.thriftscala.RecommendationLog
-import com.twitter.follow_recommendations.models.DebugParams
-import com.twitter.follow_recommendations.models.RecommendationFlowData
-import com.twitter.follow_recommendations.models.RecommendationRequest
-import com.twitter.follow_recommendations.models.RecommendationResponse
-import com.twitter.follow_recommendations.models.ScoringUserRequest
-import com.twitter.follow_recommendations.models.ScoringUserResponse
-import com.twitter.inject.annotations.Flag
-import com.twitter.logging.LoggerFactory
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.scribelib.marshallers.ClientDataProvider
-import com.twitter.scribelib.marshallers.ExternalRefererDataProvider
-import com.twitter.scribelib.marshallers.ScribeSerialization
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.util.Time
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.follow_recommendations.common.constants.GuiceNamedConstants
+import com.ExTwitter.follow_recommendations.common.models.HasIsSoftUser
+import com.ExTwitter.follow_recommendations.configapi.params.GlobalParams
+import com.ExTwitter.follow_recommendations.logging.thriftscala.RecommendationLog
+import com.ExTwitter.follow_recommendations.models.DebugParams
+import com.ExTwitter.follow_recommendations.models.RecommendationFlowData
+import com.ExTwitter.follow_recommendations.models.RecommendationRequest
+import com.ExTwitter.follow_recommendations.models.RecommendationResponse
+import com.ExTwitter.follow_recommendations.models.ScoringUserRequest
+import com.ExTwitter.follow_recommendations.models.ScoringUserResponse
+import com.ExTwitter.inject.annotations.Flag
+import com.ExTwitter.logging.LoggerFactory
+import com.ExTwitter.product_mixer.core.model.marshalling.request.ClientContext
+import com.ExTwitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.ExTwitter.scribelib.marshallers.ClientDataProvider
+import com.ExTwitter.scribelib.marshallers.ExternalRefererDataProvider
+import com.ExTwitter.scribelib.marshallers.ScribeSerialization
+import com.ExTwitter.timelines.configapi.HasParams
+import com.ExTwitter.util.Time
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
@@ -128,7 +128,7 @@ object FrsLogger {
     /** The id of the guest, which is present in logged-in or loged-out states */
     override val guestId: Option[Long] = clientContext.guestId
 
-    /** The personalization id (pid) of the user, used to personalize Twitter services */
+    /** The personalization id (pid) of the user, used to personalize ExTwitter services */
     override val personalizationId: Option[String] = None
 
     /** The id of the individual device the user is currently using. This id will be unique for different users' devices. */
@@ -149,14 +149,14 @@ object FrsLogger {
     /** The user-agent header used to identify the client browser or device that the user is currently active on */
     override val userAgent: Option[String] = clientContext.userAgent
 
-    /** Whether the user is accessing Twitter via a secured connection */
+    /** Whether the user is accessing ExTwitter via a secured connection */
     override val isSsl: Option[Boolean] = Some(true)
 
     /** The referring URL to the current page for web-based clients, if applicable */
     override val referer: Option[String] = None
 
     /**
-     * The external site, partner, or email that lead to the current Twitter application. Returned value consists of a
+     * The external site, partner, or email that lead to the current ExTwitter application. Returned value consists of a
      * tuple including the encrypted referral data and the type of referral
      */
     override val externalReferer: Option[ExternalRefererDataProvider] = None

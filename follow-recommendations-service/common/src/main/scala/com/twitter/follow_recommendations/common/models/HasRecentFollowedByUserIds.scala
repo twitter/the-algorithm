@@ -1,4 +1,4 @@
-package com.twitter.follow_recommendations.common.models
+package com.ExTwitter.follow_recommendations.common.models
 
 trait HasRecentFollowedByUserIds {
   // user ids that have recently followed the target user; target user has been "followed by" them.

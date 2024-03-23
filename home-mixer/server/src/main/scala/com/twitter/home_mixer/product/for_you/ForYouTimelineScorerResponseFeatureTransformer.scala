@@ -1,24 +1,24 @@
-package com.twitter.home_mixer.product.for_you
+package com.ExTwitter.home_mixer.product.for_you
 
-import com.twitter.tweetconvosvc.tweet_ancestor.{thriftscala => ta}
-import com.twitter.home_mixer.model.HomeFeatures._
-import com.twitter.mediaservices.commons.tweetmedia.{thriftscala => mt}
-import com.twitter.product_mixer.component_library.candidate_source.timeline_scorer.ScoredTweetCandidateWithFocalTweet
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.BasicTopicContextFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RecWithEducationTopicContextFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RecommendationTopicContextFunctionalityType
-import com.twitter.search.common.constants.thriftjava.ThriftLanguage
-import com.twitter.search.common.util.lang.ThriftLanguageUtil
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.timelinemixer.injection.model.candidate.AudioSpaceMetaData
-import com.twitter.timelines.conversation_features.{thriftscala => cvt}
-import com.twitter.timelinescorer.common.scoredtweetcandidate.{thriftscala => stc}
-import com.twitter.timelineservice.suggests.{thriftscala => tls}
+import com.ExTwitter.tweetconvosvc.tweet_ancestor.{thriftscala => ta}
+import com.ExTwitter.home_mixer.model.HomeFeatures._
+import com.ExTwitter.mediaservices.commons.tweetmedia.{thriftscala => mt}
+import com.ExTwitter.product_mixer.component_library.candidate_source.timeline_scorer.ScoredTweetCandidateWithFocalTweet
+import com.ExTwitter.product_mixer.core.feature.Feature
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
+import com.ExTwitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
+import com.ExTwitter.product_mixer.core.model.common.identifier.TransformerIdentifier
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.BasicTopicContextFunctionalityType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.RecWithEducationTopicContextFunctionalityType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.RecommendationTopicContextFunctionalityType
+import com.ExTwitter.search.common.constants.thriftjava.ThriftLanguage
+import com.ExTwitter.search.common.util.lang.ThriftLanguageUtil
+import com.ExTwitter.snowflake.id.SnowflakeId
+import com.ExTwitter.timelinemixer.injection.model.candidate.AudioSpaceMetaData
+import com.ExTwitter.timelines.conversation_features.{thriftscala => cvt}
+import com.ExTwitter.timelinescorer.common.scoredtweetcandidate.{thriftscala => stc}
+import com.ExTwitter.timelineservice.suggests.{thriftscala => tls}
 
 object ForYouTimelineScorerResponseFeatureTransformer
     extends CandidateFeatureTransformer[ScoredTweetCandidateWithFocalTweet] {

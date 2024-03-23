@@ -1,13 +1,13 @@
-package com.twitter.ann.service.query_server.common
+package com.ExTwitter.ann.service.query_server.common
 
-import com.twitter.ann.common.IndexOutputFile
-import com.twitter.ann.hnsw.HnswCommon._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.search.common.file.AbstractFile
-import com.twitter.search.common.file.AbstractFile.Filter
-import com.twitter.search.common.file.PathUtils
-import com.twitter.util.Try
+import com.ExTwitter.ann.common.IndexOutputFile
+import com.ExTwitter.ann.hnsw.HnswCommon._
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.logging.Logger
+import com.ExTwitter.search.common.file.AbstractFile
+import com.ExTwitter.search.common.file.AbstractFile.Filter
+import com.ExTwitter.search.common.file.PathUtils
+import com.ExTwitter.util.Try
 import java.io.IOException
 import java.util.concurrent.atomic.AtomicReference
 import scala.collection.JavaConverters._

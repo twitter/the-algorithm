@@ -1,12 +1,12 @@
-package com.twitter.follow_recommendations.configapi
+package com.ExTwitter.follow_recommendations.configapi
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
-import com.twitter.servo.util.MemoizingStatsReceiver
-import com.twitter.timelines.configapi.Config
-import com.twitter.timelines.configapi.FeatureValue
-import com.twitter.timelines.configapi.Params
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.follow_recommendations.common.models.DisplayLocation
+import com.ExTwitter.product_mixer.core.model.marshalling.request.ClientContext
+import com.ExTwitter.servo.util.MemoizingStatsReceiver
+import com.ExTwitter.timelines.configapi.Config
+import com.ExTwitter.timelines.configapi.FeatureValue
+import com.ExTwitter.timelines.configapi.Params
 import javax.inject.Inject
 import javax.inject.Singleton
 

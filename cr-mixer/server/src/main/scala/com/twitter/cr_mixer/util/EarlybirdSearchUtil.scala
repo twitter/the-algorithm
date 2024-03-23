@@ -1,16 +1,16 @@
-package com.twitter.cr_mixer.util
+package com.ExTwitter.cr_mixer.util
 
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant
-import com.twitter.search.queryparser.query.search.SearchOperator
-import com.twitter.search.queryparser.query.search.SearchOperatorConstants
-import com.twitter.search.queryparser.query.{Query => EbQuery}
-import com.twitter.search.queryparser.query.Conjunction
+import com.ExTwitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant
+import com.ExTwitter.search.queryparser.query.search.SearchOperator
+import com.ExTwitter.search.queryparser.query.search.SearchOperatorConstants
+import com.ExTwitter.search.queryparser.query.{Query => EbQuery}
+import com.ExTwitter.search.queryparser.query.Conjunction
 import scala.collection.JavaConverters._
-import com.twitter.search.earlybird.thriftscala.ThriftSearchResultMetadataOptions
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.search.queryparser.query.Query
-import com.twitter.util.Duration
-import com.twitter.search.common.query.thriftjava.thriftscala.CollectorTerminationParams
+import com.ExTwitter.search.earlybird.thriftscala.ThriftSearchResultMetadataOptions
+import com.ExTwitter.simclusters_v2.common.TweetId
+import com.ExTwitter.search.queryparser.query.Query
+import com.ExTwitter.util.Duration
+import com.ExTwitter.search.common.query.thriftjava.thriftscala.CollectorTerminationParams
 
 object EarlybirdSearchUtil {
   val EarlybirdClientId: String = "cr-mixer.prod"

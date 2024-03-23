@@ -1,8 +1,8 @@
-package com.twitter.home_mixer.util
+package com.ExTwitter.home_mixer.util
 
-import com.twitter.home_mixer.model.HomeFeatures._
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
+import com.ExTwitter.home_mixer.model.HomeFeatures._
+import com.ExTwitter.product_mixer.component_library.model.candidate.TweetCandidate
+import com.ExTwitter.product_mixer.core.model.common.CandidateWithFeatures
 
 object ReplyRetweetUtil {
 

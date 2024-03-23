@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.common.base
+package com.ExTwitter.follow_recommendations.common.base
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.util.Duration
-import com.twitter.util.TimeoutException
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.util.Duration
+import com.ExTwitter.util.TimeoutException
 
 /**
  * Ranker is a special kind of transform that would only change the order of a list of items.
@@ -57,7 +57,7 @@ trait Ranker[Target, Candidate] extends Transform[Target, Candidate] { ranker =>
       override def rank(target: Target, candidates: Seq[Candidate]): Stitch[Seq[Candidate]] = {
         original
           .rank(target, candidates)
-          .within(timeout)(com.twitter.finagle.util.DefaultTimer)
+          .within(timeout)(com.ExTwitter.finagle.util.DefaultTimer)
           .rescue {
             case _: TimeoutException =>
               timeoutCounter.incr()

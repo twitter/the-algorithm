@@ -1,7 +1,7 @@
-package com.twitter.home_mixer.param
+package com.ExTwitter.home_mixer.param
 
-import com.twitter.home_mixer.param.HomeGlobalParams._
-import com.twitter.product_mixer.core.functional_component.configapi.registry.GlobalParamConfig
+import com.ExTwitter.home_mixer.param.HomeGlobalParams._
+import com.ExTwitter.product_mixer.core.functional_component.configapi.registry.GlobalParamConfig
 import javax.inject.Inject
 import javax.inject.Singleton
 

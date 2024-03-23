@@ -1,28 +1,28 @@
-package com.twitter.follow_recommendations.common.candidate_sources.base
+package com.ExTwitter.follow_recommendations.common.candidate_sources.base
 
-import com.twitter.follow_recommendations.common.candidate_sources.base.SimilarUserExpanderParams.DefaultEnableImplicitEngagedExpansion
-import com.twitter.follow_recommendations.common.candidate_sources.base.SimilarUserExpanderParams.DefaultExpansionInputCount
-import com.twitter.follow_recommendations.common.candidate_sources.base.SimilarUserExpanderParams.DefaultFinalCandidatesReturnedCount
-import com.twitter.follow_recommendations.common.candidate_sources.base.SimilarUserExpanderParams.EnableNonDirectFollowExpansion
-import com.twitter.follow_recommendations.common.candidate_sources.base.SimilarUserExpanderParams.EnableSimsExpandSeedAccountsSort
-import com.twitter.follow_recommendations.common.candidate_sources.base.SimilarUserExpanderRepository.DefaultCandidateBuilder
-import com.twitter.follow_recommendations.common.candidate_sources.base.SimilarUserExpanderRepository.DefaultScore
-import com.twitter.follow_recommendations.common.models.AccountProof
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.EngagementType
-import com.twitter.follow_recommendations.common.models.FollowProof
-import com.twitter.follow_recommendations.common.models.Reason
-import com.twitter.follow_recommendations.common.models.SimilarToProof
-import com.twitter.follow_recommendations.common.models.UserCandidateSourceDetails
-import com.twitter.hermit.candidate.thriftscala.Candidates
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.timelines.configapi.Params
+import com.ExTwitter.follow_recommendations.common.candidate_sources.base.SimilarUserExpanderParams.DefaultEnableImplicitEngagedExpansion
+import com.ExTwitter.follow_recommendations.common.candidate_sources.base.SimilarUserExpanderParams.DefaultExpansionInputCount
+import com.ExTwitter.follow_recommendations.common.candidate_sources.base.SimilarUserExpanderParams.DefaultFinalCandidatesReturnedCount
+import com.ExTwitter.follow_recommendations.common.candidate_sources.base.SimilarUserExpanderParams.EnableNonDirectFollowExpansion
+import com.ExTwitter.follow_recommendations.common.candidate_sources.base.SimilarUserExpanderParams.EnableSimsExpandSeedAccountsSort
+import com.ExTwitter.follow_recommendations.common.candidate_sources.base.SimilarUserExpanderRepository.DefaultCandidateBuilder
+import com.ExTwitter.follow_recommendations.common.candidate_sources.base.SimilarUserExpanderRepository.DefaultScore
+import com.ExTwitter.follow_recommendations.common.models.AccountProof
+import com.ExTwitter.follow_recommendations.common.models.CandidateUser
+import com.ExTwitter.follow_recommendations.common.models.EngagementType
+import com.ExTwitter.follow_recommendations.common.models.FollowProof
+import com.ExTwitter.follow_recommendations.common.models.Reason
+import com.ExTwitter.follow_recommendations.common.models.SimilarToProof
+import com.ExTwitter.follow_recommendations.common.models.UserCandidateSourceDetails
+import com.ExTwitter.hermit.candidate.thriftscala.Candidates
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidateSource
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.strato.client.Fetcher
+import com.ExTwitter.timelines.configapi.FSBoundedParam
+import com.ExTwitter.timelines.configapi.FSParam
+import com.ExTwitter.timelines.configapi.HasParams
+import com.ExTwitter.timelines.configapi.Params
 
 case class SecondDegreeCandidate(userId: Long, score: Double, socialProof: Option[Seq[Long]])
 

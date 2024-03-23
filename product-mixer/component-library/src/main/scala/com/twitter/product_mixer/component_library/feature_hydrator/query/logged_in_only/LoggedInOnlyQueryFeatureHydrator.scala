@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.component_library.feature_hydrator.query.logged_in_only
+package com.ExTwitter.product_mixer.component_library.feature_hydrator.query.logged_in_only
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.Conditionally
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+import com.ExTwitter.product_mixer.core.feature.Feature
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.functional_component.common.alert.Alert
+import com.ExTwitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
+import com.ExTwitter.product_mixer.core.model.common.Conditionally
+import com.ExTwitter.product_mixer.core.model.common.UniversalNoun
+import com.ExTwitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.stitch.Stitch
 
 /**
  * A [[QueryFeatureHydrator]] with [[Conditionally]] to run only for logged in users

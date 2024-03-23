@@ -1,11 +1,11 @@
-package com.twitter.cr_mixer.similarity_engine
+package com.ExTwitter.cr_mixer.similarity_engine
 
-import com.twitter.cr_mixer.model.SourceInfo
-import com.twitter.cr_mixer.model.TweetWithScore
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.util.Duration
-import com.twitter.util.Time
+import com.ExTwitter.cr_mixer.model.SourceInfo
+import com.ExTwitter.cr_mixer.model.TweetWithScore
+import com.ExTwitter.simclusters_v2.thriftscala.InternalId
+import com.ExTwitter.snowflake.id.SnowflakeId
+import com.ExTwitter.util.Duration
+import com.ExTwitter.util.Time
 
 object FilterUtil {
 
@@ -17,7 +17,7 @@ object FilterUtil {
     // Tweet IDs are approximately chronological (see http://go/snowflake),
     // so we are building the earliest tweet id once
     // The per-candidate logic here then be candidate.tweetId > earliestPermittedTweetId, which is far cheaper.
-    // See @cyao's phab on CrMixer generic age filter for reference https://phabricator.twitter.biz/D903188
+    // See @cyao's phab on CrMixer generic age filter for reference https://phabricator.ExTwitter.biz/D903188
     val earliestTweetId = SnowflakeId.firstIdFor(Time.now - maxTweetAgeHours)
     candidates.filter { candidate => candidate.tweetId >= earliestTweetId }
   }

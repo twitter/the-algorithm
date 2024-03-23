@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.component_library.model.cursor
+package com.ExTwitter.product_mixer.component_library.model.cursor
 
-import com.twitter.product_mixer.core.pipeline.PipelineCursor
-import com.twitter.product_mixer.core.pipeline.UrtPipelineCursor
-import com.twitter.search.common.util.bloomfilter.AdaptiveLongIntBloomFilter
+import com.ExTwitter.product_mixer.core.pipeline.PipelineCursor
+import com.ExTwitter.product_mixer.core.pipeline.UrtPipelineCursor
+import com.ExTwitter.search.common.util.bloomfilter.AdaptiveLongIntBloomFilter
 
 /**
  * Cursor model that may be used when cursoring over a unordered candidate source. On each server

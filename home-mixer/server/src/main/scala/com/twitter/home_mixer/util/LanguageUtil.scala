@@ -1,8 +1,8 @@
-package com.twitter.home_mixer.util
+package com.ExTwitter.home_mixer.util
 
-import com.twitter.search.common.constants.{thriftscala => scc}
-import com.twitter.search.common.util.lang.ThriftLanguageUtil
-import com.twitter.service.metastore.gen.{thriftscala => smg}
+import com.ExTwitter.search.common.constants.{thriftscala => scc}
+import com.ExTwitter.search.common.util.lang.ThriftLanguageUtil
+import com.ExTwitter.service.metastore.gen.{thriftscala => smg}
 
 object LanguageUtil {
 

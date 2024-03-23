@@ -1,15 +1,15 @@
-package com.twitter.ann.scalding.offline
+package com.ExTwitter.ann.scalding.offline
 
-import com.twitter.core_workflows.user_model.thriftscala.CondensedUserState
-import com.twitter.cortex.ml.embeddings.common.{DataSourceManager, GraphEdge, Helpers, UserKind}
-import com.twitter.ml.featurestore.lib.UserId
-import com.twitter.entityembeddings.neighbors.thriftscala.{EntityKey, NearestNeighbors}
-import com.twitter.pluck.source.core_workflows.user_model.CondensedUserStateScalaDataset
-import com.twitter.scalding._
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.usersource.snapshot.flat.UsersourceFlatScalaDataset
-import com.twitter.usersource.snapshot.flat.thriftscala.FlatUser
+import com.ExTwitter.core_workflows.user_model.thriftscala.CondensedUserState
+import com.ExTwitter.cortex.ml.embeddings.common.{DataSourceManager, GraphEdge, Helpers, UserKind}
+import com.ExTwitter.ml.featurestore.lib.UserId
+import com.ExTwitter.entityembeddings.neighbors.thriftscala.{EntityKey, NearestNeighbors}
+import com.ExTwitter.pluck.source.core_workflows.user_model.CondensedUserStateScalaDataset
+import com.ExTwitter.scalding._
+import com.ExTwitter.scalding.typed.TypedPipe
+import com.ExTwitter.scalding_internal.dalv2.DAL
+import com.ExTwitter.usersource.snapshot.flat.UsersourceFlatScalaDataset
+import com.ExTwitter.usersource.snapshot.flat.thriftscala.FlatUser
 
 case class ConsumerAssoc(consumerId: UserId, assoc: List[String])
 

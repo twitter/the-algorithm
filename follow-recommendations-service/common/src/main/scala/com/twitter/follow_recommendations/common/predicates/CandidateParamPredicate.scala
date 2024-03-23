@@ -1,11 +1,11 @@
-package com.twitter.follow_recommendations.common.predicates
+package com.ExTwitter.follow_recommendations.common.predicates
 
-import com.twitter.follow_recommendations.common.base.Predicate
-import com.twitter.follow_recommendations.common.base.PredicateResult
-import com.twitter.follow_recommendations.common.models.FilterReason
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.timelines.configapi.Param
+import com.ExTwitter.follow_recommendations.common.base.Predicate
+import com.ExTwitter.follow_recommendations.common.base.PredicateResult
+import com.ExTwitter.follow_recommendations.common.models.FilterReason
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.timelines.configapi.HasParams
+import com.ExTwitter.timelines.configapi.Param
 
 class CandidateParamPredicate[A <: HasParams](
   param: Param[Boolean],

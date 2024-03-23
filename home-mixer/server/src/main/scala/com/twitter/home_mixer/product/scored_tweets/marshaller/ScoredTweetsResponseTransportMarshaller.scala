@@ -1,12 +1,12 @@
-package com.twitter.home_mixer.product.scored_tweets.marshaller
+package com.ExTwitter.home_mixer.product.scored_tweets.marshaller
 
-import com.twitter.home_mixer.model.HomeFeatures._
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsResponse
-import com.twitter.home_mixer.{thriftscala => t}
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.TopicContextFunctionalityTypeMarshaller
-import com.twitter.product_mixer.core.model.common.identifier.TransportMarshallerIdentifier
+import com.ExTwitter.home_mixer.model.HomeFeatures._
+import com.ExTwitter.home_mixer.product.scored_tweets.model.ScoredTweetsResponse
+import com.ExTwitter.home_mixer.{thriftscala => t}
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
+import com.ExTwitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.TopicContextFunctionalityTypeMarshaller
+import com.ExTwitter.product_mixer.core.model.common.identifier.TransportMarshallerIdentifier
 
 /**
  * Marshall the domain model into our transport (Thrift) model.

@@ -1,4 +1,4 @@
-package com.twitter.graph_feature_service.scalding
+package com.ExTwitter.graph_feature_service.scalding
 
 case class EdgeFeature(
   realGraphScore: Float,

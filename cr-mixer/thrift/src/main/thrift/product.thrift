@@ -1,6 +1,6 @@
-namespace java com.twitter.cr_mixer.thriftjava
-#@namespace scala com.twitter.cr_mixer.thriftscala
-#@namespace strato com.twitter.cr_mixer
+namespace java com.ExTwitter.cr_mixer.thriftjava
+#@namespace scala com.ExTwitter.cr_mixer.thriftscala
+#@namespace strato com.ExTwitter.cr_mixer
 
 # In CrMixer, one org should only have one Product
 enum Product {

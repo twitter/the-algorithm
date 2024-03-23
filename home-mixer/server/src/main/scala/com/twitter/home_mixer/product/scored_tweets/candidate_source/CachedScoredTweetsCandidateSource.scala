@@ -1,11 +1,11 @@
-package com.twitter.home_mixer.product.scored_tweets.candidate_source
+package com.ExTwitter.home_mixer.product.scored_tweets.candidate_source
 
-import com.twitter.home_mixer.util.CachedScoredTweetsHelper
-import com.twitter.home_mixer.{thriftscala => hmt}
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+import com.ExTwitter.home_mixer.util.CachedScoredTweetsHelper
+import com.ExTwitter.home_mixer.{thriftscala => hmt}
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidateSource
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.stitch.Stitch
 
 import javax.inject.Inject
 import javax.inject.Singleton

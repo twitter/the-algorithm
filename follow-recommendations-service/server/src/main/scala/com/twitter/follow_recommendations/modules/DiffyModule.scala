@@ -1,22 +1,22 @@
-package com.twitter.follow_recommendations.modules
+package com.ExTwitter.follow_recommendations.modules
 
 import com.google.inject.Provides
 import com.google.inject.Singleton
-import com.twitter.inject.annotations.Flag
-import com.twitter.decider.RandomRecipient
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient.MtlsThriftMuxClientSyntax
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finatra.annotations.DarkTrafficService
-import com.twitter.follow_recommendations.configapi.deciders.DeciderKey
-import com.twitter.follow_recommendations.thriftscala.FollowRecommendationsThriftService
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.thrift.filters.DarkTrafficFilter
-import com.twitter.servo.decider.DeciderGateBuilder
+import com.ExTwitter.inject.annotations.Flag
+import com.ExTwitter.decider.RandomRecipient
+import com.ExTwitter.finagle.ThriftMux
+import com.ExTwitter.finagle.mtls.authentication.ServiceIdentifier
+import com.ExTwitter.finagle.mtls.client.MtlsStackClient.MtlsThriftMuxClientSyntax
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.finagle.thrift.ClientId
+import com.ExTwitter.finatra.annotations.DarkTrafficService
+import com.ExTwitter.follow_recommendations.configapi.deciders.DeciderKey
+import com.ExTwitter.follow_recommendations.thriftscala.FollowRecommendationsThriftService
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.inject.thrift.filters.DarkTrafficFilter
+import com.ExTwitter.servo.decider.DeciderGateBuilder
 
-object DiffyModule extends TwitterModule {
+object DiffyModule extends ExTwitterModule {
   // diffy.dest is defined in the Follow Recommendations Service aurora file
   // and points to the Dark Traffic Proxy server
   private val destFlag =

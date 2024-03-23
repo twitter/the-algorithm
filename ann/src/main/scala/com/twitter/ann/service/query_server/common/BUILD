@@ -17,8 +17,8 @@ scala_library(
         "3rdparty/jvm/com/google/inject/extensions:guice-assistedinject",
         "3rdparty/jvm/javax/inject:javax.inject",
         "3rdparty/jvm/net/codingwell:scala-guice",
-        "ann/src/main/scala/com/twitter/ann/common",
-        "ann/src/main/thrift/com/twitter/ann/common:ann-common-scala",
+        "ann/src/main/scala/com/ExTwitter/ann/common",
+        "ann/src/main/thrift/com/ExTwitter/ann/common:ann-common-scala",
         "finagle/finagle-core/src/main",
         "finagle/finagle-zipkin-scribe",
         "finatra-internal/decider",
@@ -26,7 +26,7 @@ scala_library(
         "finatra/inject/inject-core/src/main/scala",
         "mediaservices/commons",
         "scrooge/scrooge-core/src/main/scala",
-        "src/scala/com/twitter/cortex/ml/embeddings/common:Helpers",
+        "src/scala/com/ExTwitter/cortex/ml/embeddings/common:Helpers",
         "util/util-app/src/main/scala",
         "util/util-logging/src/main/scala",
     ],
@@ -41,10 +41,10 @@ scala_library(
     compiler_option_sets = ["fatal_warnings"],
     tags = ["bazel-compatible"],
     dependencies = [
-        "ann/src/main/scala/com/twitter/ann/hnsw",
-        "src/java/com/twitter/search/common/file",
+        "ann/src/main/scala/com/ExTwitter/ann/hnsw",
+        "src/java/com/ExTwitter/search/common/file",
         "util/util-logging/src/main/scala",
-        "util/util-stats/src/main/scala/com/twitter/finagle/stats",
+        "util/util-stats/src/main/scala/com/ExTwitter/finagle/stats",
     ],
 )
 
@@ -55,9 +55,9 @@ scala_library(
     tags = ["bazel-compatible"],
     dependencies = [
         ":index_path_provider",
-        "ann/src/main/scala/com/twitter/ann/faiss",
-        "src/java/com/twitter/search/common/file",
+        "ann/src/main/scala/com/ExTwitter/ann/faiss",
+        "src/java/com/ExTwitter/search/common/file",
         "util/util-logging/src/main/scala",
-        "util/util-stats/src/main/scala/com/twitter/finagle/stats",
+        "util/util-stats/src/main/scala/com/ExTwitter/finagle/stats",
     ],
 )

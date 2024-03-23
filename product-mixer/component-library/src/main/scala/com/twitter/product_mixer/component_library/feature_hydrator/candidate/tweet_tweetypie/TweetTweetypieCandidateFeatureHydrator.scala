@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.component_library.feature_hydrator.candidate.tweet_tweetypie
+package com.ExTwitter.product_mixer.component_library.feature_hydrator.candidate.tweet_tweetypie
 
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.spam.rtf.thriftscala.SafetyLevel
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.tweetypie.{TweetyPie => TweetypieStitchClient}
-import com.twitter.tweetypie.thriftscala.TweetVisibilityPolicy
-import com.twitter.tweetypie.{thriftscala => TP}
+import com.ExTwitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
+import com.ExTwitter.product_mixer.component_library.model.candidate.TweetCandidate
+import com.ExTwitter.product_mixer.core.feature.Feature
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
+import com.ExTwitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator
+import com.ExTwitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.spam.rtf.thriftscala.SafetyLevel
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.stitch.tweetypie.{TweetyPie => TweetypieStitchClient}
+import com.ExTwitter.tweetypie.thriftscala.TweetVisibilityPolicy
+import com.ExTwitter.tweetypie.{thriftscala => TP}
 
 // Candidate Features
 object IsCommunityTweetFeature extends Feature[TweetCandidate, Boolean]

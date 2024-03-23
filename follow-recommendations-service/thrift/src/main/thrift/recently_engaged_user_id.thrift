@@ -1,6 +1,6 @@
-namespace java com.twitter.follow_recommendations.thriftjava
-#@namespace scala com.twitter.follow_recommendations.thriftscala
-#@namespace strato com.twitter.follow_recommendations
+namespace java com.ExTwitter.follow_recommendations.thriftjava
+#@namespace scala com.ExTwitter.follow_recommendations.thriftscala
+#@namespace strato com.ExTwitter.follow_recommendations
 
 include "engagementType.thrift"
 

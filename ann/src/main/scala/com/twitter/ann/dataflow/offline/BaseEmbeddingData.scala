@@ -1,4 +1,4 @@
-package com.twitter.ann.dataflow.offline
+package com.ExTwitter.ann.dataflow.offline
 
 trait BaseEmbeddingData {
   val entityId: Option[Long]

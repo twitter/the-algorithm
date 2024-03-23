@@ -1,27 +1,27 @@
-package com.twitter.home_mixer.federated
+package com.ExTwitter.home_mixer.federated
 
-import com.twitter.gizmoduck.{thriftscala => gd}
-import com.twitter.home_mixer.marshaller.request.HomeMixerRequestUnmarshaller
-import com.twitter.home_mixer.model.request.HomeMixerRequest
-import com.twitter.home_mixer.{thriftscala => hm}
-import com.twitter.product_mixer.core.functional_component.configapi.ParamsBuilder
-import com.twitter.product_mixer.core.pipeline.product.ProductPipelineRequest
-import com.twitter.product_mixer.core.pipeline.product.ProductPipelineResult
-import com.twitter.product_mixer.core.product.registry.ProductPipelineRegistry
-import com.twitter.product_mixer.core.{thriftscala => pm}
-import com.twitter.stitch.Arrow
-import com.twitter.stitch.Stitch
-import com.twitter.strato.callcontext.CallContext
-import com.twitter.strato.catalog.OpMetadata
-import com.twitter.strato.config._
-import com.twitter.strato.data._
-import com.twitter.strato.fed.StratoFed
-import com.twitter.strato.generated.client.auth_context.AuditIpClientColumn
-import com.twitter.strato.generated.client.gizmoduck.CompositeOnUserClientColumn
-import com.twitter.strato.graphql.timelines.{thriftscala => gql}
-import com.twitter.strato.thrift.ScroogeConv
-import com.twitter.timelines.render.{thriftscala => tr}
-import com.twitter.util.Try
+import com.ExTwitter.gizmoduck.{thriftscala => gd}
+import com.ExTwitter.home_mixer.marshaller.request.HomeMixerRequestUnmarshaller
+import com.ExTwitter.home_mixer.model.request.HomeMixerRequest
+import com.ExTwitter.home_mixer.{thriftscala => hm}
+import com.ExTwitter.product_mixer.core.functional_component.configapi.ParamsBuilder
+import com.ExTwitter.product_mixer.core.pipeline.product.ProductPipelineRequest
+import com.ExTwitter.product_mixer.core.pipeline.product.ProductPipelineResult
+import com.ExTwitter.product_mixer.core.product.registry.ProductPipelineRegistry
+import com.ExTwitter.product_mixer.core.{thriftscala => pm}
+import com.ExTwitter.stitch.Arrow
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.strato.callcontext.CallContext
+import com.ExTwitter.strato.catalog.OpMetadata
+import com.ExTwitter.strato.config._
+import com.ExTwitter.strato.data._
+import com.ExTwitter.strato.fed.StratoFed
+import com.ExTwitter.strato.generated.client.auth_context.AuditIpClientColumn
+import com.ExTwitter.strato.generated.client.gizmoduck.CompositeOnUserClientColumn
+import com.ExTwitter.strato.graphql.timelines.{thriftscala => gql}
+import com.ExTwitter.strato.thrift.ScroogeConv
+import com.ExTwitter.timelines.render.{thriftscala => tr}
+import com.ExTwitter.util.Try
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -79,7 +79,7 @@ class HomeMixerColumn @Inject() (
       val populateUserRoles = Arrow
         .flatMap[(Key, View), Option[Set[String]]] { _ =>
           Stitch.collect {
-            CallContext.twitterUserId.map { userId =>
+            CallContext.ExTwitterUserId.map { userId =>
               compositeOnUserClientColumn.fetcher
                 .callStack(HomeMixerColumn.FetchCallstack)
                 .fetch(userId, gizmoduckView).map(_.v)
@@ -138,7 +138,7 @@ class HomeMixerColumn @Inject() (
         }
 
         val clientContext = pm.ClientContext(
-          userId = CallContext.twitterUserId,
+          userId = CallContext.ExTwitterUserId,
           guestId = CallContext.guestId,
           guestIdAds = CallContext.guestIdAds,
           guestIdMarketing = CallContext.guestIdMarketing,

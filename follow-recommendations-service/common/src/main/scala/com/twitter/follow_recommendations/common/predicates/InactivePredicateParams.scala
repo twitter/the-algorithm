@@ -1,8 +1,8 @@
-package com.twitter.follow_recommendations.common.predicates
+package com.ExTwitter.follow_recommendations.common.predicates
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.Param
+import com.ExTwitter.timelines.configapi.FSBoundedParam
+import com.ExTwitter.timelines.configapi.FSParam
+import com.ExTwitter.timelines.configapi.Param
 
 object InactivePredicateParams {
   case object DefaultInactivityThreshold

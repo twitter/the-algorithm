@@ -6,7 +6,7 @@
  * the SWIG interface file instead.
  * ----------------------------------------------------------------------------- */
 
-package com.twitter.ann.faiss;
+package com.ExTwitter.ann.faiss;
 
 public class swigfaiss implements swigfaissConstants {
   public static void bitvec_print(SWIGTYPE_p_unsigned_char b, long d) {

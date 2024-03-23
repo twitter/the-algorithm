@@ -1,19 +1,19 @@
-package com.twitter.follow_recommendations.common.candidate_sources.promoted_accounts
+package com.ExTwitter.follow_recommendations.common.candidate_sources.promoted_accounts
 
-import com.twitter.adserver.thriftscala.AdServerException
-import com.twitter.adserver.{thriftscala => adthrift}
-import com.twitter.finagle.TimeoutException
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.clients.adserver.AdRequest
-import com.twitter.follow_recommendations.common.clients.adserver.AdserverClient
-import com.twitter.follow_recommendations.common.clients.socialgraph.SocialGraphClient
-import com.twitter.follow_recommendations.common.models.FollowProof
-import com.twitter.hermit.model.Algorithm
-import com.twitter.inject.Logging
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
+import com.ExTwitter.adserver.thriftscala.AdServerException
+import com.ExTwitter.adserver.{thriftscala => adthrift}
+import com.ExTwitter.finagle.TimeoutException
+import com.ExTwitter.finagle.stats.Counter
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.follow_recommendations.common.clients.adserver.AdRequest
+import com.ExTwitter.follow_recommendations.common.clients.adserver.AdserverClient
+import com.ExTwitter.follow_recommendations.common.clients.socialgraph.SocialGraphClient
+import com.ExTwitter.follow_recommendations.common.models.FollowProof
+import com.ExTwitter.hermit.model.Algorithm
+import com.ExTwitter.inject.Logging
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidateSource
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.stitch.Stitch
 import javax.inject.Inject
 import javax.inject.Singleton
 

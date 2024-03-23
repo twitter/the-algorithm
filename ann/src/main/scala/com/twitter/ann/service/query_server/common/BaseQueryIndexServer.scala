@@ -1,20 +1,20 @@
-package com.twitter.ann.service.query_server.common
+package com.ExTwitter.ann.service.query_server.common
 
 import com.google.inject.Module
-import com.twitter.ann.common.thriftscala.AnnQueryService
-import com.twitter.app.Flag
-import com.twitter.finatra.decider.modules.DeciderModule
-import com.twitter.finatra.thrift.ThriftServer
-import com.twitter.finatra.mtls.thriftmux.Mtls
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsThriftWebFormsModule
-import com.twitter.finatra.thrift.filters.{
+import com.ExTwitter.ann.common.thriftscala.AnnQueryService
+import com.ExTwitter.app.Flag
+import com.ExTwitter.finatra.decider.modules.DeciderModule
+import com.ExTwitter.finatra.thrift.ThriftServer
+import com.ExTwitter.finatra.mtls.thriftmux.Mtls
+import com.ExTwitter.finatra.mtls.thriftmux.modules.MtlsThriftWebFormsModule
+import com.ExTwitter.finatra.thrift.filters.{
   AccessLoggingFilter,
   LoggingMDCFilter,
   StatsFilter,
   ThriftMDCFilter,
   TraceIdMDCFilter
 }
-import com.twitter.finatra.thrift.routing.ThriftRouter
+import com.ExTwitter.finatra.thrift.routing.ThriftRouter
 
 /**
  * This class provides most of the configuration needed for logging, stats, deciders etc.

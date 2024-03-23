@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.alert
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.alert
 
-import com.twitter.product_mixer.component_library.model.candidate.ShowAlertCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.alert.BaseShowAlertColorConfigurationBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.ShowAlertColorConfiguration
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.component_library.model.candidate.ShowAlertCandidate
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.item.alert.BaseShowAlertColorConfigurationBuilder
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.alert.ShowAlertColorConfiguration
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
 
 case class StaticShowAlertColorConfigurationBuilder[-Query <: PipelineQuery](
   configuration: ShowAlertColorConfiguration)

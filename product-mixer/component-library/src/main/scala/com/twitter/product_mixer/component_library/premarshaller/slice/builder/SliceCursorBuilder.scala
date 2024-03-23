@@ -2,8 +2,8 @@ package com.twitter.product_mixer.component_library.premarshaller.slice.builder
 
 import com.twitter.product_mixer.core.model.marshalling.response.slice.CursorItem
 import com.twitter.product_mixer.core.model.marshalling.response.slice.CursorType
-import com.twitter.product_mixer.core.model.marshalling.response.slice.SliceItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.core.model.marshalling.response.slice.SliceItem
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
 
 trait SliceCursorBuilder[-Query <: PipelineQuery] {
 

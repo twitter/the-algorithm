@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.component_library.candidate_source.flexible_injection_pipeline
+package com.ExTwitter.product_mixer.component_library.candidate_source.flexible_injection_pipeline
 
-import com.twitter.inject.Logging
-import com.twitter.onboarding.injections.{thriftscala => injectionsthrift}
-import com.twitter.onboarding.task.service.{thriftscala => servicethrift}
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
+import com.ExTwitter.inject.Logging
+import com.ExTwitter.onboarding.injections.{thriftscala => injectionsthrift}
+import com.ExTwitter.onboarding.task.service.{thriftscala => servicethrift}
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidateSource
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.stitch.Stitch
 import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
  * Returns a list of prompts to insert into a user's timeline (inline prompt, cover modals, etc)
- * from go/flip (the prompting platform for Twitter).
+ * from go/flip (the prompting platform for ExTwitter).
  */
 @Singleton
 class PromptCandidateSource @Inject() (taskService: servicethrift.TaskService.MethodPerEndpoint)

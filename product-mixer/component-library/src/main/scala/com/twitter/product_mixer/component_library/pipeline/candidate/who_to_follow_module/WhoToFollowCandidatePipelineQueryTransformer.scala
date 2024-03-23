@@ -1,11 +1,11 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module
+package com.ExTwitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module
 
-import com.twitter.peoplediscovery.api.thriftscala.ClientContext
-import com.twitter.peoplediscovery.api.thriftscala.GetModuleRequest
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Param
+import com.ExTwitter.peoplediscovery.api.thriftscala.ClientContext
+import com.ExTwitter.peoplediscovery.api.thriftscala.GetModuleRequest
+import com.ExTwitter.product_mixer.core.feature.Feature
+import com.ExTwitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.timelines.configapi.Param
 
 object WhoToFollowCandidatePipelineQueryTransformer {
   val DisplayLocation = "timeline"

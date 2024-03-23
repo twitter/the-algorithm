@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.component_library.module
+package com.ExTwitter.product_mixer.component_library.module
 
-import com.twitter.decider.Decider
-import com.twitter.decider.RandomRecipient
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finagle.thrift.service.Filterable
-import com.twitter.finagle.thrift.service.ReqRepServicePerEndpointBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.Injector
-import com.twitter.inject.annotations.Flags
-import com.twitter.inject.thrift.modules.ReqRepDarkTrafficFilterModule
+import com.ExTwitter.decider.Decider
+import com.ExTwitter.decider.RandomRecipient
+import com.ExTwitter.finagle.thrift.ClientId
+import com.ExTwitter.finagle.thrift.service.Filterable
+import com.ExTwitter.finagle.thrift.service.ReqRepServicePerEndpointBuilder
+import com.ExTwitter.finatra.mtls.thriftmux.modules.MtlsClient
+import com.ExTwitter.inject.Injector
+import com.ExTwitter.inject.annotations.Flags
+import com.ExTwitter.inject.thrift.modules.ReqRepDarkTrafficFilterModule
 import scala.reflect.ClassTag
 
 class DarkTrafficFilterModule[MethodIface <: Filterable[MethodIface]: ClassTag](

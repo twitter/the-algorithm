@@ -1,5 +1,5 @@
 # The keys in this file correspond to the DeciderValues defined in
-# https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/cr-mixer/server/src/main/scala/com/twitter/cr_mixer/param/decider/DeciderKey.scala
+# https://sourcegraph.ExTwitter.biz/git.ExTwitter.biz/source/-/blob/cr-mixer/server/src/main/scala/com/ExTwitter/cr_mixer/param/decider/DeciderKey.scala
 
 dark_traffic_filter:
   comment: Proportion of the requests that are forwarded as dark traffic to the proxy

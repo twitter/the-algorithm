@@ -1,23 +1,23 @@
-package com.twitter.follow_recommendations.common.clients.addressbook
+package com.ExTwitter.follow_recommendations.common.clients.addressbook
 
-import com.twitter.addressbook.datatypes.thriftscala.QueryType
-import com.twitter.addressbook.thriftscala.AddressBookGetRequest
-import com.twitter.addressbook.thriftscala.AddressBookGetResponse
-import com.twitter.addressbook.thriftscala.Addressbook2
-import com.twitter.addressbook.thriftscala.ClientInfo
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.wtf.scalding.jobs.addressbook.thriftscala.STPResultFeature
-import com.twitter.follow_recommendations.common.clients.addressbook.models.Contact
-import com.twitter.follow_recommendations.common.clients.addressbook.models.EdgeType
-import com.twitter.follow_recommendations.common.clients.addressbook.models.QueryOption
-import com.twitter.follow_recommendations.common.clients.addressbook.models.RecordIdentifier
-import com.twitter.wtf.scalding.jobs.address_book.ABUtil.hashContact
-import com.twitter.wtf.scalding.jobs.address_book.ABUtil.normalizeEmail
-import com.twitter.wtf.scalding.jobs.address_book.ABUtil.normalizePhoneNumber
-import com.twitter.hermit.usercontacts.thriftscala.{UserContacts => tUserContacts}
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
+import com.ExTwitter.addressbook.datatypes.thriftscala.QueryType
+import com.ExTwitter.addressbook.thriftscala.AddressBookGetRequest
+import com.ExTwitter.addressbook.thriftscala.AddressBookGetResponse
+import com.ExTwitter.addressbook.thriftscala.Addressbook2
+import com.ExTwitter.addressbook.thriftscala.ClientInfo
+import com.ExTwitter.finagle.stats.NullStatsReceiver
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.wtf.scalding.jobs.addressbook.thriftscala.STPResultFeature
+import com.ExTwitter.follow_recommendations.common.clients.addressbook.models.Contact
+import com.ExTwitter.follow_recommendations.common.clients.addressbook.models.EdgeType
+import com.ExTwitter.follow_recommendations.common.clients.addressbook.models.QueryOption
+import com.ExTwitter.follow_recommendations.common.clients.addressbook.models.RecordIdentifier
+import com.ExTwitter.wtf.scalding.jobs.address_book.ABUtil.hashContact
+import com.ExTwitter.wtf.scalding.jobs.address_book.ABUtil.normalizeEmail
+import com.ExTwitter.wtf.scalding.jobs.address_book.ABUtil.normalizePhoneNumber
+import com.ExTwitter.hermit.usercontacts.thriftscala.{UserContacts => tUserContacts}
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.strato.client.Fetcher
 import javax.inject.Inject
 import javax.inject.Singleton
 

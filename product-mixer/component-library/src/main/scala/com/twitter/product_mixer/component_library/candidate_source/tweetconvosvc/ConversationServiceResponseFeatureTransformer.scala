@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.component_library.candidate_source.tweetconvosvc
+package com.ExTwitter.product_mixer.component_library.candidate_source.tweetconvosvc
 
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
-import com.twitter.timelineservice.suggests.thriftscala.SuggestType
+import com.ExTwitter.product_mixer.component_library.model.candidate.TweetCandidate
+import com.ExTwitter.product_mixer.core.feature.Feature
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
+import com.ExTwitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
+import com.ExTwitter.product_mixer.core.model.common.identifier.TransformerIdentifier
+import com.ExTwitter.timelineservice.suggests.thriftscala.SuggestType
 
 object AuthorIdFeature extends Feature[TweetCandidate, Option[Long]]
 object AncestorIdsFeature extends Feature[TweetCandidate, Seq[Long]]

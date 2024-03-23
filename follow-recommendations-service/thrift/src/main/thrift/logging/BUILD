@@ -4,9 +4,9 @@ create_thrift_libraries(
     platform = "java8",
     tags = ["bazel-compatible"],
     dependency_roots = [
-        "src/thrift/com/twitter/ads/adserver:adserver_common",
-        "src/thrift/com/twitter/ml/api:data",
-        "src/thrift/com/twitter/suggests/controller_data",
+        "src/thrift/com/ExTwitter/ads/adserver:adserver_common",
+        "src/thrift/com/ExTwitter/ml/api:data",
+        "src/thrift/com/ExTwitter/suggests/controller_data",
     ],
     generate_languages = [
         "java",

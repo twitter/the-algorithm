@@ -1,15 +1,15 @@
-package com.twitter.ann.hnsw
+package com.ExTwitter.ann.hnsw
 
 import com.google.common.annotations.VisibleForTesting
-import com.twitter.ann.common.EmbeddingType.EmbeddingVector
-import com.twitter.ann.common._
-import com.twitter.ann.common.thriftscala.HnswIndexMetadata
-import com.twitter.ann.hnsw.HnswCommon._
-import com.twitter.ann.hnsw.HnswIndex.RandomProvider
-import com.twitter.bijection.Injection
-import com.twitter.search.common.file.AbstractFile
-import com.twitter.search.common.file.FileUtils
-import com.twitter.util.Future
+import com.ExTwitter.ann.common.EmbeddingType.EmbeddingVector
+import com.ExTwitter.ann.common._
+import com.ExTwitter.ann.common.thriftscala.HnswIndexMetadata
+import com.ExTwitter.ann.hnsw.HnswCommon._
+import com.ExTwitter.ann.hnsw.HnswIndex.RandomProvider
+import com.ExTwitter.bijection.Injection
+import com.ExTwitter.search.common.file.AbstractFile
+import com.ExTwitter.search.common.file.FileUtils
+import com.ExTwitter.util.Future
 import java.io.IOException
 import java.util.concurrent.ThreadLocalRandom
 import java.util.Random

@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.component_library.feature_hydrator.candidate.decay
+package com.ExTwitter.product_mixer.component_library.feature_hydrator.candidate.decay
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.configapi.StaticParam
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.product_mixer.core.feature.Feature
+import com.ExTwitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
+import com.ExTwitter.product_mixer.core.functional_component.configapi.StaticParam
+import com.ExTwitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator
+import com.ExTwitter.product_mixer.core.model.common.UniversalNoun
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.snowflake.id.SnowflakeId
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.timelines.configapi.Param
+import com.ExTwitter.util.Duration
 
 object DecayScore extends Feature[UniversalNoun[Long], Double]
 

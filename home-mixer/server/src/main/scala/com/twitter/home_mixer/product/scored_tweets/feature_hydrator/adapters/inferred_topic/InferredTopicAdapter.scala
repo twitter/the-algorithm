@@ -1,10 +1,10 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.adapters.inferred_topic
+package com.ExTwitter.home_mixer.product.scored_tweets.feature_hydrator.adapters.inferred_topic
 
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.timelines.prediction.common.adapters.TimelinesMutatingAdapterBase
-import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures
+import com.ExTwitter.ml.api.Feature
+import com.ExTwitter.ml.api.FeatureContext
+import com.ExTwitter.ml.api.RichDataRecord
+import com.ExTwitter.timelines.prediction.common.adapters.TimelinesMutatingAdapterBase
+import com.ExTwitter.timelines.prediction.features.common.TimelinesSharedFeatures
 import scala.collection.JavaConverters._
 
 object InferredTopicAdapter extends TimelinesMutatingAdapterBase[Map[Long, Double]] {

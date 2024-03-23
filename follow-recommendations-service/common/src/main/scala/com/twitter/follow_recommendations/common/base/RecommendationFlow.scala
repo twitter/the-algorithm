@@ -1,12 +1,12 @@
-package com.twitter.follow_recommendations.common.base
+package com.ExTwitter.follow_recommendations.common.base
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.RecommendationPipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.recommendation.RecommendationPipelineResult
-import com.twitter.product_mixer.core.quality_factor.QualityFactorObserver
-import com.twitter.stitch.Stitch
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidateSource
+import com.ExTwitter.product_mixer.core.model.common.UniversalNoun
+import com.ExTwitter.product_mixer.core.model.common.identifier.RecommendationPipelineIdentifier
+import com.ExTwitter.product_mixer.core.pipeline.recommendation.RecommendationPipelineResult
+import com.ExTwitter.product_mixer.core.quality_factor.QualityFactorObserver
+import com.ExTwitter.stitch.Stitch
 
 /**
  * configs for results generated from the recommendation flow

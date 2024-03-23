@@ -1,16 +1,16 @@
-package com.twitter.cr_mixer.param
+package com.ExTwitter.cr_mixer.param
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.DurationConversion
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.timelines.configapi.BaseConfig
+import com.ExTwitter.timelines.configapi.BaseConfigBuilder
+import com.ExTwitter.timelines.configapi.DurationConversion
+import com.ExTwitter.timelines.configapi.FSBoundedParam
+import com.ExTwitter.timelines.configapi.FSName
+import com.ExTwitter.timelines.configapi.FSParam
+import com.ExTwitter.timelines.configapi.FeatureSwitchOverrideUtil
+import com.ExTwitter.timelines.configapi.HasDurationConversion
+import com.ExTwitter.timelines.configapi.Param
+import com.ExTwitter.util.Duration
 
 object UtegTweetGlobalParams {
 

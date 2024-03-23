@@ -1,8 +1,8 @@
-package com.twitter.follow_recommendations.common.clients.graph_feature_service
+package com.ExTwitter.follow_recommendations.common.clients.graph_feature_service
 
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.follow_recommendations.common.clients.common.BaseClientModule
-import com.twitter.graph_feature_service.thriftscala.{Server => GraphFeatureService}
+import com.ExTwitter.finatra.mtls.thriftmux.modules.MtlsClient
+import com.ExTwitter.follow_recommendations.common.clients.common.BaseClientModule
+import com.ExTwitter.graph_feature_service.thriftscala.{Server => GraphFeatureService}
 
 object GraphFeatureStoreModule
     extends BaseClientModule[GraphFeatureService.MethodPerEndpoint]

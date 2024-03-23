@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.timeline_module
 
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleFooter
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseStr
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseUrlBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleFooterBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
+import com.ExTwitter.product_mixer.core.model.common.UniversalNoun
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleFooter
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseStr
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseUrlBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleFooterBuilder
+import com.ExTwitter.product_mixer.core.model.common.CandidateWithFeatures
 
 case class ModuleFooterBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]](
   textBuilder: BaseStr[Query, Candidate],

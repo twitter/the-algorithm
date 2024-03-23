@@ -1,14 +1,14 @@
-package com.twitter.cr_mixer.module.thrift_client
-import com.twitter.app.Flag
-import com.twitter.finagle.ThriftMux
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.search.earlybird.thriftscala.EarlybirdService
-import com.twitter.inject.Injector
-import com.twitter.conversions.DurationOps._
-import com.twitter.cr_mixer.module.core.TimeoutConfigModule.EarlybirdClientTimeoutFlagName
-import com.twitter.finagle.service.RetryBudget
-import com.twitter.util.Duration
+package com.ExTwitter.cr_mixer.module.thrift_client
+import com.ExTwitter.app.Flag
+import com.ExTwitter.finagle.ThriftMux
+import com.ExTwitter.finatra.mtls.thriftmux.modules.MtlsClient
+import com.ExTwitter.inject.thrift.modules.ThriftMethodBuilderClientModule
+import com.ExTwitter.search.earlybird.thriftscala.EarlybirdService
+import com.ExTwitter.inject.Injector
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.cr_mixer.module.core.TimeoutConfigModule.EarlybirdClientTimeoutFlagName
+import com.ExTwitter.finagle.service.RetryBudget
+import com.ExTwitter.util.Duration
 import org.apache.thrift.protocol.TCompactProtocol
 
 object EarlybirdSearchClientModule

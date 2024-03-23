@@ -1,6 +1,6 @@
-package com.twitter.cr_mixer.param.decider
+package com.ExTwitter.cr_mixer.param.decider
 
-import com.twitter.servo.decider.DeciderKeyEnum
+import com.ExTwitter.servo.decider.DeciderKeyEnum
 
 object DeciderConstants {
   val enableHealthSignalsScoreDeciderKey = "enable_tweet_health_score"

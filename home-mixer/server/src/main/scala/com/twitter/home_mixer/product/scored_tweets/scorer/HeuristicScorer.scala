@@ -1,15 +1,15 @@
-package com.twitter.home_mixer.product.scored_tweets.scorer
+package com.ExTwitter.home_mixer.product.scored_tweets.scorer
 
-import com.twitter.home_mixer.model.HomeFeatures.ScoreFeature
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.scorer.Scorer
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.ScorerIdentifier
-import com.twitter.stitch.Stitch
+import com.ExTwitter.home_mixer.model.HomeFeatures.ScoreFeature
+import com.ExTwitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
+import com.ExTwitter.product_mixer.component_library.model.candidate.TweetCandidate
+import com.ExTwitter.product_mixer.core.feature.Feature
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
+import com.ExTwitter.product_mixer.core.functional_component.scorer.Scorer
+import com.ExTwitter.product_mixer.core.model.common.CandidateWithFeatures
+import com.ExTwitter.product_mixer.core.model.common.identifier.ScorerIdentifier
+import com.ExTwitter.stitch.Stitch
 
 /**
  * Apply various heuristics to the model score

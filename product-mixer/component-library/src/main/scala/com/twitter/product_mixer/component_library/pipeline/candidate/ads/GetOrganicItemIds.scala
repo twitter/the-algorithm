@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.ads
+package com.ExTwitter.product_mixer.component_library.pipeline.candidate.ads
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
+import com.ExTwitter.product_mixer.core.functional_component.common.CandidateScope
+import com.ExTwitter.product_mixer.core.model.common.presentation.CandidateWithDetails
 
 /**
  * Get organic item candidates from the set of previous candidates

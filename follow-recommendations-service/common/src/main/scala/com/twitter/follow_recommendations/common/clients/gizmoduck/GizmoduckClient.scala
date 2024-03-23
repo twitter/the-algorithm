@@ -1,12 +1,12 @@
-package com.twitter.follow_recommendations.common.clients.gizmoduck
+package com.ExTwitter.follow_recommendations.common.clients.gizmoduck
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.StatsUtil
-import com.twitter.gizmoduck.thriftscala.LookupContext
-import com.twitter.gizmoduck.thriftscala.PerspectiveEdge
-import com.twitter.gizmoduck.thriftscala.QueryFields
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.gizmoduck.Gizmoduck
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.follow_recommendations.common.base.StatsUtil
+import com.ExTwitter.gizmoduck.thriftscala.LookupContext
+import com.ExTwitter.gizmoduck.thriftscala.PerspectiveEdge
+import com.ExTwitter.gizmoduck.thriftscala.QueryFields
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.stitch.gizmoduck.Gizmoduck
 import javax.inject.Inject
 import javax.inject.Singleton
 

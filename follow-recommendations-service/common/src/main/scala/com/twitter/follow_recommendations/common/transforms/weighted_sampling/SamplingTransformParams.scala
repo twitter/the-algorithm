@@ -1,7 +1,7 @@
-package com.twitter.follow_recommendations.common.transforms.weighted_sampling
+package com.ExTwitter.follow_recommendations.common.transforms.weighted_sampling
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
+import com.ExTwitter.timelines.configapi.FSBoundedParam
+import com.ExTwitter.timelines.configapi.FSParam
 
 object SamplingTransformParams {
 

@@ -1,20 +1,20 @@
-package com.twitter.follow_recommendations.modules
+package com.ExTwitter.follow_recommendations.modules
 
 import com.google.inject.Provides
 import com.google.inject.Singleton
 import com.google.inject.name.Named
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.inject.TwitterModule
-import com.twitter.logging.BareFormatter
-import com.twitter.logging.HandlerFactory
-import com.twitter.logging.Level
-import com.twitter.logging.LoggerFactory
-import com.twitter.logging.NullHandler
-import com.twitter.logging.QueueingHandler
-import com.twitter.logging.ScribeHandler
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.follow_recommendations.common.constants.GuiceNamedConstants
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.logging.BareFormatter
+import com.ExTwitter.logging.HandlerFactory
+import com.ExTwitter.logging.Level
+import com.ExTwitter.logging.LoggerFactory
+import com.ExTwitter.logging.NullHandler
+import com.ExTwitter.logging.QueueingHandler
+import com.ExTwitter.logging.ScribeHandler
 
-object ScribeModule extends TwitterModule {
+object ScribeModule extends ExTwitterModule {
   val useProdLogger = flag(
     name = "scribe.use_prod_loggers",
     default = false,

@@ -1,6 +1,6 @@
-package com.twitter.follow_recommendations.common.constants
+package com.ExTwitter.follow_recommendations.common.constants
 
-import com.twitter.conversions.StorageUnitOps._
+import com.ExTwitter.conversions.StorageUnitOps._
 
 object ServiceConstants {
 

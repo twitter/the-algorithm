@@ -1,24 +1,24 @@
-package com.twitter.cr_mixer.similarity_engine
+package com.ExTwitter.cr_mixer.similarity_engine
 
-import com.twitter.cr_mixer.param.decider.CrMixerDecider
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.GlobalRequestTimeoutException
-import com.twitter.finagle.mux.ClientDiscardedRequestException
-import com.twitter.finagle.memcached.Client
-import com.twitter.finagle.mux.ServerApplicationError
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.hashing.KeyHasher
-import com.twitter.hermit.store.common.ObservedMemcachedReadableStore
-import com.twitter.relevance_platform.common.injection.LZ4Injection
-import com.twitter.relevance_platform.common.injection.SeqObjectInjection
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.Params
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.TimeoutException
-import com.twitter.util.logging.Logging
+import com.ExTwitter.cr_mixer.param.decider.CrMixerDecider
+import com.ExTwitter.cr_mixer.thriftscala.SimilarityEngineType
+import com.ExTwitter.finagle.GlobalRequestTimeoutException
+import com.ExTwitter.finagle.mux.ClientDiscardedRequestException
+import com.ExTwitter.finagle.memcached.Client
+import com.ExTwitter.finagle.mux.ServerApplicationError
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.frigate.common.util.StatsUtil
+import com.ExTwitter.hashing.KeyHasher
+import com.ExTwitter.hermit.store.common.ObservedMemcachedReadableStore
+import com.ExTwitter.relevance_platform.common.injection.LZ4Injection
+import com.ExTwitter.relevance_platform.common.injection.SeqObjectInjection
+import com.ExTwitter.storehaus.ReadableStore
+import com.ExTwitter.timelines.configapi.FSParam
+import com.ExTwitter.timelines.configapi.Params
+import com.ExTwitter.util.Duration
+import com.ExTwitter.util.Future
+import com.ExTwitter.util.TimeoutException
+import com.ExTwitter.util.logging.Logging
 import org.apache.thrift.TApplicationException
 
 /**
@@ -131,7 +131,7 @@ object SimilarityEngine extends Logging {
     )
   }
 
-  private val timer = com.twitter.finagle.util.DefaultTimer
+  private val timer = com.ExTwitter.finagle.util.DefaultTimer
 
   /**
    * Applies runtime configs, like stats, timeouts, exception handling, onto fn

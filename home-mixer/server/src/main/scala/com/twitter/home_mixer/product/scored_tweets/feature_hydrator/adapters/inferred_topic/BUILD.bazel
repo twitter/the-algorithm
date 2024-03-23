@@ -4,10 +4,10 @@ scala_library(
     strict_deps = True,
     tags = ["bazel-compatible"],
     dependencies = [
-        "src/java/com/twitter/ml/api:api-base",
-        "src/scala/com/twitter/ml/api/util",
-        "src/scala/com/twitter/timelines/prediction/common/adapters:base",
-        "src/scala/com/twitter/timelines/prediction/features/common",
-        "src/thrift/com/twitter/ml/api:data-java",
+        "src/java/com/ExTwitter/ml/api:api-base",
+        "src/scala/com/ExTwitter/ml/api/util",
+        "src/scala/com/ExTwitter/timelines/prediction/common/adapters:base",
+        "src/scala/com/ExTwitter/timelines/prediction/features/common",
+        "src/thrift/com/ExTwitter/ml/api:data-java",
     ],
 )

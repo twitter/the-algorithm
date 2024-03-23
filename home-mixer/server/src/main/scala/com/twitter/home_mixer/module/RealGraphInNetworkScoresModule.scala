@@ -1,19 +1,19 @@
-package com.twitter.home_mixer.module
+package com.ExTwitter.home_mixer.module
 
 import com.google.inject.Provides
 import com.google.inject.name.Named
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.RealGraphInNetworkScores
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.RealGraphManhattanEndpoint
-import com.twitter.home_mixer.store.RealGraphInNetworkScoresStore
-import com.twitter.inject.TwitterModule
-import com.twitter.storage.client.manhattan.kv.ManhattanKVEndpoint
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.util.CommonTypes.ViewerId
-import com.twitter.wtf.candidate.thriftscala.Candidate
+import com.ExTwitter.home_mixer.param.HomeMixerInjectionNames.RealGraphInNetworkScores
+import com.ExTwitter.home_mixer.param.HomeMixerInjectionNames.RealGraphManhattanEndpoint
+import com.ExTwitter.home_mixer.store.RealGraphInNetworkScoresStore
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.storage.client.manhattan.kv.ManhattanKVEndpoint
+import com.ExTwitter.storehaus.ReadableStore
+import com.ExTwitter.timelines.util.CommonTypes.ViewerId
+import com.ExTwitter.wtf.candidate.thriftscala.Candidate
 
 import javax.inject.Singleton
 
-object RealGraphInNetworkScoresModule extends TwitterModule {
+object RealGraphInNetworkScoresModule extends ExTwitterModule {
 
   @Provides
   @Singleton

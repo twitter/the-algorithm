@@ -1,7 +1,7 @@
-package com.twitter.follow_recommendations.common.candidate_sources.real_graph
+package com.ExTwitter.follow_recommendations.common.candidate_sources.real_graph
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
+import com.ExTwitter.timelines.configapi.FSBoundedParam
+import com.ExTwitter.timelines.configapi.FSParam
 
 object RealGraphOonParams {
   case object IncludeRealGraphOonCandidates

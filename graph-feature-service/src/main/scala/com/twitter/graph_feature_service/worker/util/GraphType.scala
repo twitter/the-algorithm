@@ -1,4 +1,4 @@
-package com.twitter.graph_feature_service.worker.util
+package com.ExTwitter.graph_feature_service.worker.util
 
 //These classes are to help the GraphContainer choose the right data structure to answer queries
 sealed trait GraphType

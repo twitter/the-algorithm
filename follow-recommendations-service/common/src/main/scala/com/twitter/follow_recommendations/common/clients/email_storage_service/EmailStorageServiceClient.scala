@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.common.clients.email_storage_service
+package com.ExTwitter.follow_recommendations.common.clients.email_storage_service
 
-import com.twitter.cds.contact_consent_state.thriftscala.PurposeOfProcessing
-import com.twitter.emailstorage.api.thriftscala.EmailStorageService
-import com.twitter.emailstorage.api.thriftscala.GetUsersEmailsRequest
-import com.twitter.stitch.Stitch
+import com.ExTwitter.cds.contact_consent_state.thriftscala.PurposeOfProcessing
+import com.ExTwitter.emailstorage.api.thriftscala.EmailStorageService
+import com.ExTwitter.emailstorage.api.thriftscala.GetUsersEmailsRequest
+import com.ExTwitter.stitch.Stitch
 import javax.inject.Inject
 import javax.inject.Singleton
 

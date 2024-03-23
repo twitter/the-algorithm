@@ -1,17 +1,17 @@
-package com.twitter.home_mixer.product.scored_tweets.candidate_pipeline
+package com.ExTwitter.home_mixer.product.scored_tweets.candidate_pipeline
 
-import com.twitter.home_mixer.product.scored_tweets.candidate_pipeline.CachedScoredTweetsCandidatePipelineConfig._
-import com.twitter.home_mixer.product.scored_tweets.candidate_source.CachedScoredTweetsCandidateSource
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.home_mixer.product.scored_tweets.response_transformer.CachedScoredTweetsResponseFeatureTransformer
-import com.twitter.home_mixer.{thriftscala => hmt}
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
+import com.ExTwitter.home_mixer.product.scored_tweets.candidate_pipeline.CachedScoredTweetsCandidatePipelineConfig._
+import com.ExTwitter.home_mixer.product.scored_tweets.candidate_source.CachedScoredTweetsCandidateSource
+import com.ExTwitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
+import com.ExTwitter.home_mixer.product.scored_tweets.response_transformer.CachedScoredTweetsResponseFeatureTransformer
+import com.ExTwitter.home_mixer.{thriftscala => hmt}
+import com.ExTwitter.product_mixer.component_library.model.candidate.TweetCandidate
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
+import com.ExTwitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
+import com.ExTwitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
+import com.ExTwitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
+import com.ExTwitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
 import javax.inject.Inject
 import javax.inject.Singleton
 

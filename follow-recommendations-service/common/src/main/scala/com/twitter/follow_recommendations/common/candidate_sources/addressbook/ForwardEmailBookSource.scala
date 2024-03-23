@@ -1,20 +1,20 @@
-package com.twitter.follow_recommendations.common.candidate_sources.addressbook
+package com.ExTwitter.follow_recommendations.common.candidate_sources.addressbook
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.candidate_sources.addressbook.AddressBookParams.ReadFromABV2Only
-import com.twitter.follow_recommendations.common.clients.addressbook.AddressbookClient
-import com.twitter.follow_recommendations.common.clients.addressbook.models.EdgeType
-import com.twitter.follow_recommendations.common.clients.addressbook.models.RecordIdentifier
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.utils.RescueWithStatsUtils.rescueWithStats
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.onboarding.userrecs.ForwardEmailBookClientColumn
-import com.twitter.timelines.configapi.HasParams
+import com.ExTwitter.finagle.stats.NullStatsReceiver
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.follow_recommendations.common.candidate_sources.addressbook.AddressBookParams.ReadFromABV2Only
+import com.ExTwitter.follow_recommendations.common.clients.addressbook.AddressbookClient
+import com.ExTwitter.follow_recommendations.common.clients.addressbook.models.EdgeType
+import com.ExTwitter.follow_recommendations.common.clients.addressbook.models.RecordIdentifier
+import com.ExTwitter.follow_recommendations.common.models.CandidateUser
+import com.ExTwitter.follow_recommendations.common.utils.RescueWithStatsUtils.rescueWithStats
+import com.ExTwitter.hermit.model.Algorithm
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidateSource
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.strato.generated.client.onboarding.userrecs.ForwardEmailBookClientColumn
+import com.ExTwitter.timelines.configapi.HasParams
 import javax.inject.Inject
 import javax.inject.Singleton
 

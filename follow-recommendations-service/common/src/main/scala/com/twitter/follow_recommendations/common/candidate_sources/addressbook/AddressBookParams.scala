@@ -1,6 +1,6 @@
-package com.twitter.follow_recommendations.common.candidate_sources.addressbook
+package com.ExTwitter.follow_recommendations.common.candidate_sources.addressbook
 
-import com.twitter.timelines.configapi.FSParam
+import com.ExTwitter.timelines.configapi.FSParam
 
 object AddressBookParams {
   // Used by display locations that want only to read from the ABV2 Client and ignore Manhattan

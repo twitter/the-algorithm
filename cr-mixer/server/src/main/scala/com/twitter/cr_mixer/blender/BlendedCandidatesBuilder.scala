@@ -1,9 +1,9 @@
-package com.twitter.cr_mixer.blender
+package com.ExTwitter.cr_mixer.blender
 
-import com.twitter.cr_mixer.model.BlendedCandidate
-import com.twitter.cr_mixer.model.CandidateGenerationInfo
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.simclusters_v2.common.TweetId
+import com.ExTwitter.cr_mixer.model.BlendedCandidate
+import com.ExTwitter.cr_mixer.model.CandidateGenerationInfo
+import com.ExTwitter.cr_mixer.model.InitialCandidate
+import com.ExTwitter.simclusters_v2.common.TweetId
 import scala.collection.mutable
 
 object BlendedCandidatesBuilder {

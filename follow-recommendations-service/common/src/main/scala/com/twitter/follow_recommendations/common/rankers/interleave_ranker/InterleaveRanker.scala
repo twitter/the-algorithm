@@ -1,16 +1,16 @@
-package com.twitter.follow_recommendations.common.rankers.interleave_ranker
+package com.ExTwitter.follow_recommendations.common.rankers.interleave_ranker
 
 import com.google.common.annotations.VisibleForTesting
 import com.google.inject.Inject
 import com.google.inject.Singleton
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.Ranker
-import com.twitter.follow_recommendations.common.base.StatsUtil
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.rankers.common.RankerId
-import com.twitter.follow_recommendations.common.rankers.utils.Utils
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.follow_recommendations.common.base.Ranker
+import com.ExTwitter.follow_recommendations.common.base.StatsUtil
+import com.ExTwitter.follow_recommendations.common.models.CandidateUser
+import com.ExTwitter.follow_recommendations.common.rankers.common.RankerId
+import com.ExTwitter.follow_recommendations.common.rankers.utils.Utils
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.timelines.configapi.HasParams
 
 @Singleton
 class InterleaveRanker[Target <: HasParams] @Inject() (

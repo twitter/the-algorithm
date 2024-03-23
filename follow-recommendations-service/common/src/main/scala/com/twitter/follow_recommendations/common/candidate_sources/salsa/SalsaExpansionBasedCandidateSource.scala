@@ -1,8 +1,8 @@
-package com.twitter.follow_recommendations.common.candidate_sources.salsa
+package com.ExTwitter.follow_recommendations.common.candidate_sources.salsa
 
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.stitch.Stitch
+import com.ExTwitter.follow_recommendations.common.models.CandidateUser
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidateSource
+import com.ExTwitter.stitch.Stitch
 
 abstract class SalsaExpansionBasedCandidateSource[Target](salsaExpander: SalsaExpander)
     extends CandidateSource[Target, CandidateUser] {

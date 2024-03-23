@@ -1,7 +1,7 @@
-package com.twitter.home_mixer.product.list_recommended_users.model
+package com.ExTwitter.home_mixer.product.list_recommended_users.model
 
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.feature.Feature
+import com.ExTwitter.product_mixer.component_library.model.candidate.UserCandidate
+import com.ExTwitter.product_mixer.core.feature.Feature
 
 object ListRecommendedUsersFeatures {
   // Candidate features

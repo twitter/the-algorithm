@@ -1,8 +1,8 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.real_time_aggregates
+package com.ExTwitter.home_mixer.product.scored_tweets.feature_hydrator.real_time_aggregates
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.constant.SharedFeatures.TIMESTAMP
-import com.twitter.util.Duration
+import com.ExTwitter.ml.api.DataRecord
+import com.ExTwitter.ml.api.constant.SharedFeatures.TIMESTAMP
+import com.ExTwitter.util.Duration
 
 /**
  * The default TimeDecay implementation for real time aggregates.

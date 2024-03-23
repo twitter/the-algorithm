@@ -1,10 +1,10 @@
-package com.twitter.home_mixer.marshaller.timelines
+package com.ExTwitter.home_mixer.marshaller.timelines
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.BasicTopicContextFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RecWithEducationTopicContextFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RecommendationTopicContextFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.TopicContextFunctionalityType
-import com.twitter.timelines.render.{thriftscala => urt}
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.BasicTopicContextFunctionalityType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.RecWithEducationTopicContextFunctionalityType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.RecommendationTopicContextFunctionalityType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.TopicContextFunctionalityType
+import com.ExTwitter.timelines.render.{thriftscala => urt}
 
 object TopicContextFunctionalityTypeUnmarshaller {
 

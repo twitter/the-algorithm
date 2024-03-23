@@ -1,8 +1,8 @@
-package com.twitter.follow_recommendations.common.transforms.dedup
+package com.ExTwitter.follow_recommendations.common.transforms.dedup
 
-import com.twitter.follow_recommendations.common.base.Transform
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.stitch.Stitch
+import com.ExTwitter.follow_recommendations.common.base.Transform
+import com.ExTwitter.product_mixer.core.model.common.UniversalNoun
+import com.ExTwitter.stitch.Stitch
 import scala.collection.mutable
 
 class DedupTransform[Request, Candidate <: UniversalNoun[Long]]()

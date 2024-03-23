@@ -1,36 +1,36 @@
-package com.twitter.home_mixer.product.scored_tweets.side_effect
+package com.ExTwitter.home_mixer.product.scored_tweets.side_effect
 
-import com.twitter.finagle.tracing.Trace
-import com.twitter.home_mixer.model.HomeFeatures.AncestorsFeature
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.DirectedAtUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.EarlybirdScoreFeature
-import com.twitter.home_mixer.model.HomeFeatures.FavoritedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.FollowedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.FromInNetworkSourceFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.QuotedTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.QuotedUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.RequestJoinIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.ScoreFeature
-import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
-import com.twitter.home_mixer.param.HomeMixerFlagName.ScribeScoredCandidatesFlag
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsResponse
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.EnableScribeScoredCandidatesParam
-import com.twitter.inject.annotations.Flag
-import com.twitter.logpipeline.client.common.EventPublisher
-import com.twitter.product_mixer.component_library.side_effect.ScribeLogEventSideEffect
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.common.identifier.SideEffectIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidatePipelines
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.timelines.timeline_logging.{thriftscala => t}
+import com.ExTwitter.finagle.tracing.Trace
+import com.ExTwitter.home_mixer.model.HomeFeatures.AncestorsFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.AuthorIdFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.DirectedAtUserIdFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.EarlybirdScoreFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.FavoritedByUserIdsFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.FollowedByUserIdsFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.FromInNetworkSourceFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.InReplyToTweetIdFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.InReplyToUserIdFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.QuotedTweetIdFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.QuotedUserIdFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.RequestJoinIdFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.ScoreFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
+import com.ExTwitter.home_mixer.param.HomeMixerFlagName.ScribeScoredCandidatesFlag
+import com.ExTwitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
+import com.ExTwitter.home_mixer.product.scored_tweets.model.ScoredTweetsResponse
+import com.ExTwitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.EnableScribeScoredCandidatesParam
+import com.ExTwitter.inject.annotations.Flag
+import com.ExTwitter.logpipeline.client.common.EventPublisher
+import com.ExTwitter.product_mixer.component_library.side_effect.ScribeLogEventSideEffect
+import com.ExTwitter.product_mixer.core.feature.Feature
+import com.ExTwitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
+import com.ExTwitter.product_mixer.core.model.common.identifier.SideEffectIdentifier
+import com.ExTwitter.product_mixer.core.model.common.presentation.CandidatePipelines
+import com.ExTwitter.product_mixer.core.model.common.presentation.CandidateWithDetails
+import com.ExTwitter.timelines.timeline_logging.{thriftscala => t}
 import javax.inject.Inject
 import javax.inject.Singleton
-import com.twitter.util.logging.Logging
+import com.ExTwitter.util.logging.Logging
 
 /**
  * Side effect that logs scored candidates from scoring pipelines

@@ -1,22 +1,22 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.ExTwitter.home_mixer.product.scored_tweets.feature_hydrator
 
-import com.twitter.dal.personal_data.{thriftjava => pd}
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.model.HomeFeatures.EarlybirdFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordOptionalFeature
-import com.twitter.product_mixer.core.feature.datarecord.DoubleDataRecordCompatible
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.util.OffloadFuturePools
-import com.twitter.stitch.Stitch
-import com.twitter.strato.catalog.Fetch
-import com.twitter.strato.generated.client.ml.featureStore.SimClustersUserInterestedInTweetEmbeddingDotProduct20M145K2020OnUserTweetEdgeClientColumn
+import com.ExTwitter.dal.personal_data.{thriftjava => pd}
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.home_mixer.model.HomeFeatures.EarlybirdFeature
+import com.ExTwitter.product_mixer.component_library.model.candidate.TweetCandidate
+import com.ExTwitter.product_mixer.core.feature.Feature
+import com.ExTwitter.product_mixer.core.feature.datarecord.DataRecordOptionalFeature
+import com.ExTwitter.product_mixer.core.feature.datarecord.DoubleDataRecordCompatible
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
+import com.ExTwitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
+import com.ExTwitter.product_mixer.core.model.common.CandidateWithFeatures
+import com.ExTwitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.core.util.OffloadFuturePools
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.strato.catalog.Fetch
+import com.ExTwitter.strato.generated.client.ml.featureStore.SimClustersUserInterestedInTweetEmbeddingDotProduct20M145K2020OnUserTweetEdgeClientColumn
 import javax.inject.Inject
 import javax.inject.Singleton
 

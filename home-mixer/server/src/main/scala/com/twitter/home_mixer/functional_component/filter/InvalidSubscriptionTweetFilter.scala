@@ -1,18 +1,18 @@
-package com.twitter.home_mixer.functional_component.filter
+package com.ExTwitter.home_mixer.functional_component.filter
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.tracing.Trace
-import com.twitter.home_mixer.model.HomeFeatures.ExclusiveConversationAuthorIdFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.socialgraph.{thriftscala => sg}
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.socialgraph.SocialGraph
-import com.twitter.util.logging.Logging
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.finagle.tracing.Trace
+import com.ExTwitter.home_mixer.model.HomeFeatures.ExclusiveConversationAuthorIdFeature
+import com.ExTwitter.product_mixer.component_library.model.candidate.TweetCandidate
+import com.ExTwitter.product_mixer.core.functional_component.filter.Filter
+import com.ExTwitter.product_mixer.core.functional_component.filter.FilterResult
+import com.ExTwitter.product_mixer.core.model.common.CandidateWithFeatures
+import com.ExTwitter.product_mixer.core.model.common.identifier.FilterIdentifier
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.socialgraph.{thriftscala => sg}
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.stitch.socialgraph.SocialGraph
+import com.ExTwitter.util.logging.Logging
 
 import javax.inject.Inject
 import javax.inject.Singleton

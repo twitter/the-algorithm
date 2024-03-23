@@ -1,11 +1,11 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+package com.ExTwitter.follow_recommendations.common.candidate_sources.stp
 
 import com.google.inject.Singleton
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.candidate_sources.base.SocialProofEnforcedCandidateSource
-import com.twitter.follow_recommendations.common.transforms.modify_social_proof.ModifySocialProof
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.follow_recommendations.common.candidate_sources.base.SocialProofEnforcedCandidateSource
+import com.ExTwitter.follow_recommendations.common.transforms.modify_social_proof.ModifySocialProof
+import com.ExTwitter.hermit.model.Algorithm
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
 import javax.inject.Inject
 
 @Singleton

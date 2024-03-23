@@ -1,11 +1,11 @@
-package com.twitter.ann.brute_force
+package com.ExTwitter.ann.brute_force
 
 import com.google.common.annotations.VisibleForTesting
-import com.twitter.ann.common.{Distance, EntityEmbedding, Metric, QueryableDeserialization}
-import com.twitter.ann.serialization.{PersistedEmbeddingInjection, ThriftIteratorIO}
-import com.twitter.ann.serialization.thriftscala.PersistedEmbedding
-import com.twitter.search.common.file.{AbstractFile, LocalFile}
-import com.twitter.util.FuturePool
+import com.ExTwitter.ann.common.{Distance, EntityEmbedding, Metric, QueryableDeserialization}
+import com.ExTwitter.ann.serialization.{PersistedEmbeddingInjection, ThriftIteratorIO}
+import com.ExTwitter.ann.serialization.thriftscala.PersistedEmbedding
+import com.ExTwitter.search.common.file.{AbstractFile, LocalFile}
+import com.ExTwitter.util.FuturePool
 import java.io.File
 
 /**

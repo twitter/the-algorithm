@@ -1,7 +1,7 @@
-package com.twitter.follow_recommendations.common.candidate_sources.ppmi_locale_follow
+package com.ExTwitter.follow_recommendations.common.candidate_sources.ppmi_locale_follow
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
+import com.ExTwitter.timelines.configapi.FSBoundedParam
+import com.ExTwitter.timelines.configapi.FSParam
 
 class PPMILocaleFollowSourceParams {}
 object PPMILocaleFollowSourceParams {

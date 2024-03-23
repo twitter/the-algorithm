@@ -6,7 +6,7 @@
  * the SWIG interface file instead.
  * ----------------------------------------------------------------------------- */
 
-package com.twitter.ann.faiss;
+package com.ExTwitter.ann.faiss;
 
 public class float_minheap_array_t {
   private transient long swigCPtr;

@@ -1,20 +1,20 @@
-package com.twitter.home_mixer.module
+package com.ExTwitter.home_mixer.module
 
 import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.storage.client.manhattan.kv.Guarantee
-import com.twitter.storehaus_internal.manhattan.ManhattanClusters
-import com.twitter.timelines.clients.manhattan.mhv3.ManhattanClientBuilder
-import com.twitter.timelines.impressionstore.store.ManhattanTweetImpressionStoreClientConfig
-import com.twitter.timelines.impressionstore.store.ManhattanTweetImpressionStoreClient
-import com.twitter.util.Duration
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.finagle.mtls.authentication.ServiceIdentifier
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.inject.annotations.Flag
+import com.ExTwitter.storage.client.manhattan.kv.Guarantee
+import com.ExTwitter.storehaus_internal.manhattan.ManhattanClusters
+import com.ExTwitter.timelines.clients.manhattan.mhv3.ManhattanClientBuilder
+import com.ExTwitter.timelines.impressionstore.store.ManhattanTweetImpressionStoreClientConfig
+import com.ExTwitter.timelines.impressionstore.store.ManhattanTweetImpressionStoreClient
+import com.ExTwitter.util.Duration
 import javax.inject.Singleton
 
-object ManhattanTweetImpressionStoreModule extends TwitterModule {
+object ManhattanTweetImpressionStoreModule extends ExTwitterModule {
 
   private val ProdAppId = "timelines_tweet_impression_store_v2"
   private val ProdDataset = "timelines_tweet_impressions_v2"

@@ -1,10 +1,10 @@
-package com.twitter.home_mixer.util.tweetypie.content
+package com.ExTwitter.home_mixer.util.tweetypie.content
 
-import com.twitter.home_mixer.model.ContentFeatures
-import com.twitter.mediaservices.commons.mediainformation.{thriftscala => mi}
-import com.twitter.mediaservices.commons.tweetmedia.{thriftscala => tm}
-import com.twitter.mediaservices.commons.{thriftscala => ms}
-import com.twitter.tweetypie.{thriftscala => tp}
+import com.ExTwitter.home_mixer.model.ContentFeatures
+import com.ExTwitter.mediaservices.commons.mediainformation.{thriftscala => mi}
+import com.ExTwitter.mediaservices.commons.tweetmedia.{thriftscala => tm}
+import com.ExTwitter.mediaservices.commons.{thriftscala => ms}
+import com.ExTwitter.tweetypie.{thriftscala => tp}
 import scala.collection.Map
 
 object TweetMediaFeaturesExtractor {

@@ -1,25 +1,25 @@
-package com.twitter.cr_mixer.candidate_generation
+package com.ExTwitter.cr_mixer.candidate_generation
 
-import com.twitter.cr_mixer.model.CandidateGenerationInfo
-import com.twitter.cr_mixer.model.TweetWithCandidateGenerationInfo
-import com.twitter.cr_mixer.model.TweetWithScore
-import com.twitter.cr_mixer.param.GlobalParams
-import com.twitter.cr_mixer.param.InterestedInParams
-import com.twitter.cr_mixer.param.SimClustersANNParams
-import com.twitter.cr_mixer.similarity_engine.EngineQuery
-import com.twitter.cr_mixer.similarity_engine.SimClustersANNSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.StandardSimilarityEngine
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.CandidateSource
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.timelines.configapi
-import com.twitter.util.Future
+import com.ExTwitter.cr_mixer.model.CandidateGenerationInfo
+import com.ExTwitter.cr_mixer.model.TweetWithCandidateGenerationInfo
+import com.ExTwitter.cr_mixer.model.TweetWithScore
+import com.ExTwitter.cr_mixer.param.GlobalParams
+import com.ExTwitter.cr_mixer.param.InterestedInParams
+import com.ExTwitter.cr_mixer.param.SimClustersANNParams
+import com.ExTwitter.cr_mixer.similarity_engine.EngineQuery
+import com.ExTwitter.cr_mixer.similarity_engine.SimClustersANNSimilarityEngine
+import com.ExTwitter.cr_mixer.similarity_engine.StandardSimilarityEngine
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.frigate.common.base.CandidateSource
+import com.ExTwitter.frigate.common.util.StatsUtil
+import com.ExTwitter.simclusters_v2.common.ModelVersions
+import com.ExTwitter.simclusters_v2.thriftscala.InternalId
+import com.ExTwitter.timelines.configapi
+import com.ExTwitter.util.Future
 import javax.inject.Inject
 import javax.inject.Singleton
 import javax.inject.Named
-import com.twitter.cr_mixer.model.ModuleNames
+import com.ExTwitter.cr_mixer.model.ModuleNames
 
 /**
  * This store looks for similar tweets for a given UserId that generates UserInterestedIn

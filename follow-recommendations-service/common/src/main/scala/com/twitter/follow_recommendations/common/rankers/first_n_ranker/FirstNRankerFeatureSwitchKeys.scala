@@ -1,4 +1,4 @@
-package com.twitter.follow_recommendations.common.rankers.first_n_ranker
+package com.ExTwitter.follow_recommendations.common.rankers.first_n_ranker
 
 object FirstNRankerFeatureSwitchKeys {
   val CandidatePoolSize = "first_n_ranker_candidate_pool_size"

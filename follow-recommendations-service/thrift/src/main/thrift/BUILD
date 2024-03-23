@@ -6,10 +6,10 @@ create_thrift_libraries(
     dependency_roots = [
         "finatra-internal/thrift/src/main/thrift",
         "follow-recommendations-service/thrift/src/main/thrift/logging:thrift",
-        "product-mixer/core/src/main/thrift/com/twitter/product_mixer/core:thrift",
-        "src/thrift/com/twitter/ads/adserver:adserver_common",
-        "src/thrift/com/twitter/ml/api:data",
-        "src/thrift/com/twitter/suggests/controller_data",
+        "product-mixer/core/src/main/thrift/com/ExTwitter/product_mixer/core:thrift",
+        "src/thrift/com/ExTwitter/ads/adserver:adserver_common",
+        "src/thrift/com/ExTwitter/ml/api:data",
+        "src/thrift/com/ExTwitter/suggests/controller_data",
     ],
     generate_languages = [
         "java",

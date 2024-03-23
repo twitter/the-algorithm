@@ -1,26 +1,26 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+package com.ExTwitter.home_mixer.product.scored_tweets.feature_hydrator
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.ads.entities.db.{thriftscala => ae}
-import com.twitter.gizmoduck.{thriftscala => gt}
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIsBlueVerifiedFeature
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIsProtectedFeature
-import com.twitter.home_mixer.model.HomeFeatures.FromInNetworkSourceFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsSupportAccountReplyFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.util.OffloadFuturePools
-import com.twitter.stitch.Stitch
-import com.twitter.snowflake.id.SnowflakeId
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.ads.entities.db.{thriftscala => ae}
+import com.ExTwitter.gizmoduck.{thriftscala => gt}
+import com.ExTwitter.home_mixer.model.HomeFeatures.AuthorIdFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.AuthorIsBlueVerifiedFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.AuthorIsProtectedFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.FromInNetworkSourceFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.InReplyToTweetIdFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.IsRetweetFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.IsSupportAccountReplyFeature
+import com.ExTwitter.product_mixer.component_library.model.candidate.TweetCandidate
+import com.ExTwitter.product_mixer.core.feature.Feature
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
+import com.ExTwitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
+import com.ExTwitter.product_mixer.core.model.common.CandidateWithFeatures
+import com.ExTwitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.core.util.OffloadFuturePools
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.snowflake.id.SnowflakeId
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -63,7 +63,7 @@ class GizmoduckAuthorFeatureHydrator @Inject() (gizmoduck: gt.UserService.Method
         val authorId = candidate.features.get(AuthorIdFeature).get
         val (isBlueVerified, isProtected) = userMetadataMap(authorId)
 
-        // Some accounts run promotions on Twitter and send replies automatically.
+        // Some accounts run promotions on ExTwitter and send replies automatically.
         // We assume that a reply that took more than one minute is not an auto-reply.
         // If time difference doesn't exist, this means that one of the tweets was
         // not snowflake and therefore much older, and therefore OK as an extended reply.

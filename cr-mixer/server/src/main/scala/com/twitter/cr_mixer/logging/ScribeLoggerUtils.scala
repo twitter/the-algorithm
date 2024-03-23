@@ -1,13 +1,13 @@
-package com.twitter.cr_mixer.logging
+package com.ExTwitter.cr_mixer.logging
 
-import com.twitter.cr_mixer.featureswitch.CrMixerImpressedBuckets
-import com.twitter.cr_mixer.thriftscala.ImpressesedBucketInfo
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.logging.Logger
-import com.twitter.scrooge.BinaryThriftStructSerializer
-import com.twitter.scrooge.ThriftStruct
-import com.twitter.scrooge.ThriftStructCodec
+import com.ExTwitter.cr_mixer.featureswitch.CrMixerImpressedBuckets
+import com.ExTwitter.cr_mixer.thriftscala.ImpressesedBucketInfo
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.frigate.common.util.StatsUtil
+import com.ExTwitter.logging.Logger
+import com.ExTwitter.scrooge.BinaryThriftStructSerializer
+import com.ExTwitter.scrooge.ThriftStruct
+import com.ExTwitter.scrooge.ThriftStructCodec
 
 object ScribeLoggerUtils {
 

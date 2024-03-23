@@ -1,6 +1,6 @@
-#@namespace scala com.twitter.ann.serialization.thriftscala
+#@namespace scala com.ExTwitter.ann.serialization.thriftscala
 
-include "com/twitter/ml/api/embedding.thrift"
+include "com/ExTwitter/ml/api/embedding.thrift"
 /**
 * Thrift schema for storing embeddings in a file
 */

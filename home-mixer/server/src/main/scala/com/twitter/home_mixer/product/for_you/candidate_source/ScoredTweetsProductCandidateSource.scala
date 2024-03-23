@@ -1,21 +1,21 @@
-package com.twitter.home_mixer.product.for_you.candidate_source
+package com.ExTwitter.home_mixer.product.for_you.candidate_source
 
 import com.google.inject.Provider
-import com.twitter.home_mixer.model.HomeFeatures.ServedTweetIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.TimelineServiceTweetsFeature
-import com.twitter.home_mixer.model.request.HomeMixerRequest
-import com.twitter.home_mixer.model.request.ScoredTweetsProduct
-import com.twitter.home_mixer.model.request.ScoredTweetsProductContext
-import com.twitter.home_mixer.product.for_you.model.ForYouQuery
-import com.twitter.home_mixer.{thriftscala => t}
-import com.twitter.product_mixer.component_library.premarshaller.cursor.UrtCursorSerializer
-import com.twitter.product_mixer.core.functional_component.candidate_source.product_pipeline.ProductPipelineCandidateSource
-import com.twitter.product_mixer.core.functional_component.configapi.ParamsBuilder
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.product.registry.ProductPipelineRegistry
-import com.twitter.timelines.render.{thriftscala => tl}
-import com.twitter.timelineservice.suggests.{thriftscala => st}
-import com.twitter.tweetconvosvc.tweet_ancestor.{thriftscala => ta}
+import com.ExTwitter.home_mixer.model.HomeFeatures.ServedTweetIdsFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.TimelineServiceTweetsFeature
+import com.ExTwitter.home_mixer.model.request.HomeMixerRequest
+import com.ExTwitter.home_mixer.model.request.ScoredTweetsProduct
+import com.ExTwitter.home_mixer.model.request.ScoredTweetsProductContext
+import com.ExTwitter.home_mixer.product.for_you.model.ForYouQuery
+import com.ExTwitter.home_mixer.{thriftscala => t}
+import com.ExTwitter.product_mixer.component_library.premarshaller.cursor.UrtCursorSerializer
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.product_pipeline.ProductPipelineCandidateSource
+import com.ExTwitter.product_mixer.core.functional_component.configapi.ParamsBuilder
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.product_mixer.core.product.registry.ProductPipelineRegistry
+import com.ExTwitter.timelines.render.{thriftscala => tl}
+import com.ExTwitter.timelineservice.suggests.{thriftscala => st}
+import com.ExTwitter.tweetconvosvc.tweet_ancestor.{thriftscala => ta}
 import javax.inject.Inject
 import javax.inject.Singleton
 

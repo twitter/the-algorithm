@@ -4,11 +4,11 @@ scala_library(
     platform = "java8",
     tags = ["bazel-compatible"],
     dependencies = [
-        "emailstorage/server/src/main/thrift/com/twitter/emailstorage/api:email-storage-service-scala",
+        "emailstorage/server/src/main/thrift/com/ExTwitter/emailstorage/api:email-storage-service-scala",
         "finatra-internal/mtls-thriftmux/src/main/scala",
         "finatra/inject/inject-thrift-client",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/clients/common",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/models",
+        "follow-recommendations-service/common/src/main/scala/com/ExTwitter/follow_recommendations/common/clients/common",
+        "follow-recommendations-service/common/src/main/scala/com/ExTwitter/follow_recommendations/common/models",
         "stitch/stitch-core",
     ],
 )

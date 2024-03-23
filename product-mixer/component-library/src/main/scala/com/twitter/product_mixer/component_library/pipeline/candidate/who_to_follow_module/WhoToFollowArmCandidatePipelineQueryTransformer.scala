@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module
+package com.ExTwitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module
 
-import com.twitter.account_recommendations_mixer.{thriftscala => t}
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.functional_component.marshaller.request.ClientContextMarshaller
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.BadRequest
-import com.twitter.timelines.configapi.Param
+import com.ExTwitter.account_recommendations_mixer.{thriftscala => t}
+import com.ExTwitter.product_mixer.core.feature.Feature
+import com.ExTwitter.product_mixer.core.functional_component.marshaller.request.ClientContextMarshaller
+import com.ExTwitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
+import com.ExTwitter.product_mixer.core.pipeline.pipeline_failure.BadRequest
+import com.ExTwitter.timelines.configapi.Param
 
 object WhoToFollowArmCandidatePipelineQueryTransformer {
   val HomeDisplayLocation = "timeline"

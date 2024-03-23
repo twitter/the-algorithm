@@ -1,8 +1,8 @@
-package com.twitter.ann.scalding.offline
+package com.ExTwitter.ann.scalding.offline
 
-import com.twitter.ann.common.EmbeddingType.EmbeddingVector
-import com.twitter.ann.common.{Distance, NeighborWithDistance, Queryable, RuntimeParams}
-import com.twitter.util.Future
+import com.ExTwitter.ann.common.EmbeddingType.EmbeddingVector
+import com.ExTwitter.ann.common.{Distance, NeighborWithDistance, Queryable, RuntimeParams}
+import com.ExTwitter.util.Future
 
 private[offline] case class ParameterlessQueryable[T, P <: RuntimeParams, D <: Distance[D]](
   queryable: Queryable[T, P, D],

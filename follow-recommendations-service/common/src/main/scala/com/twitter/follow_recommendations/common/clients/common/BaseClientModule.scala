@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.common.clients.common
+package com.ExTwitter.follow_recommendations.common.clients.common
 
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.thrift.Protocols
-import com.twitter.follow_recommendations.common.constants.ServiceConstants._
-import com.twitter.inject.thrift.modules.ThriftClientModule
+import com.ExTwitter.finagle.ThriftMux
+import com.ExTwitter.finagle.thrift.Protocols
+import com.ExTwitter.follow_recommendations.common.constants.ServiceConstants._
+import com.ExTwitter.inject.thrift.modules.ThriftClientModule
 import scala.reflect.ClassTag
 
 /**

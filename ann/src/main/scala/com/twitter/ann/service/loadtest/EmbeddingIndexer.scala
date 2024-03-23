@@ -1,8 +1,8 @@
-package com.twitter.ann.service.loadtest
+package com.ExTwitter.ann.service.loadtest
 
-import com.twitter.ann.common.{Appendable, Distance, EntityEmbedding, Queryable, RuntimeParams}
-import com.twitter.ann.util.IndexBuilderUtils
-import com.twitter.util.{Future, Stopwatch}
+import com.ExTwitter.ann.common.{Appendable, Distance, EntityEmbedding, Queryable, RuntimeParams}
+import com.ExTwitter.ann.util.IndexBuilderUtils
+import com.ExTwitter.util.{Future, Stopwatch}
 
 class EmbeddingIndexer {
   // Index embeddings into Appendable and return the (appendable, latency) pair

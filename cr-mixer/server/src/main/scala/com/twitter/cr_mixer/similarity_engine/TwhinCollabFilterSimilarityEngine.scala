@@ -1,14 +1,14 @@
-package com.twitter.cr_mixer.similarity_engine
+package com.ExTwitter.cr_mixer.similarity_engine
 
-import com.twitter.cr_mixer.model.SimilarityEngineInfo
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.cr_mixer.model.TweetWithScore
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi
-import com.twitter.util.Future
+import com.ExTwitter.cr_mixer.model.SimilarityEngineInfo
+import com.ExTwitter.simclusters_v2.common.TweetId
+import com.ExTwitter.cr_mixer.model.TweetWithScore
+import com.ExTwitter.cr_mixer.thriftscala.SimilarityEngineType
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.simclusters_v2.thriftscala.InternalId
+import com.ExTwitter.storehaus.ReadableStore
+import com.ExTwitter.timelines.configapi
+import com.ExTwitter.util.Future
 import javax.inject.Singleton
 
 @Singleton

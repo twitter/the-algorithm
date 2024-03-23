@@ -1,16 +1,16 @@
-package com.twitter.ann.common
+package com.ExTwitter.ann.common
 
-import com.twitter.ann.common.EmbeddingType._
-import com.twitter.ann.common.thriftscala.{
+import com.ExTwitter.ann.common.EmbeddingType._
+import com.ExTwitter.ann.common.thriftscala.{
   NearestNeighborQuery,
   NearestNeighborResult,
   Distance => ServiceDistance,
   RuntimeParams => ServiceRuntimeParams
 }
-import com.twitter.bijection.Injection
-import com.twitter.finagle.Service
-import com.twitter.mediaservices.commons.codec.ArrayByteBufferCodec
-import com.twitter.util.Future
+import com.ExTwitter.bijection.Injection
+import com.ExTwitter.finagle.Service
+import com.ExTwitter.mediaservices.commons.codec.ArrayByteBufferCodec
+import com.ExTwitter.util.Future
 
 class ServiceClientQueryable[T, P <: RuntimeParams, D <: Distance[D]](
   service: Service[NearestNeighborQuery, NearestNeighborResult],

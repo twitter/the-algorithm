@@ -1,4 +1,4 @@
-package com.twitter.follow_recommendations.products.common
+package com.ExTwitter.follow_recommendations.products.common
 
 abstract class ProductException(message: String) extends Exception(message)
 

@@ -1,23 +1,23 @@
-package com.twitter.cr_mixer.similarity_engine
+package com.ExTwitter.cr_mixer.similarity_engine
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import com.google.inject.name.Named
-import com.twitter.contentrecommender.thriftscala.AlgorithmType
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.model.TopicTweetWithScore
-import com.twitter.cr_mixer.param.TopicTweetParams
-import com.twitter.cr_mixer.similarity_engine.SkitTopicTweetSimilarityEngine._
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.TopicId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi
-import com.twitter.topic_recos.thriftscala.TopicTweet
-import com.twitter.topic_recos.thriftscala.TopicTweetPartitionFlatKey
-import com.twitter.util.Future
+import com.ExTwitter.contentrecommender.thriftscala.AlgorithmType
+import com.ExTwitter.cr_mixer.model.ModuleNames
+import com.ExTwitter.cr_mixer.model.TopicTweetWithScore
+import com.ExTwitter.cr_mixer.param.TopicTweetParams
+import com.ExTwitter.cr_mixer.similarity_engine.SkitTopicTweetSimilarityEngine._
+import com.ExTwitter.cr_mixer.thriftscala.SimilarityEngineType
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.frigate.common.util.StatsUtil
+import com.ExTwitter.simclusters_v2.thriftscala.EmbeddingType
+import com.ExTwitter.simclusters_v2.thriftscala.TopicId
+import com.ExTwitter.storehaus.ReadableStore
+import com.ExTwitter.timelines.configapi
+import com.ExTwitter.topic_recos.thriftscala.TopicTweet
+import com.ExTwitter.topic_recos.thriftscala.TopicTweetPartitionFlatKey
+import com.ExTwitter.util.Future
 
 @Singleton
 case class SkitHighPrecisionTopicTweetSimilarityEngine @Inject() (

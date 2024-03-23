@@ -1,13 +1,13 @@
-package com.twitter.cr_mixer.module
+package com.ExTwitter.cr_mixer.module
 
 import com.google.inject.Provides
 import com.google.inject.Singleton
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.inject.TwitterModule
-import com.twitter.simclustersann.thriftscala.SimClustersANNService
+import com.ExTwitter.cr_mixer.model.ModuleNames
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.simclustersann.thriftscala.SimClustersANNService
 import javax.inject.Named
 
-object SimClustersANNServiceNameToClientMapper extends TwitterModule {
+object SimClustersANNServiceNameToClientMapper extends ExTwitterModule {
 
   @Provides
   @Singleton

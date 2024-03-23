@@ -8,8 +8,8 @@ java_library(
         "bazel-only",
     ],
     dependencies = [
-        "ann/src/main/java/com/twitter/ann/faiss:swig-native-utils",
-        "ann/src/main/java/com/twitter/ann/faiss/swig/resources",
+        "ann/src/main/java/com/ExTwitter/ann/faiss:swig-native-utils",
+        "ann/src/main/java/com/ExTwitter/ann/faiss/swig/resources",
     ],
 )
 
@@ -20,7 +20,7 @@ java_library(
     platform = "java8",
     tags = ["bazel-compatible"],
     dependencies = [
-        "3rdparty/jvm/com/twitter/ann/faiss/swig:resources",
-        "ann/src/main/java/com/twitter/ann/faiss:swig-native-utils",
+        "3rdparty/jvm/com/ExTwitter/ann/faiss/swig:resources",
+        "ann/src/main/java/com/ExTwitter/ann/faiss:swig-native-utils",
     ],
 )

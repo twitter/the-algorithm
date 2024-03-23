@@ -1,12 +1,12 @@
-package com.twitter.home_mixer.module
+package com.ExTwitter.home_mixer.module
 
-import com.twitter.finatra.thrift.exceptions.ExceptionMapper
-import com.twitter.home_mixer.{thriftscala => t}
-import com.twitter.util.logging.Logging
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.ProductDisabled
-import com.twitter.scrooge.ThriftException
-import com.twitter.util.Future
+import com.ExTwitter.finatra.thrift.exceptions.ExceptionMapper
+import com.ExTwitter.home_mixer.{thriftscala => t}
+import com.ExTwitter.util.logging.Logging
+import com.ExTwitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
+import com.ExTwitter.product_mixer.core.pipeline.pipeline_failure.ProductDisabled
+import com.ExTwitter.scrooge.ThriftException
+import com.ExTwitter.util.Future
 import javax.inject.Singleton
 
 @Singleton

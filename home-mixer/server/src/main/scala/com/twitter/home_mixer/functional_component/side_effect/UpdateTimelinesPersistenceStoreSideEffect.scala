@@ -1,38 +1,38 @@
-package com.twitter.home_mixer.functional_component.side_effect
+package com.ExTwitter.home_mixer.functional_component.side_effect
 
-import com.twitter.home_mixer.model.HomeFeatures._
-import com.twitter.home_mixer.model.request.FollowingProduct
-import com.twitter.home_mixer.model.request.ForYouProduct
-import com.twitter.home_mixer.model.HomeFeatures.IsTweetPreviewFeature
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module.WhoToFollowCandidateDecorator
-import com.twitter.product_mixer.component_library.pipeline.candidate.who_to_subscribe_module.WhoToSubscribeCandidateDecorator
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.common.identifier.SideEffectIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.AddEntriesTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ReplaceEntryTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ShowCoverInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.Timeline
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineModule
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelinemixer.clients.persistence.EntryWithItemIds
-import com.twitter.timelinemixer.clients.persistence.ItemIds
-import com.twitter.timelinemixer.clients.persistence.TimelineResponseBatchesClient
-import com.twitter.timelinemixer.clients.persistence.TimelineResponseV3
-import com.twitter.timelines.persistence.thriftscala.TweetScoreV1
-import com.twitter.timelines.persistence.{thriftscala => persistence}
-import com.twitter.timelineservice.model.TimelineQuery
-import com.twitter.timelineservice.model.TimelineQueryOptions
-import com.twitter.timelineservice.model.TweetScore
-import com.twitter.timelineservice.model.core.TimelineKind
-import com.twitter.timelineservice.model.rich.EntityIdType
-import com.twitter.util.Time
-import com.twitter.{timelineservice => tls}
+import com.ExTwitter.home_mixer.model.HomeFeatures._
+import com.ExTwitter.home_mixer.model.request.FollowingProduct
+import com.ExTwitter.home_mixer.model.request.ForYouProduct
+import com.ExTwitter.home_mixer.model.HomeFeatures.IsTweetPreviewFeature
+import com.ExTwitter.home_mixer.service.HomeMixerAlertConfig
+import com.ExTwitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module.WhoToFollowCandidateDecorator
+import com.ExTwitter.product_mixer.component_library.pipeline.candidate.who_to_subscribe_module.WhoToSubscribeCandidateDecorator
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
+import com.ExTwitter.product_mixer.core.model.common.identifier.SideEffectIdentifier
+import com.ExTwitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
+import com.ExTwitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.AddEntriesTimelineInstruction
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.ReplaceEntryTimelineInstruction
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.ShowCoverInstruction
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.Timeline
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.TimelineModule
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.timelinemixer.clients.persistence.EntryWithItemIds
+import com.ExTwitter.timelinemixer.clients.persistence.ItemIds
+import com.ExTwitter.timelinemixer.clients.persistence.TimelineResponseBatchesClient
+import com.ExTwitter.timelinemixer.clients.persistence.TimelineResponseV3
+import com.ExTwitter.timelines.persistence.thriftscala.TweetScoreV1
+import com.ExTwitter.timelines.persistence.{thriftscala => persistence}
+import com.ExTwitter.timelineservice.model.TimelineQuery
+import com.ExTwitter.timelineservice.model.TimelineQueryOptions
+import com.ExTwitter.timelineservice.model.TweetScore
+import com.ExTwitter.timelineservice.model.core.TimelineKind
+import com.ExTwitter.timelineservice.model.rich.EntityIdType
+import com.ExTwitter.util.Time
+import com.ExTwitter.{timelineservice => tls}
 import javax.inject.Inject
 import javax.inject.Singleton
 

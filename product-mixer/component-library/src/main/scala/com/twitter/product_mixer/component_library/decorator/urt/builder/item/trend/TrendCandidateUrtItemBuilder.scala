@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.trend
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.trend
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.trend.TrendCandidateUrtItemBuilder.TrendsClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.TrendDescription
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.TrendDomainContext
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.TrendGroupedTrends
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.TrendNormalizedTrendName
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.TrendTrendName
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.TrendTweetCount
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.TrendUrl
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.UnifiedTrendCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.promoted.BasePromotedMetadataBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.trend.TrendItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.trend.TrendCandidateUrtItemBuilder.TrendsClientEventInfoElement
+import com.ExTwitter.product_mixer.component_library.model.candidate.trends_events.TrendDescription
+import com.ExTwitter.product_mixer.component_library.model.candidate.trends_events.TrendDomainContext
+import com.ExTwitter.product_mixer.component_library.model.candidate.trends_events.TrendGroupedTrends
+import com.ExTwitter.product_mixer.component_library.model.candidate.trends_events.TrendNormalizedTrendName
+import com.ExTwitter.product_mixer.component_library.model.candidate.trends_events.TrendTrendName
+import com.ExTwitter.product_mixer.component_library.model.candidate.trends_events.TrendTweetCount
+import com.ExTwitter.product_mixer.component_library.model.candidate.trends_events.TrendUrl
+import com.ExTwitter.product_mixer.component_library.model.candidate.trends_events.UnifiedTrendCandidate
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.promoted.BasePromotedMetadataBuilder
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.trend.TrendItem
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
 
 object TrendCandidateUrtItemBuilder {
   final val TrendsClientEventInfoElement = "trend"

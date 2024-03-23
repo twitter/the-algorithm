@@ -1,7 +1,7 @@
-package com.twitter.ann.common
+package com.ExTwitter.ann.common
 
-import com.twitter.ann.common.EmbeddingType.EmbeddingVector
-import com.twitter.util.Future
+import com.ExTwitter.ann.common.EmbeddingType.EmbeddingVector
+import com.ExTwitter.util.Future
 import scala.util.Random
 
 trait ShardFunction[T] {

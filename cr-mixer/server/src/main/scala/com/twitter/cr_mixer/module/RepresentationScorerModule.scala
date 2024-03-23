@@ -1,24 +1,24 @@
-package com.twitter.cr_mixer.module
+package com.ExTwitter.cr_mixer.module
 
-import com.twitter.inject.TwitterModule
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.store.strato.StratoFetchableStore
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.storehaus.ReadableStore
-import com.twitter.simclusters_v2.thriftscala.ScoringAlgorithm
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.simclusters_v2.thriftscala.EmbeddingType
+import com.ExTwitter.simclusters_v2.thriftscala.InternalId
+import com.ExTwitter.simclusters_v2.thriftscala.ModelVersion
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.frigate.common.store.strato.StratoFetchableStore
+import com.ExTwitter.simclusters_v2.common.UserId
+import com.ExTwitter.simclusters_v2.common.TweetId
+import com.ExTwitter.strato.client.{Client => StratoClient}
+import com.ExTwitter.storehaus.ReadableStore
+import com.ExTwitter.simclusters_v2.thriftscala.ScoringAlgorithm
 import com.google.inject.Provides
 import com.google.inject.Singleton
-import com.twitter.hermit.store.common.ObservedReadableStore
+import com.ExTwitter.hermit.store.common.ObservedReadableStore
 import javax.inject.Named
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.representationscorer.thriftscala.ListScoreId
+import com.ExTwitter.cr_mixer.model.ModuleNames
+import com.ExTwitter.representationscorer.thriftscala.ListScoreId
 
-object RepresentationScorerModule extends TwitterModule {
+object RepresentationScorerModule extends ExTwitterModule {
 
   private val rsxColumnPath = "recommendations/representation_scorer/listScore"
 

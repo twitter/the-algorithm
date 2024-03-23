@@ -1,17 +1,17 @@
-package com.twitter.home_mixer.module
+package com.ExTwitter.home_mixer.module
 
 import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.Injector
-import com.twitter.inject.annotations.Flags
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.stitch.tweetypie.TweetyPie
-import com.twitter.tweetypie.thriftscala.TweetService
-import com.twitter.util.Duration
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.finagle.mtls.authentication.ServiceIdentifier
+import com.ExTwitter.finagle.thrift.ClientId
+import com.ExTwitter.finagle.thriftmux.MethodBuilder
+import com.ExTwitter.finatra.mtls.thriftmux.modules.MtlsClient
+import com.ExTwitter.inject.Injector
+import com.ExTwitter.inject.annotations.Flags
+import com.ExTwitter.inject.thrift.modules.ThriftMethodBuilderClientModule
+import com.ExTwitter.stitch.tweetypie.TweetyPie
+import com.ExTwitter.tweetypie.thriftscala.TweetService
+import com.ExTwitter.util.Duration
 import javax.inject.Singleton
 
 /**

@@ -1,11 +1,11 @@
-package com.twitter.follow_recommendations.common.clients.socialgraph
+package com.ExTwitter.follow_recommendations.common.clients.socialgraph
 
 import com.google.inject.Provides
-import com.twitter.finagle.ThriftMux
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.follow_recommendations.common.clients.common.BaseClientModule
-import com.twitter.socialgraph.thriftscala.SocialGraphService
-import com.twitter.stitch.socialgraph.SocialGraph
+import com.ExTwitter.finagle.ThriftMux
+import com.ExTwitter.finatra.mtls.thriftmux.modules.MtlsClient
+import com.ExTwitter.follow_recommendations.common.clients.common.BaseClientModule
+import com.ExTwitter.socialgraph.thriftscala.SocialGraphService
+import com.ExTwitter.stitch.socialgraph.SocialGraph
 import javax.inject.Singleton
 
 object SocialGraphModule

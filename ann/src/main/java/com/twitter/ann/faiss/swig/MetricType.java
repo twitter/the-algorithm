@@ -6,7 +6,7 @@
  * the SWIG interface file instead.
  * ----------------------------------------------------------------------------- */
 
-package com.twitter.ann.faiss;
+package com.ExTwitter.ann.faiss;
 
 public final class MetricType {
   public final static MetricType METRIC_INNER_PRODUCT = new MetricType("METRIC_INNER_PRODUCT", swigfaissJNI.METRIC_INNER_PRODUCT_get());

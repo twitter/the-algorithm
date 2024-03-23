@@ -5,21 +5,21 @@ scala_library(
         "bazel-only",
     ],
     dependencies = [
-        "3rdparty/jvm/com/twitter/bijection:core",
-        "frigate/frigate-common/src/main/scala/com/twitter/frigate/common/constdb_util",
-        "graph-feature-service/src/main/scala/com/twitter/graph_feature_service/common",
-        "src/scala/com/twitter/interaction_graph/scio/agg_all:interaction_graph_history_aggregated_edge_snapshot-scala",
-        "src/scala/com/twitter/interaction_graph/scio/ml/scores:real_graph_in_scores-scala",
-        "src/scala/com/twitter/pluck/source/user_audits:user_audit_final-scala",
-        "src/scala/com/twitter/scalding_internal/dalv2",
-        "src/scala/com/twitter/scalding_internal/job",
-        "src/scala/com/twitter/scalding_internal/job/analytics_batch",
+        "3rdparty/jvm/com/ExTwitter/bijection:core",
+        "frigate/frigate-common/src/main/scala/com/ExTwitter/frigate/common/constdb_util",
+        "graph-feature-service/src/main/scala/com/ExTwitter/graph_feature_service/common",
+        "src/scala/com/ExTwitter/interaction_graph/scio/agg_all:interaction_graph_history_aggregated_edge_snapshot-scala",
+        "src/scala/com/ExTwitter/interaction_graph/scio/ml/scores:real_graph_in_scores-scala",
+        "src/scala/com/ExTwitter/pluck/source/user_audits:user_audit_final-scala",
+        "src/scala/com/ExTwitter/scalding_internal/dalv2",
+        "src/scala/com/ExTwitter/scalding_internal/job",
+        "src/scala/com/ExTwitter/scalding_internal/job/analytics_batch",
     ],
 )
 
 scalding_job(
     name = "graph_feature_service_adhoc_job",
-    main = "com.twitter.graph_feature_service.scalding.GraphFeatureServiceAdhocApp",
+    main = "com.ExTwitter.graph_feature_service.scalding.GraphFeatureServiceAdhocApp",
     args = [
         "--date 2022-10-24",
     ],
@@ -29,7 +29,7 @@ scalding_job(
         ("hadoop.submitter.jvm.total-memory", "5120m"),
         ("submitter.tier", "preemptible"),
     ],
-    contact = "recos-platform-alerts@twitter.com",
+    contact = "recos-platform-alerts@ExTwitter.com",
     hadoop_cluster = "atla-proc",
     hadoop_properties = [("mapreduce.job.hdfs-servers", "/atla/proc/user/cassowary")],
     platform = "java8",
@@ -44,14 +44,14 @@ scalding_job(
 
 scalding_job(
     name = "graph_feature_service_daily_job",
-    main = "com.twitter.graph_feature_service.scalding.GraphFeatureServiceScheduledApp",
+    main = "com.ExTwitter.graph_feature_service.scalding.GraphFeatureServiceScheduledApp",
     config = [
         ("hadoop.map.jvm.total-memory", "3072m"),
         ("hadoop.reduce.jvm.total-memory", "3072m"),
         ("hadoop.submitter.jvm.total-memory", "5120m"),
         ("submitter.tier", "preemptible"),
     ],
-    contact = "recos-platform-alerts@twitter.com",
+    contact = "recos-platform-alerts@ExTwitter.com",
     cron = "01,31 * * * *",
     hadoop_cluster = "atla-proc",
     hadoop_properties = [("mapreduce.job.hdfs-servers", "/atla/proc/user/cassowary")],

@@ -1,22 +1,22 @@
-package com.twitter.follow_recommendations.services
+package com.ExTwitter.follow_recommendations.services
 
-import com.twitter.finagle.stats.StatsReceiver
+import com.ExTwitter.finagle.stats.StatsReceiver
 import javax.inject.Inject
 import javax.inject.Singleton
-import com.twitter.timelines.configapi.Params
-import com.twitter.follow_recommendations.common.utils.DisplayLocationProductConverterUtil
-import com.twitter.follow_recommendations.configapi.deciders.DeciderParams
-import com.twitter.follow_recommendations.logging.FrsLogger
-import com.twitter.follow_recommendations.models.{DebugParams => FrsDebugParams}
-import com.twitter.follow_recommendations.models.RecommendationRequest
-import com.twitter.follow_recommendations.models.RecommendationResponse
-import com.twitter.follow_recommendations.models.Request
-import com.twitter.product_mixer.core.model.marshalling.request.{
+import com.ExTwitter.timelines.configapi.Params
+import com.ExTwitter.follow_recommendations.common.utils.DisplayLocationProductConverterUtil
+import com.ExTwitter.follow_recommendations.configapi.deciders.DeciderParams
+import com.ExTwitter.follow_recommendations.logging.FrsLogger
+import com.ExTwitter.follow_recommendations.models.{DebugParams => FrsDebugParams}
+import com.ExTwitter.follow_recommendations.models.RecommendationRequest
+import com.ExTwitter.follow_recommendations.models.RecommendationResponse
+import com.ExTwitter.follow_recommendations.models.Request
+import com.ExTwitter.product_mixer.core.model.marshalling.request.{
   DebugParams => ProductMixerDebugParams
 }
-import com.twitter.product_mixer.core.product.registry.ProductPipelineRegistry
-import com.twitter.product_mixer.core.pipeline.product.ProductPipelineRequest
-import com.twitter.stitch.Stitch
+import com.ExTwitter.product_mixer.core.product.registry.ProductPipelineRegistry
+import com.ExTwitter.product_mixer.core.pipeline.product.ProductPipelineRequest
+import com.ExTwitter.stitch.Stitch
 
 @Singleton
 class ProductMixerRecommendationService @Inject() (

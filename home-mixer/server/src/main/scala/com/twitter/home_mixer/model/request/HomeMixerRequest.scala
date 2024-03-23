@@ -1,10 +1,10 @@
-package com.twitter.home_mixer.model.request
+package com.ExTwitter.home_mixer.model.request
 
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
-import com.twitter.product_mixer.core.model.marshalling.request.DebugParams
-import com.twitter.product_mixer.core.model.marshalling.request.Product
-import com.twitter.product_mixer.core.model.marshalling.request.ProductContext
-import com.twitter.product_mixer.core.model.marshalling.request.Request
+import com.ExTwitter.product_mixer.core.model.marshalling.request.ClientContext
+import com.ExTwitter.product_mixer.core.model.marshalling.request.DebugParams
+import com.ExTwitter.product_mixer.core.model.marshalling.request.Product
+import com.ExTwitter.product_mixer.core.model.marshalling.request.ProductContext
+import com.ExTwitter.product_mixer.core.model.marshalling.request.Request
 
 case class HomeMixerRequest(
   override val clientContext: ClientContext,

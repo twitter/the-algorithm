@@ -1,8 +1,8 @@
-package com.twitter.follow_recommendations.common.clients.email_storage_service
+package com.ExTwitter.follow_recommendations.common.clients.email_storage_service
 
-import com.twitter.emailstorage.api.thriftscala.EmailStorageService
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.follow_recommendations.common.clients.common.BaseClientModule
+import com.ExTwitter.emailstorage.api.thriftscala.EmailStorageService
+import com.ExTwitter.finatra.mtls.thriftmux.modules.MtlsClient
+import com.ExTwitter.follow_recommendations.common.clients.common.BaseClientModule
 
 object EmailStorageServiceModule
     extends BaseClientModule[EmailStorageService.MethodPerEndpoint]

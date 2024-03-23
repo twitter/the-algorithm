@@ -1,41 +1,41 @@
-package com.twitter.follow_recommendations.common.clients.strato
+package com.ExTwitter.follow_recommendations.common.clients.strato
 
 import com.google.inject.name.Named
 import com.google.inject.Provides
 import com.google.inject.Singleton
-import com.twitter.conversions.DurationOps._
-import com.twitter.core_workflows.user_model.thriftscala.CondensedUserState
-import com.twitter.search.account_search.extended_network.thriftscala.ExtendedNetworkUserKey
-import com.twitter.search.account_search.extended_network.thriftscala.ExtendedNetworkUserVal
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.thrift.Protocols
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.follow_recommendations.common.constants.ServiceConstants._
-import com.twitter.frigate.data_pipeline.candidate_generation.thriftscala.LatestEvents
-import com.twitter.hermit.candidate.thriftscala.{Candidates => HermitCandidates}
-import com.twitter.hermit.pop_geo.thriftscala.PopUsersInPlace
-import com.twitter.onboarding.relevance.relatable_accounts.thriftscala.RelatableAccounts
-import com.twitter.inject.TwitterModule
-import com.twitter.onboarding.relevance.candidates.thriftscala.InterestBasedUserRecommendations
-import com.twitter.onboarding.relevance.candidates.thriftscala.UTTInterest
-import com.twitter.onboarding.relevance.store.thriftscala.WhoToFollowDismissEventDetails
-import com.twitter.recos.user_user_graph.thriftscala.RecommendUserRequest
-import com.twitter.recos.user_user_graph.thriftscala.RecommendUserResponse
-import com.twitter.service.metastore.gen.thriftscala.UserRecommendabilityFeatures
-import com.twitter.strato.catalog.Scan.Slice
-import com.twitter.strato.client.Strato.{Client => StratoClient}
-import com.twitter.strato.client.Client
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.client.Scanner
-import com.twitter.strato.thrift.ScroogeConvImplicits._
-import com.twitter.wtf.candidate.thriftscala.CandidateSeq
-import com.twitter.wtf.ml.thriftscala.CandidateFeatures
-import com.twitter.wtf.real_time_interaction_graph.thriftscala.Interaction
-import com.twitter.wtf.triangular_loop.thriftscala.{Candidates => TriangularLoopCandidates}
-import com.twitter.strato.opcontext.Attribution._
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.core_workflows.user_model.thriftscala.CondensedUserState
+import com.ExTwitter.search.account_search.extended_network.thriftscala.ExtendedNetworkUserKey
+import com.ExTwitter.search.account_search.extended_network.thriftscala.ExtendedNetworkUserVal
+import com.ExTwitter.finagle.ThriftMux
+import com.ExTwitter.finagle.mtls.authentication.ServiceIdentifier
+import com.ExTwitter.finagle.thrift.Protocols
+import com.ExTwitter.follow_recommendations.common.constants.GuiceNamedConstants
+import com.ExTwitter.follow_recommendations.common.constants.ServiceConstants._
+import com.ExTwitter.frigate.data_pipeline.candidate_generation.thriftscala.LatestEvents
+import com.ExTwitter.hermit.candidate.thriftscala.{Candidates => HermitCandidates}
+import com.ExTwitter.hermit.pop_geo.thriftscala.PopUsersInPlace
+import com.ExTwitter.onboarding.relevance.relatable_accounts.thriftscala.RelatableAccounts
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.onboarding.relevance.candidates.thriftscala.InterestBasedUserRecommendations
+import com.ExTwitter.onboarding.relevance.candidates.thriftscala.UTTInterest
+import com.ExTwitter.onboarding.relevance.store.thriftscala.WhoToFollowDismissEventDetails
+import com.ExTwitter.recos.user_user_graph.thriftscala.RecommendUserRequest
+import com.ExTwitter.recos.user_user_graph.thriftscala.RecommendUserResponse
+import com.ExTwitter.service.metastore.gen.thriftscala.UserRecommendabilityFeatures
+import com.ExTwitter.strato.catalog.Scan.Slice
+import com.ExTwitter.strato.client.Strato.{Client => StratoClient}
+import com.ExTwitter.strato.client.Client
+import com.ExTwitter.strato.client.Fetcher
+import com.ExTwitter.strato.client.Scanner
+import com.ExTwitter.strato.thrift.ScroogeConvImplicits._
+import com.ExTwitter.wtf.candidate.thriftscala.CandidateSeq
+import com.ExTwitter.wtf.ml.thriftscala.CandidateFeatures
+import com.ExTwitter.wtf.real_time_interaction_graph.thriftscala.Interaction
+import com.ExTwitter.wtf.triangular_loop.thriftscala.{Candidates => TriangularLoopCandidates}
+import com.ExTwitter.strato.opcontext.Attribution._
 
-object StratoClientModule extends TwitterModule {
+object StratoClientModule extends ExTwitterModule {
 
   // column paths
   val CosineFollowPath = "recommendations/similarity/similarUsersByFollowGraph.User"

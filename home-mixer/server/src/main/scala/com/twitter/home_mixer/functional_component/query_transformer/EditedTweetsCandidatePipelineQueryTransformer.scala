@@ -1,17 +1,17 @@
-package com.twitter.home_mixer.functional_component.query_transformer
+package com.ExTwitter.home_mixer.functional_component.query_transformer
 
-import com.twitter.common_internal.analytics.twitter_client_user_agent_parser.UserAgent
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.model.HomeFeatures.PersistenceEntriesFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelinemixer.clients.persistence.EntryWithItemIds
-import com.twitter.timelines.persistence.thriftscala.RequestType
-import com.twitter.timelines.util.client_info.ClientPlatform
-import com.twitter.timelineservice.model.rich.EntityIdType
-import com.twitter.util.Time
+import com.ExTwitter.common_internal.analytics.ExTwitter_client_user_agent_parser.UserAgent
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.home_mixer.model.HomeFeatures.PersistenceEntriesFeature
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
+import com.ExTwitter.product_mixer.core.model.common.identifier.TransformerIdentifier
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.timelinemixer.clients.persistence.EntryWithItemIds
+import com.ExTwitter.timelines.persistence.thriftscala.RequestType
+import com.ExTwitter.timelines.util.client_info.ClientPlatform
+import com.ExTwitter.timelineservice.model.rich.EntityIdType
+import com.ExTwitter.util.Time
 
 object EditedTweetsCandidatePipelineQueryTransformer
     extends CandidatePipelineQueryTransformer[PipelineQuery, Seq[Long]] {

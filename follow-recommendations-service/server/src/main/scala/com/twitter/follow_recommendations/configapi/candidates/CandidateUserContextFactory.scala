@@ -1,15 +1,15 @@
-package com.twitter.follow_recommendations.configapi.candidates
+package com.ExTwitter.follow_recommendations.configapi.candidates
 
 import com.google.common.annotations.VisibleForTesting
 import com.google.inject.Inject
-import com.twitter.decider.Decider
-import com.twitter.featureswitches.v2.FeatureSwitches
-import com.twitter.featureswitches.{Recipient => FeatureSwitchRecipient}
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants.PRODUCER_SIDE_FEATURE_SWITCHES
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.timelines.configapi.FeatureContext
-import com.twitter.timelines.configapi.featureswitches.v2.FeatureSwitchResultsFeatureContext
+import com.ExTwitter.decider.Decider
+import com.ExTwitter.featureswitches.v2.FeatureSwitches
+import com.ExTwitter.featureswitches.{Recipient => FeatureSwitchRecipient}
+import com.ExTwitter.follow_recommendations.common.constants.GuiceNamedConstants.PRODUCER_SIDE_FEATURE_SWITCHES
+import com.ExTwitter.follow_recommendations.common.models.CandidateUser
+import com.ExTwitter.follow_recommendations.common.models.DisplayLocation
+import com.ExTwitter.timelines.configapi.FeatureContext
+import com.ExTwitter.timelines.configapi.featureswitches.v2.FeatureSwitchResultsFeatureContext
 import javax.inject.Named
 import javax.inject.Singleton
 

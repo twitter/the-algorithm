@@ -1,12 +1,12 @@
-package com.twitter.cr_mixer.util
+package com.ExTwitter.cr_mixer.util
 
-import com.twitter.cr_mixer.model.Candidate
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.model.RankedCandidate
-import com.twitter.cr_mixer.model.SourceInfo
-import com.twitter.cr_mixer.param.BlenderParams.BlendGroupingMethodEnum
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.simclusters_v2.thriftscala.InternalId
+import com.ExTwitter.cr_mixer.model.Candidate
+import com.ExTwitter.cr_mixer.model.InitialCandidate
+import com.ExTwitter.cr_mixer.model.RankedCandidate
+import com.ExTwitter.cr_mixer.model.SourceInfo
+import com.ExTwitter.cr_mixer.param.BlenderParams.BlendGroupingMethodEnum
+import com.ExTwitter.cr_mixer.thriftscala.SimilarityEngineType
+import com.ExTwitter.simclusters_v2.thriftscala.InternalId
 
 object CountWeightedInterleaveUtil {
 

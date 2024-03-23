@@ -1,8 +1,8 @@
-package com.twitter.follow_recommendations.configapi.params
+package com.ExTwitter.follow_recommendations.configapi.params
 
-import com.twitter.follow_recommendations.models.CandidateSourceType
-import com.twitter.timelines.configapi.FSEnumParam
-import com.twitter.timelines.configapi.FSParam
+import com.ExTwitter.follow_recommendations.models.CandidateSourceType
+import com.ExTwitter.timelines.configapi.FSEnumParam
+import com.ExTwitter.timelines.configapi.FSParam
 
 /**
  * When adding Producer side experiments, make sure to register the FS Key in [[ProducerFeatureFilter]]

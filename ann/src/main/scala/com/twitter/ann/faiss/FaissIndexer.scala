@@ -1,19 +1,19 @@
-package com.twitter.ann.faiss
+package com.ExTwitter.ann.faiss
 
 import com.google.common.base.Preconditions
-import com.twitter.ann.common.Cosine
-import com.twitter.ann.common.Distance
-import com.twitter.ann.common.EntityEmbedding
-import com.twitter.ann.common.IndexOutputFile
-import com.twitter.ann.common.InnerProduct
-import com.twitter.ann.common.L2
-import com.twitter.ann.common.Metric
-import com.twitter.ml.api.embedding.EmbeddingMath
-import com.twitter.scalding.Execution
-import com.twitter.scalding.TypedPipe
-import com.twitter.search.common.file.AbstractFile
-import com.twitter.search.common.file.FileUtils
-import com.twitter.util.logging.Logging
+import com.ExTwitter.ann.common.Cosine
+import com.ExTwitter.ann.common.Distance
+import com.ExTwitter.ann.common.EntityEmbedding
+import com.ExTwitter.ann.common.IndexOutputFile
+import com.ExTwitter.ann.common.InnerProduct
+import com.ExTwitter.ann.common.L2
+import com.ExTwitter.ann.common.Metric
+import com.ExTwitter.ml.api.embedding.EmbeddingMath
+import com.ExTwitter.scalding.Execution
+import com.ExTwitter.scalding.TypedPipe
+import com.ExTwitter.search.common.file.AbstractFile
+import com.ExTwitter.search.common.file.FileUtils
+import com.ExTwitter.util.logging.Logging
 import java.io.File
 import scala.util.Random
 

@@ -1,4 +1,4 @@
-package com.twitter.home_mixer.model.request
+package com.ExTwitter.home_mixer.model.request
 
 /**
  * [[HasSeenTweetIds]] enables shared components to access the list of impressed tweet IDs

@@ -1,6 +1,6 @@
-package com.twitter.ann.service.query_server.common.throttling
+package com.ExTwitter.ann.service.query_server.common.throttling
 
-import com.twitter.util.Duration
+import com.ExTwitter.util.Duration
 
 trait ThrottlingInstrument {
   def sample(): Unit

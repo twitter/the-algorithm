@@ -1,11 +1,11 @@
-package com.twitter.follow_recommendations.common.feature_hydration.sources
+package com.ExTwitter.follow_recommendations.common.feature_hydration.sources
 
-import com.twitter.timelines.configapi.DurationConversion
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.util.Duration
-import com.twitter.conversions.DurationOps._
+import com.ExTwitter.timelines.configapi.DurationConversion
+import com.ExTwitter.timelines.configapi.FSBoundedParam
+import com.ExTwitter.timelines.configapi.FSParam
+import com.ExTwitter.timelines.configapi.HasDurationConversion
+import com.ExTwitter.util.Duration
+import com.ExTwitter.conversions.DurationOps._
 
 object FeatureStoreSourceParams {
   case object EnableTopicAggregateFeatures

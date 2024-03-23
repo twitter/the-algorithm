@@ -1,4 +1,4 @@
-package com.twitter.follow_recommendations.common.rankers.common
+package com.ExTwitter.follow_recommendations.common.rankers.common
 
 object RankerId extends Enumeration {
   type RankerId = Value

@@ -1,18 +1,18 @@
-package com.twitter.home_mixer.module
+package com.ExTwitter.home_mixer.module
 
 import com.google.inject.Provides
 import com.google.inject.name.Named
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.memcached.{Client => MemcachedClient}
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.hashing.KeyHasher
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.StaleTweetsCache
-import com.twitter.inject.TwitterModule
-import com.twitter.product_mixer.shared_library.memcached_client.MemcachedClientBuilder
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.finagle.memcached.{Client => MemcachedClient}
+import com.ExTwitter.finagle.mtls.authentication.ServiceIdentifier
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.hashing.KeyHasher
+import com.ExTwitter.home_mixer.param.HomeMixerInjectionNames.StaleTweetsCache
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.product_mixer.shared_library.memcached_client.MemcachedClientBuilder
 import javax.inject.Singleton
 
-object StaleTweetsCacheModule extends TwitterModule {
+object StaleTweetsCacheModule extends ExTwitterModule {
 
   @Singleton
   @Provides

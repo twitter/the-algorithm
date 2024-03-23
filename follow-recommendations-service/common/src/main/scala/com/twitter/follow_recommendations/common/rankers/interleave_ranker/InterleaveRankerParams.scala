@@ -1,6 +1,6 @@
-package com.twitter.follow_recommendations.common.rankers.interleave_ranker
+package com.ExTwitter.follow_recommendations.common.rankers.interleave_ranker
 
-import com.twitter.timelines.configapi.FSParam
+import com.ExTwitter.timelines.configapi.FSParam
 
 object InterleaveRankerParams {
   case object ScribeRankingInfoInInterleaveRanker

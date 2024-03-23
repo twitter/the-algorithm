@@ -1,6 +1,6 @@
-package com.twitter.follow_recommendations.common.base
+package com.ExTwitter.follow_recommendations.common.base
 
-import com.twitter.follow_recommendations.common.models.FilterReason
+import com.ExTwitter.follow_recommendations.common.models.FilterReason
 
 sealed trait PredicateResult {
   def value: Boolean

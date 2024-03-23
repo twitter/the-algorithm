@@ -1,14 +1,14 @@
-package com.twitter.follow_recommendations.common.clients.impression_store
+package com.ExTwitter.follow_recommendations.common.clients.impression_store
 
 import com.google.inject.Provides
 import com.google.inject.Singleton
-import com.twitter.follow_recommendations.thriftscala.DisplayLocation
-import com.twitter.inject.TwitterModule
-import com.twitter.strato.catalog.Scan.Slice
-import com.twitter.strato.client.Client
-import com.twitter.strato.thrift.ScroogeConvImplicits._
+import com.ExTwitter.follow_recommendations.thriftscala.DisplayLocation
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.strato.catalog.Scan.Slice
+import com.ExTwitter.strato.client.Client
+import com.ExTwitter.strato.thrift.ScroogeConvImplicits._
 
-object ImpressionStoreModule extends TwitterModule {
+object ImpressionStoreModule extends ExTwitterModule {
 
   val columnPath: String = "onboarding/userrecs/wtfImpressionCountsStore"
 

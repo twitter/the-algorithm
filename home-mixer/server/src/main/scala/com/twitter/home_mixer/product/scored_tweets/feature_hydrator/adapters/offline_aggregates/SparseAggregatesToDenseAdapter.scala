@@ -1,10 +1,10 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.adapters.offline_aggregates
+package com.ExTwitter.home_mixer.product.scored_tweets.feature_hydrator.adapters.offline_aggregates
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.conversion.CombineCountsPolicy
-import com.twitter.timelines.prediction.common.adapters.TimelinesIRecordAdapter
+import com.ExTwitter.ml.api.DataRecord
+import com.ExTwitter.ml.api.FeatureContext
+import com.ExTwitter.ml.api.RichDataRecord
+import com.ExTwitter.timelines.data_processing.ml_util.aggregation_framework.conversion.CombineCountsPolicy
+import com.ExTwitter.timelines.prediction.common.adapters.TimelinesIRecordAdapter
 
 class SparseAggregatesToDenseAdapter(policy: CombineCountsPolicy)
     extends TimelinesIRecordAdapter[Seq[DataRecord]] {

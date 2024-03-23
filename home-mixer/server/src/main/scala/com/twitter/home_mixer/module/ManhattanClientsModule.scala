@@ -1,18 +1,18 @@
-package com.twitter.home_mixer.module
+package com.ExTwitter.home_mixer.module
 
 import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.RealGraphManhattanEndpoint
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.storage.client.manhattan.kv._
-import com.twitter.timelines.config.ConfigUtils
-import com.twitter.util.Duration
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.finagle.mtls.authentication.ServiceIdentifier
+import com.ExTwitter.home_mixer.param.HomeMixerInjectionNames.RealGraphManhattanEndpoint
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.inject.annotations.Flag
+import com.ExTwitter.storage.client.manhattan.kv._
+import com.ExTwitter.timelines.config.ConfigUtils
+import com.ExTwitter.util.Duration
 import javax.inject.Named
 import javax.inject.Singleton
 
-object ManhattanClientsModule extends TwitterModule with ConfigUtils {
+object ManhattanClientsModule extends ExTwitterModule with ConfigUtils {
 
   private val ApolloDest = "/s/manhattan/apollo.native-thrift"
   private final val Timeout = "mh_real_graph.timeout"

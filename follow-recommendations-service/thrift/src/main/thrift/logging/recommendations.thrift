@@ -1,8 +1,8 @@
-namespace java com.twitter.follow_recommendations.logging.thriftjava
-#@namespace scala com.twitter.follow_recommendations.logging.thriftscala
-#@namespace strato com.twitter.follow_recommendations.logging
+namespace java com.ExTwitter.follow_recommendations.logging.thriftjava
+#@namespace scala com.ExTwitter.follow_recommendations.logging.thriftscala
+#@namespace strato com.ExTwitter.follow_recommendations.logging
 
-include "com/twitter/ads/adserver/adserver_common.thrift"
+include "com/ExTwitter/ads/adserver/adserver_common.thrift"
 include "reasons.thrift"
 include "tracking.thrift"
 include "scoring.thrift"

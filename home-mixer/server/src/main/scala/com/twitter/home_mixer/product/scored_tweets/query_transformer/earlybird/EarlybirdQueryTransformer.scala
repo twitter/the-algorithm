@@ -1,18 +1,18 @@
-package com.twitter.home_mixer.product.scored_tweets.query_transformer.earlybird
+package com.ExTwitter.home_mixer.product.scored_tweets.query_transformer.earlybird
 
-import com.twitter.home_mixer.model.HomeFeatures.RealGraphInNetworkScoresFeature
-import com.twitter.home_mixer.model.request.HasDeviceContext
-import com.twitter.home_mixer.util.CachedScoredTweetsHelper
-import com.twitter.home_mixer.util.earlybird.EarlybirdRequestUtil
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.quality_factor.HasQualityFactorStatus
-import com.twitter.search.earlybird.{thriftscala => eb}
-import com.twitter.timelines.clients.relevance_search.SearchClient.TweetTypes
-import com.twitter.timelines.common.model.TweetKindOption
-import com.twitter.timelines.util.SnowflakeSortIndexHelper
-import com.twitter.util.Duration
-import com.twitter.util.Time
+import com.ExTwitter.home_mixer.model.HomeFeatures.RealGraphInNetworkScoresFeature
+import com.ExTwitter.home_mixer.model.request.HasDeviceContext
+import com.ExTwitter.home_mixer.util.CachedScoredTweetsHelper
+import com.ExTwitter.home_mixer.util.earlybird.EarlybirdRequestUtil
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.core.quality_factor.HasQualityFactorStatus
+import com.ExTwitter.search.earlybird.{thriftscala => eb}
+import com.ExTwitter.timelines.clients.relevance_search.SearchClient.TweetTypes
+import com.ExTwitter.timelines.common.model.TweetKindOption
+import com.ExTwitter.timelines.util.SnowflakeSortIndexHelper
+import com.ExTwitter.util.Duration
+import com.ExTwitter.util.Time
 
 trait EarlybirdQueryTransformer[
   Query <: PipelineQuery with HasQualityFactorStatus with HasDeviceContext] {

@@ -1,7 +1,7 @@
-package com.twitter.home_mixer.functional_component.decorator
+package com.ExTwitter.home_mixer.functional_component.decorator
 
-import com.twitter.home_mixer.model.HomeFeatures._
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.home_mixer.model.HomeFeatures._
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
 
 object HomeQueryTypePredicates {
   private[this] val QueryPredicates: Seq[(String, FeatureMap => Boolean)] = Seq(

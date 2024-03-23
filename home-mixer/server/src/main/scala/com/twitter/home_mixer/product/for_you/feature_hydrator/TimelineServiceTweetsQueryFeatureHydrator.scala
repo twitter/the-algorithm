@@ -1,19 +1,19 @@
-package com.twitter.home_mixer.product.for_you.feature_hydrator
+package com.ExTwitter.home_mixer.product.for_you.feature_hydrator
 
-import com.twitter.home_mixer.marshaller.timelines.DeviceContextMarshaller
-import com.twitter.home_mixer.model.HomeFeatures.TimelineServiceTweetsFeature
-import com.twitter.home_mixer.model.request.DeviceContext
-import com.twitter.home_mixer.model.request.HasDeviceContext
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.timelineservice.TimelineService
-import com.twitter.timelineservice.{thriftscala => t}
+import com.ExTwitter.home_mixer.marshaller.timelines.DeviceContextMarshaller
+import com.ExTwitter.home_mixer.model.HomeFeatures.TimelineServiceTweetsFeature
+import com.ExTwitter.home_mixer.model.request.DeviceContext
+import com.ExTwitter.home_mixer.model.request.HasDeviceContext
+import com.ExTwitter.home_mixer.service.HomeMixerAlertConfig
+import com.ExTwitter.product_mixer.core.feature.Feature
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
+import com.ExTwitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
+import com.ExTwitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.stitch.timelineservice.TimelineService
+import com.ExTwitter.timelineservice.{thriftscala => t}
 import javax.inject.Inject
 import javax.inject.Singleton
 

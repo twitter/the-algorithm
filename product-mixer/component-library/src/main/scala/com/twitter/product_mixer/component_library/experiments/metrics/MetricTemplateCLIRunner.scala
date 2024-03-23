@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.component_library.experiments.metrics
+package com.ExTwitter.product_mixer.component_library.experiments.metrics
 
-import com.twitter.product_mixer.component_library.experiments.metrics.PlaceholderConfig.PlaceholdersMap
+import com.ExTwitter.product_mixer.component_library.experiments.metrics.PlaceholderConfig.PlaceholdersMap
 import java.io.File
 import java.io.PrintWriter
 import scala.collection.immutable.ListSet

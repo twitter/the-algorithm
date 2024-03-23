@@ -1,7 +1,7 @@
-package com.twitter.graph_feature_service.worker.util
+package com.ExTwitter.graph_feature_service.worker.util
 
-import com.twitter.graph_feature_service.thriftscala.EdgeType
-import com.twitter.graph_feature_service.thriftscala.EdgeType._
+import com.ExTwitter.graph_feature_service.thriftscala.EdgeType
+import com.ExTwitter.graph_feature_service.thriftscala.EdgeType._
 
 sealed trait GraphKey {
 

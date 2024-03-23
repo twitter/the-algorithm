@@ -4,9 +4,9 @@ scala_library(
     platform = "java8",
     tags = ["bazel-compatible"],
     dependencies = [
-        "3rdparty/jvm/com/twitter/storehaus:core",
-        "ann/src/main/scala/com/twitter/ann/common",
-        "ann/src/main/thrift/com/twitter/ann/common:ann-common-scala",
+        "3rdparty/jvm/com/ExTwitter/storehaus:core",
+        "ann/src/main/scala/com/ExTwitter/ann/common",
+        "ann/src/main/thrift/com/ExTwitter/ann/common:ann-common-scala",
         "mediaservices/commons/src/main/scala",
     ],
 )

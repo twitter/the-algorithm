@@ -1,22 +1,22 @@
-package com.twitter.cr_mixer.similarity_engine
+package com.ExTwitter.cr_mixer.similarity_engine
 
-import com.twitter.cr_mixer.model.TripTweetWithScore
-import com.twitter.cr_mixer.param.ConsumerEmbeddingBasedTripParams
-import com.twitter.cr_mixer.util.InterleaveUtil
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi
-import com.twitter.timelines.configapi.Params
-import com.twitter.trends.trip_v1.trip_tweets.thriftscala.Cluster
-import com.twitter.trends.trip_v1.trip_tweets.thriftscala.ClusterDomain
-import com.twitter.trends.trip_v1.trip_tweets.thriftscala.TripTweet
-import com.twitter.trends.trip_v1.trip_tweets.thriftscala.TripDomain
-import com.twitter.util.Future
+import com.ExTwitter.cr_mixer.model.TripTweetWithScore
+import com.ExTwitter.cr_mixer.param.ConsumerEmbeddingBasedTripParams
+import com.ExTwitter.cr_mixer.util.InterleaveUtil
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.frigate.common.util.StatsUtil
+import com.ExTwitter.simclusters_v2.common.ClusterId
+import com.ExTwitter.simclusters_v2.common.SimClustersEmbedding
+import com.ExTwitter.simclusters_v2.common.UserId
+import com.ExTwitter.simclusters_v2.thriftscala.InternalId
+import com.ExTwitter.storehaus.ReadableStore
+import com.ExTwitter.timelines.configapi
+import com.ExTwitter.timelines.configapi.Params
+import com.ExTwitter.trends.trip_v1.trip_tweets.thriftscala.Cluster
+import com.ExTwitter.trends.trip_v1.trip_tweets.thriftscala.ClusterDomain
+import com.ExTwitter.trends.trip_v1.trip_tweets.thriftscala.TripTweet
+import com.ExTwitter.trends.trip_v1.trip_tweets.thriftscala.TripDomain
+import com.ExTwitter.util.Future
 
 case class TripEngineQuery(
   modelId: String,

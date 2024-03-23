@@ -1,28 +1,28 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.tweet
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.tweet
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.contextual_ref.ContextualTweetRefBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.tweet.TweetCandidateUrtItemBuilder.TweetClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.component_library.model.candidate.IsPinnedFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.tweet.BaseEntryIdToReplaceBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.tweet.BaseTimelinesScoreInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.tweet.BaseTweetHighlightsBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseUrlBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseSocialContextBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.conversation_annotation.ConversationAnnotation
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.forward_pivot.ForwardPivot
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tombstone.TombstoneInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.Tweet
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Badge
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.PrerollMetadata
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.PromotedMetadata
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.component_library.decorator.urt.builder.contextual_ref.ContextualTweetRefBuilder
+import com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.tweet.TweetCandidateUrtItemBuilder.TweetClientEventInfoElement
+import com.ExTwitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
+import com.ExTwitter.product_mixer.component_library.model.candidate.IsPinnedFeature
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.item.tweet.BaseEntryIdToReplaceBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.item.tweet.BaseTimelinesScoreInfoBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.item.tweet.BaseTweetHighlightsBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseUrlBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseSocialContextBuilder
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.conversation_annotation.ConversationAnnotation
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.forward_pivot.ForwardPivot
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.tombstone.TombstoneInfo
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.tweet.Tweet
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetDisplayType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.Badge
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.promoted.PrerollMetadata
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.promoted.PromotedMetadata
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
 
 case object TweetCandidateUrtItemBuilder {
   val TweetClientEventInfoElement = "tweet"

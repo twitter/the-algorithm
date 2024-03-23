@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module
+package com.ExTwitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module
 
-import com.twitter.hermit.{thriftscala => h}
-import com.twitter.account_recommendations_mixer.{thriftscala => t}
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
+import com.ExTwitter.hermit.{thriftscala => h}
+import com.ExTwitter.account_recommendations_mixer.{thriftscala => t}
+import com.ExTwitter.product_mixer.component_library.model.candidate.UserCandidate
+import com.ExTwitter.product_mixer.core.feature.Feature
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
+import com.ExTwitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
+import com.ExTwitter.product_mixer.core.model.common.identifier.TransformerIdentifier
 
 object ContextTypeFeature extends Feature[UserCandidate, Option[t.ContextType]]
 

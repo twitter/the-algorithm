@@ -1,6 +1,6 @@
-package com.twitter.follow_recommendations.common.clients.addressbook.models
+package com.ExTwitter.follow_recommendations.common.clients.addressbook.models
 
-import com.twitter.addressbook.datatypes.{thriftscala => t}
+import com.ExTwitter.addressbook.datatypes.{thriftscala => t}
 
 sealed trait EdgeType {
   def toThrift: t.EdgeType

@@ -6,9 +6,9 @@ scala_library(
     dependencies = [
         "finatra-internal/mtls-thriftmux/src/main/scala",
         "finatra/inject/inject-thrift-client",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/clients/common",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/models",
-        "src/thrift/com/twitter/ads/adserver:adserver_rpc-scala",
+        "follow-recommendations-service/common/src/main/scala/com/ExTwitter/follow_recommendations/common/clients/common",
+        "follow-recommendations-service/common/src/main/scala/com/ExTwitter/follow_recommendations/common/models",
+        "src/thrift/com/ExTwitter/ads/adserver:adserver_rpc-scala",
         "stitch/stitch-core",
     ],
 )

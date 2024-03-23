@@ -1,36 +1,36 @@
-package com.twitter.cr_mixer.source_signal
+package com.ExTwitter.cr_mixer.source_signal
 
-import com.twitter.cr_mixer.param.GlobalParams
-import com.twitter.cr_mixer.param.GoodProfileClickParams
-import com.twitter.cr_mixer.param.GoodTweetClickParams
-import com.twitter.cr_mixer.param.RealGraphOonParams
-import com.twitter.cr_mixer.param.RecentFollowsParams
-import com.twitter.cr_mixer.param.RecentNegativeSignalParams
-import com.twitter.cr_mixer.param.RecentNotificationsParams
-import com.twitter.cr_mixer.param.RecentOriginalTweetsParams
-import com.twitter.cr_mixer.param.RecentReplyTweetsParams
-import com.twitter.cr_mixer.param.RecentRetweetsParams
-import com.twitter.cr_mixer.param.RecentTweetFavoritesParams
-import com.twitter.cr_mixer.param.RepeatedProfileVisitsParams
-import com.twitter.cr_mixer.param.TweetSharesParams
-import com.twitter.cr_mixer.param.UnifiedUSSSignalParams
-import com.twitter.cr_mixer.param.VideoViewTweetsParams
-import com.twitter.cr_mixer.source_signal.UssStore.Query
-import com.twitter.cr_mixer.thriftscala.SourceType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.usersignalservice.thriftscala.{Signal => UssSignal}
-import com.twitter.usersignalservice.thriftscala.SignalType
+import com.ExTwitter.cr_mixer.param.GlobalParams
+import com.ExTwitter.cr_mixer.param.GoodProfileClickParams
+import com.ExTwitter.cr_mixer.param.GoodTweetClickParams
+import com.ExTwitter.cr_mixer.param.RealGraphOonParams
+import com.ExTwitter.cr_mixer.param.RecentFollowsParams
+import com.ExTwitter.cr_mixer.param.RecentNegativeSignalParams
+import com.ExTwitter.cr_mixer.param.RecentNotificationsParams
+import com.ExTwitter.cr_mixer.param.RecentOriginalTweetsParams
+import com.ExTwitter.cr_mixer.param.RecentReplyTweetsParams
+import com.ExTwitter.cr_mixer.param.RecentRetweetsParams
+import com.ExTwitter.cr_mixer.param.RecentTweetFavoritesParams
+import com.ExTwitter.cr_mixer.param.RepeatedProfileVisitsParams
+import com.ExTwitter.cr_mixer.param.TweetSharesParams
+import com.ExTwitter.cr_mixer.param.UnifiedUSSSignalParams
+import com.ExTwitter.cr_mixer.param.VideoViewTweetsParams
+import com.ExTwitter.cr_mixer.source_signal.UssStore.Query
+import com.ExTwitter.cr_mixer.thriftscala.SourceType
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.simclusters_v2.common.UserId
+import com.ExTwitter.storehaus.ReadableStore
+import com.ExTwitter.usersignalservice.thriftscala.{Signal => UssSignal}
+import com.ExTwitter.usersignalservice.thriftscala.SignalType
 import javax.inject.Singleton
-import com.twitter.timelines.configapi
-import com.twitter.timelines.configapi.Params
-import com.twitter.usersignalservice.thriftscala.BatchSignalRequest
-import com.twitter.usersignalservice.thriftscala.BatchSignalResponse
-import com.twitter.usersignalservice.thriftscala.SignalRequest
-import com.twitter.util.Future
-import com.twitter.cr_mixer.thriftscala.Product
-import com.twitter.usersignalservice.thriftscala.ClientIdentifier
+import com.ExTwitter.timelines.configapi
+import com.ExTwitter.timelines.configapi.Params
+import com.ExTwitter.usersignalservice.thriftscala.BatchSignalRequest
+import com.ExTwitter.usersignalservice.thriftscala.BatchSignalResponse
+import com.ExTwitter.usersignalservice.thriftscala.SignalRequest
+import com.ExTwitter.util.Future
+import com.ExTwitter.cr_mixer.thriftscala.Product
+import com.ExTwitter.usersignalservice.thriftscala.ClientIdentifier
 
 @Singleton
 case class UssStore(
@@ -38,7 +38,7 @@ case class UssStore(
   statsReceiver: StatsReceiver)
     extends ReadableStore[Query, Seq[(SignalType, Seq[UssSignal])]] {
 
-  import com.twitter.cr_mixer.source_signal.UssStore._
+  import com.ExTwitter.cr_mixer.source_signal.UssStore._
 
   override def get(query: Query): Future[Option[Seq[(SignalType, Seq[UssSignal])]]] = {
     val ussClientIdentifier = query.product match {

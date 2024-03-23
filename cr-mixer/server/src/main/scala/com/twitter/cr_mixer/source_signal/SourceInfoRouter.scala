@@ -1,14 +1,14 @@
-package com.twitter.cr_mixer.source_signal
+package com.ExTwitter.cr_mixer.source_signal
 
-import com.twitter.core_workflows.user_model.thriftscala.UserState
-import com.twitter.cr_mixer.model.GraphSourceInfo
-import com.twitter.cr_mixer.model.SourceInfo
-import com.twitter.cr_mixer.source_signal.SourceFetcher.FetcherQuery
-import com.twitter.cr_mixer.thriftscala.SourceType
-import com.twitter.cr_mixer.thriftscala.{Product => TProduct}
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.timelines.configapi
-import com.twitter.util.Future
+import com.ExTwitter.core_workflows.user_model.thriftscala.UserState
+import com.ExTwitter.cr_mixer.model.GraphSourceInfo
+import com.ExTwitter.cr_mixer.model.SourceInfo
+import com.ExTwitter.cr_mixer.source_signal.SourceFetcher.FetcherQuery
+import com.ExTwitter.cr_mixer.thriftscala.SourceType
+import com.ExTwitter.cr_mixer.thriftscala.{Product => TProduct}
+import com.ExTwitter.simclusters_v2.common.UserId
+import com.ExTwitter.timelines.configapi
+import com.ExTwitter.util.Future
 import javax.inject.Inject
 import javax.inject.Singleton
 

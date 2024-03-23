@@ -1,20 +1,20 @@
-package com.twitter.cr_mixer.module
+package com.ExTwitter.cr_mixer.module
 
 import com.google.inject.Provides
 import com.google.inject.Singleton
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.conversions.DurationOps._
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.thriftscala.CrMixerTweetResponse
-import com.twitter.finagle.memcached.{Client => MemcachedClient}
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.hermit.store.common.ReadableWritableStore
-import com.twitter.hermit.store.common.ObservedReadableWritableMemcacheStore
-import com.twitter.simclusters_v2.common.UserId
+import com.ExTwitter.bijection.scrooge.BinaryScalaCodec
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.cr_mixer.model.ModuleNames
+import com.ExTwitter.cr_mixer.thriftscala.CrMixerTweetResponse
+import com.ExTwitter.finagle.memcached.{Client => MemcachedClient}
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.hermit.store.common.ReadableWritableStore
+import com.ExTwitter.hermit.store.common.ObservedReadableWritableMemcacheStore
+import com.ExTwitter.simclusters_v2.common.UserId
 import javax.inject.Named
 
-object TweetRecommendationResultsStoreModule extends TwitterModule {
+object TweetRecommendationResultsStoreModule extends ExTwitterModule {
   @Provides
   @Singleton
   def providesTweetRecommendationResultsStore(

@@ -1,16 +1,16 @@
-package com.twitter.home_mixer.functional_component.decorator.urt.builder
+package com.ExTwitter.home_mixer.functional_component.decorator.urt.builder
 
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.InNetworkFeature
-import com.twitter.home_mixer.model.HomeFeatures.ScreenNamesFeature
-import com.twitter.home_mixer.product.following.model.HomeMixerExternalStrings
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.marshalling.response.urt.icon
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ChildFeedbackAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichBehavior
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorToggleFollowUser
-import com.twitter.product_mixer.core.product.guice.scope.ProductScoped
-import com.twitter.stringcenter.client.StringCenter
+import com.ExTwitter.home_mixer.model.HomeFeatures.AuthorIdFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.InNetworkFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.ScreenNamesFeature
+import com.ExTwitter.home_mixer.product.following.model.HomeMixerExternalStrings
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.icon
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.ChildFeedbackAction
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.RichBehavior
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorToggleFollowUser
+import com.ExTwitter.product_mixer.core.product.guice.scope.ProductScoped
+import com.ExTwitter.stringcenter.client.StringCenter
 import javax.inject.Inject
 import javax.inject.Singleton
 

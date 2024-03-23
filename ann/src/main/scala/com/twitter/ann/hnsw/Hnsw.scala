@@ -1,12 +1,12 @@
-package com.twitter.ann.hnsw
+package com.ExTwitter.ann.hnsw
 
 import com.google.common.annotations.VisibleForTesting
-import com.twitter.ann.common.EmbeddingType._
-import com.twitter.ann.common.Metric.toThrift
-import com.twitter.ann.common._
-import com.twitter.ann.common.thriftscala.DistanceMetric
-import com.twitter.ann.hnsw.HnswIndex.RandomProvider
-import com.twitter.util.Future
+import com.ExTwitter.ann.common.EmbeddingType._
+import com.ExTwitter.ann.common.Metric.toThrift
+import com.ExTwitter.ann.common._
+import com.ExTwitter.ann.common.thriftscala.DistanceMetric
+import com.ExTwitter.ann.hnsw.HnswIndex.RandomProvider
+import com.ExTwitter.util.Future
 import java.util.Random
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ThreadLocalRandom

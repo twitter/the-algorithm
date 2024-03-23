@@ -1,17 +1,17 @@
-package com.twitter.home_mixer.product.for_you.query_transformer
+package com.ExTwitter.home_mixer.product.for_you.query_transformer
 
-import com.twitter.conversions.DurationOps.richDurationFromInt
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finagle.tracing.Trace
-import com.twitter.product_mixer.component_library.feature_hydrator.query.social_graph.PreviewCreatorsFeature
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.search.common.ranking.{thriftscala => scr}
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant
-import com.twitter.search.earlybird.{thriftscala => t}
-import com.twitter.search.queryparser.query.Conjunction
-import com.twitter.search.queryparser.query.Query
-import com.twitter.search.queryparser.query.search.SearchOperator
+import com.ExTwitter.conversions.DurationOps.richDurationFromInt
+import com.ExTwitter.finagle.thrift.ClientId
+import com.ExTwitter.finagle.tracing.Trace
+import com.ExTwitter.product_mixer.component_library.feature_hydrator.query.social_graph.PreviewCreatorsFeature
+import com.ExTwitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.search.common.ranking.{thriftscala => scr}
+import com.ExTwitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant
+import com.ExTwitter.search.earlybird.{thriftscala => t}
+import com.ExTwitter.search.queryparser.query.Conjunction
+import com.ExTwitter.search.queryparser.query.Query
+import com.ExTwitter.search.queryparser.query.search.SearchOperator
 import javax.inject.Inject
 import javax.inject.Singleton
 

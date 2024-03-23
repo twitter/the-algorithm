@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.models
+package com.ExTwitter.follow_recommendations.models
 
-import com.twitter.follow_recommendations.{thriftscala => t}
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
-import com.twitter.follow_recommendations.common.models.Recommendation
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
+import com.ExTwitter.follow_recommendations.{thriftscala => t}
+import com.ExTwitter.follow_recommendations.logging.{thriftscala => offline}
+import com.ExTwitter.follow_recommendations.common.models.Recommendation
+import com.ExTwitter.product_mixer.core.model.marshalling.HasMarshalling
 
 case class RecommendationResponse(recommendations: Seq[Recommendation]) extends HasMarshalling {
   lazy val toThrift: t.RecommendationResponse =

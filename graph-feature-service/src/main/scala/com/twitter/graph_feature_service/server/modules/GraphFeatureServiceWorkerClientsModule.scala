@@ -1,21 +1,21 @@
-package com.twitter.graph_feature_service.server.modules
+package com.ExTwitter.graph_feature_service.server.modules
 
 import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient._
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.service.RetryBudget
-import com.twitter.graph_feature_service.thriftscala
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.util.{Await, Duration}
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.finagle.mtls.authentication.ServiceIdentifier
+import com.ExTwitter.finagle.mtls.client.MtlsStackClient._
+import com.ExTwitter.finagle.ThriftMux
+import com.ExTwitter.finagle.service.RetryBudget
+import com.ExTwitter.graph_feature_service.thriftscala
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.inject.annotations.Flag
+import com.ExTwitter.util.{Await, Duration}
 import javax.inject.Singleton
 
 case class GraphFeatureServiceWorkerClients(
   workers: Seq[thriftscala.Worker.MethodPerEndpoint])
 
-object GraphFeatureServiceWorkerClientsModule extends TwitterModule {
+object GraphFeatureServiceWorkerClientsModule extends ExTwitterModule {
   private[this] val closeableGracePeriod: Duration = 1.second
   private[this] val requestTimeout: Duration = 25.millis
 

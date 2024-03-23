@@ -1,16 +1,16 @@
-package com.twitter.home_mixer.functional_component.side_effect
+package com.ExTwitter.home_mixer.functional_component.side_effect
 
-import com.twitter.home_mixer.model.HomeFeatures.TweetImpressionsFeature
-import com.twitter.home_mixer.model.request.HasSeenTweetIds
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.common.identifier.SideEffectIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.impression.{thriftscala => t}
-import com.twitter.timelines.impressionstore.store.ManhattanTweetImpressionStoreClient
+import com.ExTwitter.home_mixer.model.HomeFeatures.TweetImpressionsFeature
+import com.ExTwitter.home_mixer.model.request.HasSeenTweetIds
+import com.ExTwitter.home_mixer.service.HomeMixerAlertConfig
+import com.ExTwitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
+import com.ExTwitter.product_mixer.core.model.common.identifier.SideEffectIdentifier
+import com.ExTwitter.product_mixer.core.model.common.presentation.CandidateWithDetails
+import com.ExTwitter.product_mixer.core.model.marshalling.HasMarshalling
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.timelines.impression.{thriftscala => t}
+import com.ExTwitter.timelines.impressionstore.store.ManhattanTweetImpressionStoreClient
 import javax.inject.Inject
 import javax.inject.Singleton
 

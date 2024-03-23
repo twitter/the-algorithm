@@ -1,13 +1,13 @@
-package com.twitter.cr_mixer.model
+package com.ExTwitter.cr_mixer.model
 
-import com.twitter.core_workflows.user_model.thriftscala.UserState
-import com.twitter.cr_mixer.thriftscala.Product
-import com.twitter.product_mixer.core.thriftscala.ClientContext
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.TopicId
-import com.twitter.timelines.configapi.Params
+import com.ExTwitter.core_workflows.user_model.thriftscala.UserState
+import com.ExTwitter.cr_mixer.thriftscala.Product
+import com.ExTwitter.product_mixer.core.thriftscala.ClientContext
+import com.ExTwitter.simclusters_v2.common.TweetId
+import com.ExTwitter.simclusters_v2.common.UserId
+import com.ExTwitter.simclusters_v2.thriftscala.InternalId
+import com.ExTwitter.simclusters_v2.thriftscala.TopicId
+import com.ExTwitter.timelines.configapi.Params
 
 sealed trait CandidateGeneratorQuery {
   val product: Product

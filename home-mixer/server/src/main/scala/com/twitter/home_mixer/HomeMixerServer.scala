@@ -1,41 +1,41 @@
-package com.twitter.home_mixer
+package com.ExTwitter.home_mixer
 
 import com.google.inject.Module
-import com.twitter.finagle.Filter
-import com.twitter.finatra.annotations.DarkTrafficFilterType
-import com.twitter.finatra.http.HttpServer
-import com.twitter.finatra.http.routing.HttpRouter
-import com.twitter.finatra.mtls.http.{Mtls => HttpMtls}
-import com.twitter.finatra.mtls.thriftmux.Mtls
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsThriftWebFormsModule
-import com.twitter.finatra.thrift.ThriftServer
-import com.twitter.finatra.thrift.filters._
-import com.twitter.finatra.thrift.routing.ThriftRouter
-import com.twitter.home_mixer.controller.HomeThriftController
-import com.twitter.home_mixer.federated.HomeMixerColumn
-import com.twitter.home_mixer.module._
-import com.twitter.home_mixer.param.GlobalParamConfigModule
-import com.twitter.home_mixer.product.HomeMixerProductModule
-import com.twitter.home_mixer.{thriftscala => st}
-import com.twitter.product_mixer.component_library.module.AccountRecommendationsMixerModule
-import com.twitter.product_mixer.component_library.module.DarkTrafficFilterModule
-import com.twitter.product_mixer.component_library.module.EarlybirdModule
-import com.twitter.product_mixer.component_library.module.ExploreRankerClientModule
-import com.twitter.product_mixer.component_library.module.GizmoduckClientModule
-import com.twitter.product_mixer.component_library.module.OnboardingTaskServiceModule
-import com.twitter.product_mixer.component_library.module.SocialGraphServiceModule
-import com.twitter.product_mixer.component_library.module.TimelineRankerClientModule
-import com.twitter.product_mixer.component_library.module.TimelineScorerClientModule
-import com.twitter.product_mixer.component_library.module.TimelineServiceClientModule
-import com.twitter.product_mixer.component_library.module.TweetImpressionStoreModule
-import com.twitter.product_mixer.component_library.module.TweetMixerClientModule
-import com.twitter.product_mixer.component_library.module.UserSessionStoreModule
-import com.twitter.product_mixer.core.controllers.ProductMixerController
-import com.twitter.product_mixer.core.module.LoggingThrowableExceptionMapper
-import com.twitter.product_mixer.core.module.ProductMixerModule
-import com.twitter.product_mixer.core.module.stringcenter.ProductScopeStringCenterModule
-import com.twitter.strato.fed.StratoFed
-import com.twitter.strato.fed.server.StratoFedServer
+import com.ExTwitter.finagle.Filter
+import com.ExTwitter.finatra.annotations.DarkTrafficFilterType
+import com.ExTwitter.finatra.http.HttpServer
+import com.ExTwitter.finatra.http.routing.HttpRouter
+import com.ExTwitter.finatra.mtls.http.{Mtls => HttpMtls}
+import com.ExTwitter.finatra.mtls.thriftmux.Mtls
+import com.ExTwitter.finatra.mtls.thriftmux.modules.MtlsThriftWebFormsModule
+import com.ExTwitter.finatra.thrift.ThriftServer
+import com.ExTwitter.finatra.thrift.filters._
+import com.ExTwitter.finatra.thrift.routing.ThriftRouter
+import com.ExTwitter.home_mixer.controller.HomeThriftController
+import com.ExTwitter.home_mixer.federated.HomeMixerColumn
+import com.ExTwitter.home_mixer.module._
+import com.ExTwitter.home_mixer.param.GlobalParamConfigModule
+import com.ExTwitter.home_mixer.product.HomeMixerProductModule
+import com.ExTwitter.home_mixer.{thriftscala => st}
+import com.ExTwitter.product_mixer.component_library.module.AccountRecommendationsMixerModule
+import com.ExTwitter.product_mixer.component_library.module.DarkTrafficFilterModule
+import com.ExTwitter.product_mixer.component_library.module.EarlybirdModule
+import com.ExTwitter.product_mixer.component_library.module.ExploreRankerClientModule
+import com.ExTwitter.product_mixer.component_library.module.GizmoduckClientModule
+import com.ExTwitter.product_mixer.component_library.module.OnboardingTaskServiceModule
+import com.ExTwitter.product_mixer.component_library.module.SocialGraphServiceModule
+import com.ExTwitter.product_mixer.component_library.module.TimelineRankerClientModule
+import com.ExTwitter.product_mixer.component_library.module.TimelineScorerClientModule
+import com.ExTwitter.product_mixer.component_library.module.TimelineServiceClientModule
+import com.ExTwitter.product_mixer.component_library.module.TweetImpressionStoreModule
+import com.ExTwitter.product_mixer.component_library.module.TweetMixerClientModule
+import com.ExTwitter.product_mixer.component_library.module.UserSessionStoreModule
+import com.ExTwitter.product_mixer.core.controllers.ProductMixerController
+import com.ExTwitter.product_mixer.core.module.LoggingThrowableExceptionMapper
+import com.ExTwitter.product_mixer.core.module.ProductMixerModule
+import com.ExTwitter.product_mixer.core.module.stringcenter.ProductScopeStringCenterModule
+import com.ExTwitter.strato.fed.StratoFed
+import com.ExTwitter.strato.fed.server.StratoFedServer
 
 object HomeMixerServerMain extends HomeMixerServer
 

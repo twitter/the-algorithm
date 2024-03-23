@@ -1,13 +1,13 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.adapters.earlybird
+package com.ExTwitter.home_mixer.product.scored_tweets.feature_hydrator.adapters.earlybird
 
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.ml.api.util.DataRecordConverters.RichDataRecordWrapper
-import com.twitter.search.common.features.{thriftscala => sc}
-import com.twitter.timelines.prediction.common.adapters.TimelinesMutatingAdapterBase
-import com.twitter.timelines.prediction.features.common.InReplyToTweetTimelinesSharedFeatures
-import com.twitter.timelines.prediction.features.recap.InReplyToRecapFeatures
+import com.ExTwitter.ml.api.Feature
+import com.ExTwitter.ml.api.FeatureContext
+import com.ExTwitter.ml.api.RichDataRecord
+import com.ExTwitter.ml.api.util.DataRecordConverters.RichDataRecordWrapper
+import com.ExTwitter.search.common.features.{thriftscala => sc}
+import com.ExTwitter.timelines.prediction.common.adapters.TimelinesMutatingAdapterBase
+import com.ExTwitter.timelines.prediction.features.common.InReplyToTweetTimelinesSharedFeatures
+import com.ExTwitter.timelines.prediction.features.recap.InReplyToRecapFeatures
 import java.lang.{Boolean => JBoolean}
 import java.lang.{Double => JDouble}
 

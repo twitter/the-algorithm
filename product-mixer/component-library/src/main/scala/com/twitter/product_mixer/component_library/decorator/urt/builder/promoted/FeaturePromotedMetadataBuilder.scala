@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.promoted
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.promoted
 
-import com.twitter.ads.adserver.{thriftscala => ads}
-import com.twitter.ads.common.base.{thriftscala => ac}
-import com.twitter.adserver.{thriftscala => ad}
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.promoted.BasePromotedMetadataBuilder
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted._
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.util.AdMetadataContainerSerializer
+import com.ExTwitter.ads.adserver.{thriftscala => ads}
+import com.ExTwitter.ads.common.base.{thriftscala => ac}
+import com.ExTwitter.adserver.{thriftscala => ad}
+import com.ExTwitter.product_mixer.core.feature.Feature
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.promoted.BasePromotedMetadataBuilder
+import com.ExTwitter.product_mixer.core.model.common.UniversalNoun
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.promoted._
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.timelines.util.AdMetadataContainerSerializer
 
 case class FeaturePromotedMetadataBuilder(adImpressionFeature: Feature[_, Option[ad.AdImpression]])
     extends BasePromotedMetadataBuilder[PipelineQuery, UniversalNoun[Any]] {

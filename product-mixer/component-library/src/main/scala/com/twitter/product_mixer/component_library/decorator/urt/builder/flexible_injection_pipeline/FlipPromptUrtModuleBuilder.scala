@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.flexible_injection_pipeline
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.flexible_injection_pipeline
 
-import com.twitter.onboarding.injections.thriftscala.Injection
-import com.twitter.onboarding.injections.{thriftscala => onboardingthrift}
-import com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module.AutomaticUniqueModuleId
-import com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module.ModuleIdGeneration
-import com.twitter.product_mixer.component_library.model.candidate.BasePromptCandidate
-import com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer.FlipPromptInjectionsFeature
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseTimelineModuleBuilder
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineModule
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.Carousel
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.onboarding.injections.thriftscala.Injection
+import com.ExTwitter.onboarding.injections.{thriftscala => onboardingthrift}
+import com.ExTwitter.product_mixer.component_library.decorator.urt.builder.timeline_module.AutomaticUniqueModuleId
+import com.ExTwitter.product_mixer.component_library.decorator.urt.builder.timeline_module.ModuleIdGeneration
+import com.ExTwitter.product_mixer.component_library.model.candidate.BasePromptCandidate
+import com.ExTwitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer.FlipPromptInjectionsFeature
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseTimelineModuleBuilder
+import com.ExTwitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
+import com.ExTwitter.product_mixer.core.model.common.CandidateWithFeatures
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.TimelineModule
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.timeline_module.Carousel
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
 
 case class FlipPromptUrtModuleBuilder[-Query <: PipelineQuery](
   moduleIdGeneration: ModuleIdGeneration = AutomaticUniqueModuleId())

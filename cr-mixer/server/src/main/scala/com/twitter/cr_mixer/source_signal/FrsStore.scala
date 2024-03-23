@@ -1,19 +1,19 @@
-package com.twitter.cr_mixer.source_signal
+package com.ExTwitter.cr_mixer.source_signal
 
-import com.twitter.cr_mixer.param.decider.CrMixerDecider
-import com.twitter.cr_mixer.param.decider.DeciderConstants
-import com.twitter.cr_mixer.source_signal.FrsStore.Query
-import com.twitter.cr_mixer.source_signal.FrsStore.FrsQueryResult
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.thriftscala.ClientContext
-import com.twitter.follow_recommendations.thriftscala.DisplayLocation
-import com.twitter.follow_recommendations.thriftscala.FollowRecommendationsThriftService
-import com.twitter.follow_recommendations.thriftscala.Recommendation
-import com.twitter.follow_recommendations.thriftscala.RecommendationRequest
-import com.twitter.storehaus.ReadableStore
+import com.ExTwitter.cr_mixer.param.decider.CrMixerDecider
+import com.ExTwitter.cr_mixer.param.decider.DeciderConstants
+import com.ExTwitter.cr_mixer.source_signal.FrsStore.Query
+import com.ExTwitter.cr_mixer.source_signal.FrsStore.FrsQueryResult
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.follow_recommendations.thriftscala.ClientContext
+import com.ExTwitter.follow_recommendations.thriftscala.DisplayLocation
+import com.ExTwitter.follow_recommendations.thriftscala.FollowRecommendationsThriftService
+import com.ExTwitter.follow_recommendations.thriftscala.Recommendation
+import com.ExTwitter.follow_recommendations.thriftscala.RecommendationRequest
+import com.ExTwitter.storehaus.ReadableStore
 import javax.inject.Singleton
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.util.Future
+import com.ExTwitter.simclusters_v2.common.UserId
+import com.ExTwitter.util.Future
 
 @Singleton
 case class FrsStore(

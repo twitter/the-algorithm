@@ -78,7 +78,7 @@ General arguments (specified as **--profile.{options}**):
   - tweet
   - tfwId
 
-- **embedding_args** Embedding format args. See the documentation in `com.twitter.cortex.ml.embeddings.common.EmbeddingFormatArgsParser` for a full explanation of the input options. Possible options:
+- **embedding_args** Embedding format args. See the documentation in `com.ExTwitter.cortex.ml.embeddings.common.EmbeddingFormatArgsParser` for a full explanation of the input options. Possible options:
 
   1. **input.embedding_format** Format of the serialized embedding.
 
@@ -91,7 +91,7 @@ General arguments (specified as **--profile.{options}**):
 
   3. **input.{feature_store_args}** For feature store related args like `feature_store_embedding`, `feature_store_major_version`, `date_range`:
 
-- **output_dir** Where to save the produced serialized ann index. Save to HDFS by specifying the full URI. e.g `hdfs://hadoop-dw2-nn.smf1.twitter.com/user/<user>/index_file` or using the default cluster `hdfs:///user/<user>/index_file`.
+- **output_dir** Where to save the produced serialized ann index. Save to HDFS by specifying the full URI. e.g `hdfs://hadoop-dw2-nn.smf1.ExTwitter.com/user/<user>/index_file` or using the default cluster `hdfs:///user/<user>/index_file`.
 - **num_dimensions** Dimension of embedding in the input data. An exception will be thrown if any entry does not have a number of dimensions equal to this number.
 - **metric** Distance metric (InnerProduct/Cosine/L2)
 - **concurrency_level** Specifies how many parallel inserts happen to the index. This should probably be set to the number of cores on the machine.
@@ -122,7 +122,7 @@ You can create job bundle locally, upload to packer and then it can be used with
 
 .. code-block:: bash
 
-  ./bazel bundle ann/src/main/scala/com/twitter/ann/scalding/offline/indexbuilder:indexbuilder-deploy \
+  ./bazel bundle ann/src/main/scala/com/ExTwitter/ann/scalding/offline/indexbuilder:indexbuilder-deploy \
   --bundle-jvm-archive=zip
 
 .. code-block:: bash

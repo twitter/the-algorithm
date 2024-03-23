@@ -1,7 +1,7 @@
-package com.twitter.cr_mixer.model
+package com.ExTwitter.cr_mixer.model
 
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.simclusters_v2.common.TweetId
+import com.ExTwitter.cr_mixer.thriftscala.SimilarityEngineType
+import com.ExTwitter.simclusters_v2.common.TweetId
 
 /***
  * Bind a tweetId with a raw score generated from one single Similarity Engine

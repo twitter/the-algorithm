@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.audio_space
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.audio_space
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.audio_space.AudioSpaceCandidateUrtItemBuilder.AudioSpaceClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.AudioSpaceCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.audio_space.AudioSpaceItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.audio_space.AudioSpaceCandidateUrtItemBuilder.AudioSpaceClientEventInfoElement
+import com.ExTwitter.product_mixer.component_library.model.candidate.AudioSpaceCandidate
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
+import com.ExTwitter.product_mixer.core.model.common.UniversalNoun
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.audio_space.AudioSpaceItem
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
 
 object AudioSpaceCandidateUrtItemBuilder {
   val AudioSpaceClientEventInfoElement: String = "audiospace"

@@ -1,4 +1,4 @@
-package com.twitter.ann.service.query_server.common.throttling
+package com.ExTwitter.ann.service.query_server.common.throttling
 
 /**
  * A simple ring buffer that keeps track of long values over `window`.

@@ -1,15 +1,15 @@
-package com.twitter.ann.manhattan
+package com.ExTwitter.ann.manhattan
 
-import com.twitter.ann.common.EmbeddingType.EmbeddingVector
-import com.twitter.ann.common.{EmbeddingProducer, EmbeddingType}
-import com.twitter.bijection.Injection
-import com.twitter.ml.api.embedding.{EmbeddingBijection, EmbeddingSerDe}
-import com.twitter.ml.api.{thriftscala => thrift}
-import com.twitter.stitch.Stitch
-import com.twitter.storage.client.manhattan.bijections.Bijections
-import com.twitter.storage.client.manhattan.bijections.Bijections.BinaryScalaInjection
-import com.twitter.storage.client.manhattan.kv.ManhattanKVEndpoint
-import com.twitter.storage.client.manhattan.kv.impl.{
+import com.ExTwitter.ann.common.EmbeddingType.EmbeddingVector
+import com.ExTwitter.ann.common.{EmbeddingProducer, EmbeddingType}
+import com.ExTwitter.bijection.Injection
+import com.ExTwitter.ml.api.embedding.{EmbeddingBijection, EmbeddingSerDe}
+import com.ExTwitter.ml.api.{thriftscala => thrift}
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.storage.client.manhattan.bijections.Bijections
+import com.ExTwitter.storage.client.manhattan.bijections.Bijections.BinaryScalaInjection
+import com.ExTwitter.storage.client.manhattan.kv.ManhattanKVEndpoint
+import com.ExTwitter.storage.client.manhattan.kv.impl.{
   DescriptorP1L0,
   ReadOnlyKeyDescriptor,
   ValueDescriptor

@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.message
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.message
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.message.InlinePromptCandidateUrtItemStringCenterBuilder.InlinePromptClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.InlinePromptCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseStr
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.richtext.BaseRichTextBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseSocialContextBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.InlinePromptMessageContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessagePromptItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.message.InlinePromptCandidateUrtItemStringCenterBuilder.InlinePromptClientEventInfoElement
+import com.ExTwitter.product_mixer.component_library.model.candidate.InlinePromptCandidate
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseStr
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.richtext.BaseRichTextBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseSocialContextBuilder
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.message.InlinePromptMessageContent
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.message.MessagePromptItem
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
 
 object InlinePromptCandidateUrtItemStringCenterBuilder {
   val InlinePromptClientEventInfoElement: String = "message"

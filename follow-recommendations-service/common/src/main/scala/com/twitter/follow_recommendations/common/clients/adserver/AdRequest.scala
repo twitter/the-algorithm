@@ -1,8 +1,8 @@
-package com.twitter.follow_recommendations.common.clients.adserver
+package com.ExTwitter.follow_recommendations.common.clients.adserver
 
-import com.twitter.adserver.{thriftscala => t}
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
+import com.ExTwitter.adserver.{thriftscala => t}
+import com.ExTwitter.follow_recommendations.common.models.DisplayLocation
+import com.ExTwitter.product_mixer.core.model.marshalling.request.ClientContext
 
 case class AdRequest(
   clientContext: ClientContext,

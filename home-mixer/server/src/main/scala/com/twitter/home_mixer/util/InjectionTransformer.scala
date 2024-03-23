@@ -1,11 +1,11 @@
-package com.twitter.home_mixer.util
+package com.ExTwitter.home_mixer.util
 
-import com.twitter.bijection.Injection
-import com.twitter.io.Buf
-import com.twitter.servo.util.Transformer
-import com.twitter.storage.client.manhattan.bijections.Bijections
-import com.twitter.util.Return
-import com.twitter.util.Try
+import com.ExTwitter.bijection.Injection
+import com.ExTwitter.io.Buf
+import com.ExTwitter.servo.util.Transformer
+import com.ExTwitter.storage.client.manhattan.bijections.Bijections
+import com.ExTwitter.util.Return
+import com.ExTwitter.util.Try
 import java.nio.ByteBuffer
 
 object InjectionTransformerImplicits {

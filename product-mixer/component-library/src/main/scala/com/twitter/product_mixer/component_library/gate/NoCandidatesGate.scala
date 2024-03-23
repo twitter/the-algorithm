@@ -1,11 +1,11 @@
-package com.twitter.product_mixer.component_library.gate
+package com.ExTwitter.product_mixer.component_library.gate
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.gate.QueryAndCandidateGate
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+import com.ExTwitter.product_mixer.core.functional_component.common.CandidateScope
+import com.ExTwitter.product_mixer.core.functional_component.gate.QueryAndCandidateGate
+import com.ExTwitter.product_mixer.core.model.common.identifier.GateIdentifier
+import com.ExTwitter.product_mixer.core.model.common.presentation.CandidateWithDetails
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.stitch.Stitch
 
 /**
  * A Gate that only continues if the previously returned candidates are empty. This is useful

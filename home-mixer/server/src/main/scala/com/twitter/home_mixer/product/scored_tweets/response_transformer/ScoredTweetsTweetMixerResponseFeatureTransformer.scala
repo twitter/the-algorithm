@@ -1,15 +1,15 @@
-package com.twitter.home_mixer.product.scored_tweets.response_transformer
+package com.ExTwitter.home_mixer.product.scored_tweets.response_transformer
 
-import com.twitter.tweet_mixer.{thriftscala => tmt}
-import com.twitter.home_mixer.model.HomeFeatures._
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
-import com.twitter.timelineservice.suggests.logging.candidate_tweet_source_id.{thriftscala => cts}
-import com.twitter.timelineservice.suggests.{thriftscala => st}
-import com.twitter.tsp.{thriftscala => tsp}
+import com.ExTwitter.tweet_mixer.{thriftscala => tmt}
+import com.ExTwitter.home_mixer.model.HomeFeatures._
+import com.ExTwitter.product_mixer.core.feature.Feature
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
+import com.ExTwitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
+import com.ExTwitter.product_mixer.core.model.common.identifier.TransformerIdentifier
+import com.ExTwitter.timelineservice.suggests.logging.candidate_tweet_source_id.{thriftscala => cts}
+import com.ExTwitter.timelineservice.suggests.{thriftscala => st}
+import com.ExTwitter.tsp.{thriftscala => tsp}
 
 object ScoredTweetsTweetMixerResponseFeatureTransformer
     extends CandidateFeatureTransformer[tmt.TweetResult] {

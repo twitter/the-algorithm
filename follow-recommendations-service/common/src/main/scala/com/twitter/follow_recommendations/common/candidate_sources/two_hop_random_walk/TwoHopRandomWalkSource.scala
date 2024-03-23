@@ -1,12 +1,12 @@
-package com.twitter.follow_recommendations.common.candidate_sources.two_hop_random_walk
+package com.ExTwitter.follow_recommendations.common.candidate_sources.two_hop_random_walk
 
-import com.twitter.follow_recommendations.common.candidate_sources.base.StratoFetcherWithUnitViewSource
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.client.Fetcher
-import com.twitter.wtf.candidate.thriftscala.{CandidateSeq => TCandidateSeq}
+import com.ExTwitter.follow_recommendations.common.candidate_sources.base.StratoFetcherWithUnitViewSource
+import com.ExTwitter.follow_recommendations.common.constants.GuiceNamedConstants
+import com.ExTwitter.follow_recommendations.common.models.CandidateUser
+import com.ExTwitter.hermit.model.Algorithm
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.strato.client.Fetcher
+import com.ExTwitter.wtf.candidate.thriftscala.{CandidateSeq => TCandidateSeq}
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton

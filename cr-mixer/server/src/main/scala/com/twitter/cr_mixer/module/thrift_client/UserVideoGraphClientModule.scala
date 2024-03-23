@@ -1,19 +1,19 @@
-package com.twitter.cr_mixer.module.thrift_client
+package com.ExTwitter.cr_mixer.module.thrift_client
 
-import com.twitter.app.Flag
-import com.twitter.cr_mixer.module.core.TimeoutConfigModule.UserVideoGraphClientTimeoutFlagName
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.mux.ClientDiscardedRequestException
-import com.twitter.finagle.service.ReqRep
-import com.twitter.finagle.service.ResponseClass
-import com.twitter.finagle.service.RetryBudget
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.recos.user_video_graph.thriftscala.UserVideoGraph
-import com.twitter.util.Duration
-import com.twitter.util.Throw
+import com.ExTwitter.app.Flag
+import com.ExTwitter.cr_mixer.module.core.TimeoutConfigModule.UserVideoGraphClientTimeoutFlagName
+import com.ExTwitter.finagle.ThriftMux
+import com.ExTwitter.finagle.mux.ClientDiscardedRequestException
+import com.ExTwitter.finagle.service.ReqRep
+import com.ExTwitter.finagle.service.ResponseClass
+import com.ExTwitter.finagle.service.RetryBudget
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.finatra.mtls.thriftmux.modules.MtlsClient
+import com.ExTwitter.inject.Injector
+import com.ExTwitter.inject.thrift.modules.ThriftMethodBuilderClientModule
+import com.ExTwitter.recos.user_video_graph.thriftscala.UserVideoGraph
+import com.ExTwitter.util.Duration
+import com.ExTwitter.util.Throw
 
 object UserVideoGraphClientModule
     extends ThriftMethodBuilderClientModule[

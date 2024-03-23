@@ -1,8 +1,8 @@
-package com.twitter.ann.common
+package com.ExTwitter.ann.common
 
-import com.twitter.ann.common.EmbeddingType.EmbeddingVector
-import com.twitter.storehaus.{ReadableStore, Store}
-import com.twitter.util.Future
+import com.ExTwitter.ann.common.EmbeddingType.EmbeddingVector
+import com.ExTwitter.storehaus.{ReadableStore, Store}
+import com.ExTwitter.util.Future
 
 // Utility to transform raw index to typed index using Store
 object IndexTransformer {

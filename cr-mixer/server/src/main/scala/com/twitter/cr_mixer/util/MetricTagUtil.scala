@@ -1,11 +1,11 @@
-package com.twitter.cr_mixer.util
+package com.ExTwitter.cr_mixer.util
 
-import com.twitter.cr_mixer.model.RankedCandidate
-import com.twitter.cr_mixer.model.SimilarityEngineInfo
-import com.twitter.cr_mixer.model.SourceInfo
-import com.twitter.cr_mixer.thriftscala.MetricTag
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.cr_mixer.thriftscala.SourceType
+import com.ExTwitter.cr_mixer.model.RankedCandidate
+import com.ExTwitter.cr_mixer.model.SimilarityEngineInfo
+import com.ExTwitter.cr_mixer.model.SourceInfo
+import com.ExTwitter.cr_mixer.thriftscala.MetricTag
+import com.ExTwitter.cr_mixer.thriftscala.SimilarityEngineType
+import com.ExTwitter.cr_mixer.thriftscala.SourceType
 
 object MetricTagUtil {
 

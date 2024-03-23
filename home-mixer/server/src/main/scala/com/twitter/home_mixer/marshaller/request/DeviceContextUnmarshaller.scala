@@ -1,7 +1,7 @@
-package com.twitter.home_mixer.marshaller.request
+package com.ExTwitter.home_mixer.marshaller.request
 
-import com.twitter.home_mixer.model.request.DeviceContext
-import com.twitter.home_mixer.{thriftscala => t}
+import com.ExTwitter.home_mixer.model.request.DeviceContext
+import com.ExTwitter.home_mixer.{thriftscala => t}
 import javax.inject.Inject
 import javax.inject.Singleton
 

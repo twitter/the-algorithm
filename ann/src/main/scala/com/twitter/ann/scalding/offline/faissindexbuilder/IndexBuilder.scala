@@ -1,15 +1,15 @@
-package com.twitter.ann.scalding.offline.faissindexbuilder
+package com.ExTwitter.ann.scalding.offline.faissindexbuilder
 
-import com.twitter.ann.common.Distance
-import com.twitter.ann.common.EntityEmbedding
-import com.twitter.ann.common.Metric
-import com.twitter.ann.faiss.FaissIndexer
-import com.twitter.cortex.ml.embeddings.common.EmbeddingFormat
-import com.twitter.ml.api.embedding.Embedding
-import com.twitter.ml.featurestore.lib.UserId
-import com.twitter.scalding.Execution
-import com.twitter.search.common.file.AbstractFile
-import com.twitter.util.logging.Logging
+import com.ExTwitter.ann.common.Distance
+import com.ExTwitter.ann.common.EntityEmbedding
+import com.ExTwitter.ann.common.Metric
+import com.ExTwitter.ann.faiss.FaissIndexer
+import com.ExTwitter.cortex.ml.embeddings.common.EmbeddingFormat
+import com.ExTwitter.ml.api.embedding.Embedding
+import com.ExTwitter.ml.featurestore.lib.UserId
+import com.ExTwitter.scalding.Execution
+import com.ExTwitter.search.common.file.AbstractFile
+import com.ExTwitter.util.logging.Logging
 
 object IndexBuilder extends FaissIndexer with Logging {
   def run[T <: UserId, D <: Distance[D]](

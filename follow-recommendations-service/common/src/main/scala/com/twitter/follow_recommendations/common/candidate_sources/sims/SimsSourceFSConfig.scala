@@ -1,8 +1,8 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims
+package com.ExTwitter.follow_recommendations.common.candidate_sources.sims
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
+import com.ExTwitter.follow_recommendations.configapi.common.FeatureSwitchConfig
+import com.ExTwitter.timelines.configapi.FSName
+import com.ExTwitter.timelines.configapi.FSParam
 import javax.inject.Inject
 import javax.inject.Singleton
 

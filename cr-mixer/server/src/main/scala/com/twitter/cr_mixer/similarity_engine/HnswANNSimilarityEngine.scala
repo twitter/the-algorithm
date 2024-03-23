@@ -1,26 +1,26 @@
-package com.twitter.cr_mixer.similarity_engine
+package com.ExTwitter.cr_mixer.similarity_engine
 
-import com.twitter.ann.common.thriftscala.AnnQueryService
-import com.twitter.ann.common.thriftscala.Distance
-import com.twitter.ann.common.thriftscala.NearestNeighborQuery
-import com.twitter.ann.hnsw.HnswCommon
-import com.twitter.ann.hnsw.HnswParams
-import com.twitter.bijection.Injection
-import com.twitter.cortex.ml.embeddings.common.TweetKind
-import com.twitter.cr_mixer.model.SimilarityEngineInfo
-import com.twitter.cr_mixer.model.TweetWithScore
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.MemCacheConfig
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.SimilarityEngineConfig
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.mediaservices.commons.codec.ArrayByteBufferCodec
-import com.twitter.ml.api.thriftscala.{Embedding => ThriftEmbedding}
-import com.twitter.ml.featurestore.lib
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi.Params
-import com.twitter.util.Future
+import com.ExTwitter.ann.common.thriftscala.AnnQueryService
+import com.ExTwitter.ann.common.thriftscala.Distance
+import com.ExTwitter.ann.common.thriftscala.NearestNeighborQuery
+import com.ExTwitter.ann.hnsw.HnswCommon
+import com.ExTwitter.ann.hnsw.HnswParams
+import com.ExTwitter.bijection.Injection
+import com.ExTwitter.cortex.ml.embeddings.common.TweetKind
+import com.ExTwitter.cr_mixer.model.SimilarityEngineInfo
+import com.ExTwitter.cr_mixer.model.TweetWithScore
+import com.ExTwitter.cr_mixer.similarity_engine.SimilarityEngine.MemCacheConfig
+import com.ExTwitter.cr_mixer.similarity_engine.SimilarityEngine.SimilarityEngineConfig
+import com.ExTwitter.cr_mixer.thriftscala.SimilarityEngineType
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.frigate.common.util.StatsUtil
+import com.ExTwitter.mediaservices.commons.codec.ArrayByteBufferCodec
+import com.ExTwitter.ml.api.thriftscala.{Embedding => ThriftEmbedding}
+import com.ExTwitter.ml.featurestore.lib
+import com.ExTwitter.simclusters_v2.thriftscala.InternalId
+import com.ExTwitter.storehaus.ReadableStore
+import com.ExTwitter.timelines.configapi.Params
+import com.ExTwitter.util.Future
 
 case class HnswANNEngineQuery(
   modelId: String,

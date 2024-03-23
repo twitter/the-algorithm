@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.component_library.gate
+package com.ExTwitter.product_mixer.component_library.gate
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.MissingFeatureException
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.functional_component.gate.GateResult
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.MisconfiguredFeatureMapFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.stitch.Stitch
-import com.twitter.util.Return
-import com.twitter.util.Throw
+import com.ExTwitter.product_mixer.core.feature.Feature
+import com.ExTwitter.product_mixer.core.feature.featuremap.MissingFeatureException
+import com.ExTwitter.product_mixer.core.functional_component.gate.Gate
+import com.ExTwitter.product_mixer.core.functional_component.gate.GateResult
+import com.ExTwitter.product_mixer.core.model.common.identifier.GateIdentifier
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.core.pipeline.pipeline_failure.MisconfiguredFeatureMapFailure
+import com.ExTwitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.util.Return
+import com.ExTwitter.util.Throw
 
 trait ShouldContinue[Value] {
 
@@ -21,7 +21,7 @@ trait ShouldContinue[Value] {
   def onFailedFeature(t: Throwable): GateResult = GateResult.Stop
 
   /**
-   * If the [[Feature]], or [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap]],
+   * If the [[Feature]], or [[com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap]],
    * is missing use this value
    */
   def onMissingFeature: GateResult = GateResult.Stop

@@ -1,19 +1,19 @@
-package com.twitter.home_mixer.marshaller.timeline_logging
+package com.ExTwitter.home_mixer.marshaller.timeline_logging
 
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
-import com.twitter.product_mixer.component_library.model.presentation.urt.UrtItemPresentation
-import com.twitter.product_mixer.component_library.model.presentation.urt.UrtModulePresentation
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.GeneralContextTypeMarshaller
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ConversationGeneralContextType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.GeneralContext
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.TopicContext
-import com.twitter.timelines.service.{thriftscala => tst}
-import com.twitter.timelines.timeline_logging.{thriftscala => thriftlog}
+import com.ExTwitter.home_mixer.model.HomeFeatures.AuthorIdFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.SourceTweetIdFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.SourceUserIdFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
+import com.ExTwitter.product_mixer.component_library.model.presentation.urt.UrtItemPresentation
+import com.ExTwitter.product_mixer.component_library.model.presentation.urt.UrtModulePresentation
+import com.ExTwitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.GeneralContextTypeMarshaller
+import com.ExTwitter.product_mixer.core.model.common.presentation.CandidateWithDetails
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.ConversationGeneralContextType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.GeneralContext
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.TopicContext
+import com.ExTwitter.timelines.service.{thriftscala => tst}
+import com.ExTwitter.timelines.timeline_logging.{thriftscala => thriftlog}
 
 object TweetDetailsMarshaller {
 

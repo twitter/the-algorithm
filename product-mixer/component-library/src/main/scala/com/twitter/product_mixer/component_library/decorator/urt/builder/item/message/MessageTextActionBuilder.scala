@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.message
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.message
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseStr
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageTextAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Callback
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseStr
+import com.ExTwitter.product_mixer.core.model.common.UniversalNoun
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageAction
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageTextAction
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.Callback
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
 
 object MessageTextActionBuilder {
   val MessageTextActionClientEventInfoElement: String = "message-text-action"

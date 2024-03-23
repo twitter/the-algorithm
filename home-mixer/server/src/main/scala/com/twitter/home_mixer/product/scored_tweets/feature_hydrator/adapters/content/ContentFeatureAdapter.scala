@@ -1,14 +1,14 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.adapters.content
+package com.ExTwitter.home_mixer.product.scored_tweets.feature_hydrator.adapters.content
 
-import com.twitter.home_mixer.model.ContentFeatures
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.ml.api.util.DataRecordConverters._
-import com.twitter.timelines.prediction.common.adapters.TimelinesMutatingAdapterBase
-import com.twitter.timelines.prediction.common.adapters.TweetLengthType
-import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures
-import com.twitter.timelines.prediction.features.conversation_features.ConversationFeatures
+import com.ExTwitter.home_mixer.model.ContentFeatures
+import com.ExTwitter.ml.api.Feature
+import com.ExTwitter.ml.api.FeatureContext
+import com.ExTwitter.ml.api.RichDataRecord
+import com.ExTwitter.ml.api.util.DataRecordConverters._
+import com.ExTwitter.timelines.prediction.common.adapters.TimelinesMutatingAdapterBase
+import com.ExTwitter.timelines.prediction.common.adapters.TweetLengthType
+import com.ExTwitter.timelines.prediction.features.common.TimelinesSharedFeatures
+import com.ExTwitter.timelines.prediction.features.conversation_features.ConversationFeatures
 import scala.collection.JavaConverters._
 
 object ContentFeatureAdapter extends TimelinesMutatingAdapterBase[Option[ContentFeatures]] {

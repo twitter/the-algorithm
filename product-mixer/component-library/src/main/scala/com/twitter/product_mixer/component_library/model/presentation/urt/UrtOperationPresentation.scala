@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.component_library.model.presentation.urt
+package com.ExTwitter.product_mixer.component_library.model.presentation.urt
 
-import com.twitter.product_mixer.core.model.common.presentation.urt.BaseUrtOperationPresentation
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineOperation
+import com.ExTwitter.product_mixer.core.model.common.presentation.urt.BaseUrtOperationPresentation
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.TimelineOperation
 
 final case class UrtOperationPresentation(
   override val timelineOperation: TimelineOperation)

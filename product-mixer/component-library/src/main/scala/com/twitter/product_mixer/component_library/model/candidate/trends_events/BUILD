@@ -5,13 +5,13 @@ scala_library(
     strict_deps = True,
     tags = ["bazel-compatible"],
     dependencies = [
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/marshalling/response/urt/item",
+        "product-mixer/component-library/src/main/scala/com/ExTwitter/product_mixer/component_library/model/candidate",
+        "product-mixer/core/src/main/scala/com/ExTwitter/product_mixer/core/model/common",
+        "product-mixer/core/src/main/scala/com/ExTwitter/product_mixer/core/model/marshalling/response/urt/item",
     ],
     exports = [
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/marshalling/response/urt/item",
+        "product-mixer/component-library/src/main/scala/com/ExTwitter/product_mixer/component_library/model/candidate",
+        "product-mixer/core/src/main/scala/com/ExTwitter/product_mixer/core/model/common",
+        "product-mixer/core/src/main/scala/com/ExTwitter/product_mixer/core/model/marshalling/response/urt/item",
     ],
 )

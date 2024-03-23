@@ -1,23 +1,23 @@
-package com.twitter.cr_mixer.module.core
+package com.ExTwitter.cr_mixer.module.core
 
 import com.google.inject.Provides
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.scribe.ScribeCategories
-import com.twitter.cr_mixer.scribe.ScribeCategory
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.logging.BareFormatter
-import com.twitter.logging.Level
-import com.twitter.logging.Logger
-import com.twitter.logging.NullHandler
-import com.twitter.logging.QueueingHandler
-import com.twitter.logging.ScribeHandler
-import com.twitter.logging.{LoggerFactory => TwitterLoggerFactory}
+import com.ExTwitter.cr_mixer.model.ModuleNames
+import com.ExTwitter.cr_mixer.scribe.ScribeCategories
+import com.ExTwitter.cr_mixer.scribe.ScribeCategory
+import com.ExTwitter.finagle.mtls.authentication.ServiceIdentifier
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.logging.BareFormatter
+import com.ExTwitter.logging.Level
+import com.ExTwitter.logging.Logger
+import com.ExTwitter.logging.NullHandler
+import com.ExTwitter.logging.QueueingHandler
+import com.ExTwitter.logging.ScribeHandler
+import com.ExTwitter.logging.{LoggerFactory => ExTwitterLoggerFactory}
 import javax.inject.Named
 import javax.inject.Singleton
 
-object LoggerFactoryModule extends TwitterModule {
+object LoggerFactoryModule extends ExTwitterModule {
 
   private val DefaultQueueSize = 10000
 
@@ -123,10 +123,10 @@ object LoggerFactoryModule extends TwitterModule {
     category: ScribeCategory,
     environment: String,
     statsReceiver: StatsReceiver
-  ): TwitterLoggerFactory = {
+  ): ExTwitterLoggerFactory = {
     environment match {
       case "prod" =>
-        TwitterLoggerFactory(
+        ExTwitterLoggerFactory(
           node = category.getProdLoggerFactoryNode,
           level = Some(Level.INFO),
           useParents = false,
@@ -142,7 +142,7 @@ object LoggerFactoryModule extends TwitterModule {
           )
         )
       case _ =>
-        TwitterLoggerFactory(
+        ExTwitterLoggerFactory(
           node = category.getStagingLoggerFactoryNode,
           level = Some(Level.DEBUG),
           useParents = false,

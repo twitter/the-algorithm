@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.component_library.candidate_source.interest_discovery
+package com.ExTwitter.product_mixer.component_library.candidate_source.interest_discovery
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
-import com.twitter.inject.Logging
-import com.twitter.interests_discovery.{thriftscala => t}
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
+import com.ExTwitter.inject.Logging
+import com.ExTwitter.interests_discovery.{thriftscala => t}
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidateSource
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.stitch.Stitch
 
 /**
  * Generate a list of related topics results from IDS getRelatedTopics (thrift) endpoint.

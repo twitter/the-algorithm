@@ -1,10 +1,10 @@
-package com.twitter.follow_recommendations.common.candidate_sources.base
+package com.ExTwitter.follow_recommendations.common.candidate_sources.base
 
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
+import com.ExTwitter.follow_recommendations.common.models.CandidateUser
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidateSource
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.strato.client.Fetcher
 
 abstract class StratoFetcherSource[K, U, V](
   fetcher: Fetcher[K, U, V],

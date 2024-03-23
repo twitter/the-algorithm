@@ -1,11 +1,11 @@
-package com.twitter.follow_recommendations.common.models
+package com.ExTwitter.follow_recommendations.common.models
 
-import com.twitter.finagle.tracing.Trace
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
-import com.twitter.follow_recommendations.{thriftscala => t}
-import com.twitter.scrooge.BinaryThriftStructSerializer
-import com.twitter.suggests.controller_data.thriftscala.ControllerData
-import com.twitter.util.Base64StringEncoder
+import com.ExTwitter.finagle.tracing.Trace
+import com.ExTwitter.follow_recommendations.logging.{thriftscala => offline}
+import com.ExTwitter.follow_recommendations.{thriftscala => t}
+import com.ExTwitter.scrooge.BinaryThriftStructSerializer
+import com.ExTwitter.suggests.controller_data.thriftscala.ControllerData
+import com.ExTwitter.util.Base64StringEncoder
 
 /**
  * used for attribution per target-candidate pair

@@ -1,21 +1,21 @@
-package com.twitter.ann.scalding.offline
+package com.ExTwitter.ann.scalding.offline
 
-import com.twitter.ann.common.Distance
-import com.twitter.ann.common.Metric
-import com.twitter.ann.scalding.offline.KnnHelper.nearestNeighborsToString
-import com.twitter.cortex.ml.embeddings.common.EntityKind
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.scalding.source.TypedText
-import com.twitter.scalding.Args
-import com.twitter.scalding.Execution
-import com.twitter.scalding.UniqueID
-import com.twitter.scalding_internal.job.TwitterExecutionApp
+import com.ExTwitter.ann.common.Distance
+import com.ExTwitter.ann.common.Metric
+import com.ExTwitter.ann.scalding.offline.KnnHelper.nearestNeighborsToString
+import com.ExTwitter.cortex.ml.embeddings.common.EntityKind
+import com.ExTwitter.ml.featurestore.lib.EntityId
+import com.ExTwitter.scalding.source.TypedText
+import com.ExTwitter.scalding.Args
+import com.ExTwitter.scalding.Execution
+import com.ExTwitter.scalding.UniqueID
+import com.ExTwitter.scalding_internal.job.ExTwitterExecutionApp
 
 /**
  * This job reads index embedding data, query embeddings data, and split into index set, query set and true nearest neigbor set
  * from query to index.
  */
-object KnnTruthSetGenerator extends TwitterExecutionApp {
+object KnnTruthSetGenerator extends ExTwitterExecutionApp {
   override def job: Execution[Unit] = Execution.withId { implicit uniqueId =>
     Execution.getArgs.flatMap { args: Args =>
       val queryEntityKind = EntityKind.getEntityKind(args("query_entity_kind"))

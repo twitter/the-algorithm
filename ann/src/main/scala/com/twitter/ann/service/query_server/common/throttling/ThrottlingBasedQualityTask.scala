@@ -1,15 +1,15 @@
-package com.twitter.ann.service.query_server.common.throttling
+package com.ExTwitter.ann.service.query_server.common.throttling
 
-import com.twitter.ann.common.RuntimeParams
-import com.twitter.ann.common.Task
-import com.twitter.ann.faiss.FaissParams
-import com.twitter.ann.hnsw.HnswParams
-import com.twitter.ann.service.query_server.common.throttling.ThrottlingBasedQualityTask.SAMPLING_INTERVAL
-import com.twitter.conversions.DurationOps.richDurationFromInt
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.logging.Logging
+import com.ExTwitter.ann.common.RuntimeParams
+import com.ExTwitter.ann.common.Task
+import com.ExTwitter.ann.faiss.FaissParams
+import com.ExTwitter.ann.hnsw.HnswParams
+import com.ExTwitter.ann.service.query_server.common.throttling.ThrottlingBasedQualityTask.SAMPLING_INTERVAL
+import com.ExTwitter.conversions.DurationOps.richDurationFromInt
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.util.Duration
+import com.ExTwitter.util.Future
+import com.ExTwitter.util.logging.Logging
 
 object ThrottlingBasedQualityTask {
   private[throttling] val SAMPLING_INTERVAL = 100.milliseconds

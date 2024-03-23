@@ -1,5 +1,5 @@
-package com.twitter.home_mixer.module
+package com.ExTwitter.home_mixer.module
 
-import com.twitter.inject.TwitterModule
+import com.ExTwitter.inject.ExTwitterModule
 
-object HomeMixerResourcesModule extends TwitterModule {}
+object HomeMixerResourcesModule extends ExTwitterModule {}

@@ -1,13 +1,13 @@
-package com.twitter.home_mixer.product.list_recommended_users.model
+package com.ExTwitter.home_mixer.product.list_recommended_users.model
 
-import com.twitter.home_mixer.model.request.HasListId
-import com.twitter.home_mixer.model.request.ListRecommendedUsersProduct
-import com.twitter.product_mixer.component_library.model.cursor.UrtUnorderedExcludeIdsCursor
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.marshalling.request._
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Params
+import com.ExTwitter.home_mixer.model.request.HasListId
+import com.ExTwitter.home_mixer.model.request.ListRecommendedUsersProduct
+import com.ExTwitter.product_mixer.component_library.model.cursor.UrtUnorderedExcludeIdsCursor
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.model.marshalling.request._
+import com.ExTwitter.product_mixer.core.pipeline.HasPipelineCursor
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.timelines.configapi.Params
 
 case class ListRecommendedUsersQuery(
   override val listId: Long,

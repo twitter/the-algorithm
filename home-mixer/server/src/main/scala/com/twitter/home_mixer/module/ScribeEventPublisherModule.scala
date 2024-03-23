@@ -1,21 +1,21 @@
-package com.twitter.home_mixer.module
+package com.ExTwitter.home_mixer.module
 
 import com.google.inject.Provides
-import com.twitter.clientapp.{thriftscala => ca}
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.CandidateFeaturesScribeEventPublisher
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.CommonFeaturesScribeEventPublisher
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.MinimumFeaturesScribeEventPublisher
-import com.twitter.inject.TwitterModule
-import com.twitter.logpipeline.client.EventPublisherManager
-import com.twitter.logpipeline.client.common.EventPublisher
-import com.twitter.logpipeline.client.serializers.EventLogMsgTBinarySerializer
-import com.twitter.logpipeline.client.serializers.EventLogMsgThriftStructSerializer
-import com.twitter.timelines.suggests.common.poly_data_record.{thriftjava => pldr}
-import com.twitter.timelines.timeline_logging.{thriftscala => tl}
+import com.ExTwitter.clientapp.{thriftscala => ca}
+import com.ExTwitter.home_mixer.param.HomeMixerInjectionNames.CandidateFeaturesScribeEventPublisher
+import com.ExTwitter.home_mixer.param.HomeMixerInjectionNames.CommonFeaturesScribeEventPublisher
+import com.ExTwitter.home_mixer.param.HomeMixerInjectionNames.MinimumFeaturesScribeEventPublisher
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.logpipeline.client.EventPublisherManager
+import com.ExTwitter.logpipeline.client.common.EventPublisher
+import com.ExTwitter.logpipeline.client.serializers.EventLogMsgTBinarySerializer
+import com.ExTwitter.logpipeline.client.serializers.EventLogMsgThriftStructSerializer
+import com.ExTwitter.timelines.suggests.common.poly_data_record.{thriftjava => pldr}
+import com.ExTwitter.timelines.timeline_logging.{thriftscala => tl}
 import javax.inject.Named
 import javax.inject.Singleton
 
-object ScribeEventPublisherModule extends TwitterModule {
+object ScribeEventPublisherModule extends ExTwitterModule {
 
   val ClientEventLogCategory = "client_event"
   val ServedCandidatesLogCategory = "home_timeline_served_candidates_flattened"

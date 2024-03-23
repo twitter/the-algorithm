@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.component_library.candidate_source.lists
+package com.ExTwitter.product_mixer.component_library.candidate_source.lists
 
-import com.twitter.product_mixer.component_library.model.candidate.TwitterListCandidate
-import com.twitter.product_mixer.core.functional_component.candidate_source.strato.StratoKeyFetcherSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.generated.client.recommendations.interests_discovery.recommendations_mh.OrganicPopgeoListsClientColumn
+import com.ExTwitter.product_mixer.component_library.model.candidate.ExTwitterListCandidate
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.strato.StratoKeyFetcherSource
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.strato.client.Fetcher
+import com.ExTwitter.strato.generated.client.recommendations.interests_discovery.recommendations_mh.OrganicPopgeoListsClientColumn
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -14,7 +14,7 @@ class OrganicPopGeoListsCandidateSource @Inject() (
     extends StratoKeyFetcherSource[
       OrganicPopgeoListsClientColumn.Key,
       OrganicPopgeoListsClientColumn.Value,
-      TwitterListCandidate
+      ExTwitterListCandidate
     ] {
 
   override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
@@ -29,10 +29,10 @@ class OrganicPopGeoListsCandidateSource @Inject() (
 
   override def stratoResultTransformer(
     stratoResult: OrganicPopgeoListsClientColumn.Value
-  ): Seq[TwitterListCandidate] = {
+  ): Seq[ExTwitterListCandidate] = {
     stratoResult.recommendedListsByAlgo.flatMap { topLists =>
       topLists.lists.map { list =>
-        TwitterListCandidate(list.listId)
+        ExTwitterListCandidate(list.listId)
       }
     }
   }

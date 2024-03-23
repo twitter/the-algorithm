@@ -1,8 +1,8 @@
-package com.twitter.follow_recommendations.common.clients.adserver
+package com.ExTwitter.follow_recommendations.common.clients.adserver
 
-import com.twitter.adserver.thriftscala.NewAdServer
-import com.twitter.adserver.{thriftscala => t}
-import com.twitter.stitch.Stitch
+import com.ExTwitter.adserver.thriftscala.NewAdServer
+import com.ExTwitter.adserver.{thriftscala => t}
+import com.ExTwitter.stitch.Stitch
 import javax.inject.{Inject, Singleton}
 
 @Singleton

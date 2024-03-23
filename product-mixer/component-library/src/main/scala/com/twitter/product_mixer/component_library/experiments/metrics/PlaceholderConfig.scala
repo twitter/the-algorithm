@@ -1,4 +1,4 @@
-package com.twitter.product_mixer.component_library.experiments.metrics
+package com.ExTwitter.product_mixer.component_library.experiments.metrics
 
 // Base trait for all placeholder values
 sealed trait Named {

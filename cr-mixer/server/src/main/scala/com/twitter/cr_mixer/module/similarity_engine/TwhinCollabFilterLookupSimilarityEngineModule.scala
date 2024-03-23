@@ -1,21 +1,21 @@
-package com.twitter.cr_mixer.module
+package com.ExTwitter.cr_mixer.module
 package similarity_engine
 
 import com.google.inject.Provides
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.cr_mixer.model.TweetWithScore
-import com.twitter.cr_mixer.model.ModelConfig
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.similarity_engine.LookupSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.TwhinCollabFilterSimilarityEngine.Query
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.GatingConfig
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.SimilarityEngineConfig
-import com.twitter.cr_mixer.similarity_engine.TwhinCollabFilterSimilarityEngine
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.storehaus.ReadableStore
+import com.ExTwitter.cr_mixer.config.TimeoutConfig
+import com.ExTwitter.simclusters_v2.common.TweetId
+import com.ExTwitter.cr_mixer.model.TweetWithScore
+import com.ExTwitter.cr_mixer.model.ModelConfig
+import com.ExTwitter.cr_mixer.model.ModuleNames
+import com.ExTwitter.cr_mixer.similarity_engine.LookupSimilarityEngine
+import com.ExTwitter.cr_mixer.similarity_engine.TwhinCollabFilterSimilarityEngine.Query
+import com.ExTwitter.cr_mixer.similarity_engine.SimilarityEngine.GatingConfig
+import com.ExTwitter.cr_mixer.similarity_engine.SimilarityEngine.SimilarityEngineConfig
+import com.ExTwitter.cr_mixer.similarity_engine.TwhinCollabFilterSimilarityEngine
+import com.ExTwitter.cr_mixer.thriftscala.SimilarityEngineType
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.storehaus.ReadableStore
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -24,7 +24,7 @@ import javax.inject.Singleton
  * twhin based candidate store which follow the same pattern as TwHIN Collaborative Filtering.
  */
 
-object TwhinCollabFilterLookupSimilarityEngineModule extends TwitterModule {
+object TwhinCollabFilterLookupSimilarityEngineModule extends ExTwitterModule {
   @Provides
   @Singleton
   @Named(ModuleNames.TwhinCollabFilterSimilarityEngine)

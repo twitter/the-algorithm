@@ -1,14 +1,14 @@
-package com.twitter.follow_recommendations.common.candidate_sources.base
+package com.ExTwitter.follow_recommendations.common.candidate_sources.base
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.transforms.modify_social_proof.ModifySocialProof
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.util.Duration
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.follow_recommendations.common.models.CandidateUser
+import com.ExTwitter.follow_recommendations.common.transforms.modify_social_proof.ModifySocialProof
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidateSource
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.timelines.configapi.HasParams
+import com.ExTwitter.util.Duration
 
 abstract class SocialProofEnforcedCandidateSource(
   candidateSource: CandidateSource[HasClientContext with HasParams, CandidateUser],

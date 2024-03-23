@@ -18,7 +18,7 @@ python3_library(
         "3rdparty/python/pandas:default",
         "3rdparty/python/pandas-gbq:default",
         "3rdparty/python/pyarrow:default",
-        "src/python/twitter/ml/common/apache_beam",
+        "src/python/ExTwitter/ml/common/apache_beam",
     ],
 )
 

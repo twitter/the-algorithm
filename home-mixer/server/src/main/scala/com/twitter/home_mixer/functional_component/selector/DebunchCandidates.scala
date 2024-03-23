@@ -1,14 +1,14 @@
-package com.twitter.home_mixer.functional_component.selector
+package com.ExTwitter.home_mixer.functional_component.selector
 
-import com.twitter.home_mixer.functional_component.selector.DebunchCandidates.TrailingTweetsMinSize
-import com.twitter.home_mixer.functional_component.selector.DebunchCandidates.TrailingTweetsPortionToKeep
-import com.twitter.home_mixer.model.HomeFeatures.GetNewerFeature
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope.PartitionedCandidates
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.home_mixer.functional_component.selector.DebunchCandidates.TrailingTweetsMinSize
+import com.ExTwitter.home_mixer.functional_component.selector.DebunchCandidates.TrailingTweetsPortionToKeep
+import com.ExTwitter.home_mixer.model.HomeFeatures.GetNewerFeature
+import com.ExTwitter.product_mixer.core.functional_component.common.CandidateScope
+import com.ExTwitter.product_mixer.core.functional_component.common.CandidateScope.PartitionedCandidates
+import com.ExTwitter.product_mixer.core.functional_component.selector.Selector
+import com.ExTwitter.product_mixer.core.functional_component.selector.SelectorResult
+import com.ExTwitter.product_mixer.core.model.common.presentation.CandidateWithDetails
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
 
 trait MustDebunch {
   def apply(candidate: CandidateWithDetails): Boolean

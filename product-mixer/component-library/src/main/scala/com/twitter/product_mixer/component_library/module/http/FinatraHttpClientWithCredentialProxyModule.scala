@@ -1,28 +1,28 @@
-package com.twitter.product_mixer.component_library.module.http
+package com.ExTwitter.product_mixer.component_library.module.http
 
 import com.google.inject.Provides
-import com.twitter.finagle.http.ProxyCredentials
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.httpclient.HttpClient
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientModule.HttpClientAcquisitionTimeout
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientModule.HttpClientConnectTimeout
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientModule.HttpClientRequestTimeout
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientWithProxyModule.HttpClientWithProxyRemoteHost
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientWithProxyModule.HttpClientWithProxyRemotePort
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientWithProxyModule.HttpClientWithProxyTwitterHost
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientWithProxyModule.HttpClientWithProxyTwitterPort
-import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule.ServiceLocal
-import com.twitter.product_mixer.shared_library.http_client.FinagleHttpClientWithProxyBuilder.buildFinagleHttpClientWithCredentialProxy
-import com.twitter.product_mixer.shared_library.http_client.FinagleHttpClientWithProxyBuilder.buildFinagleHttpServiceWithProxy
-import com.twitter.product_mixer.shared_library.http_client.HttpHostPort
-import com.twitter.util.Duration
-import com.twitter.util.jackson.ScalaObjectMapper
+import com.ExTwitter.finagle.http.ProxyCredentials
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.finatra.httpclient.HttpClient
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.inject.annotations.Flag
+import com.ExTwitter.product_mixer.component_library.module.http.FinagleHttpClientModule.HttpClientAcquisitionTimeout
+import com.ExTwitter.product_mixer.component_library.module.http.FinagleHttpClientModule.HttpClientConnectTimeout
+import com.ExTwitter.product_mixer.component_library.module.http.FinagleHttpClientModule.HttpClientRequestTimeout
+import com.ExTwitter.product_mixer.component_library.module.http.FinagleHttpClientWithProxyModule.HttpClientWithProxyRemoteHost
+import com.ExTwitter.product_mixer.component_library.module.http.FinagleHttpClientWithProxyModule.HttpClientWithProxyRemotePort
+import com.ExTwitter.product_mixer.component_library.module.http.FinagleHttpClientWithProxyModule.HttpClientWithProxyExTwitterHost
+import com.ExTwitter.product_mixer.component_library.module.http.FinagleHttpClientWithProxyModule.HttpClientWithProxyExTwitterPort
+import com.ExTwitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule.ServiceLocal
+import com.ExTwitter.product_mixer.shared_library.http_client.FinagleHttpClientWithProxyBuilder.buildFinagleHttpClientWithCredentialProxy
+import com.ExTwitter.product_mixer.shared_library.http_client.FinagleHttpClientWithProxyBuilder.buildFinagleHttpServiceWithProxy
+import com.ExTwitter.product_mixer.shared_library.http_client.HttpHostPort
+import com.ExTwitter.util.Duration
+import com.ExTwitter.util.jackson.ScalaObjectMapper
 import javax.inject.Named
 import javax.inject.Singleton
 
-object FinatraHttpClientWithCredentialProxyModule extends TwitterModule {
+object FinatraHttpClientWithCredentialProxyModule extends ExTwitterModule {
 
   final val FinatraHttpClientWithCredentialProxy = "FinagleHttpClientWithCredentialProxy"
 
@@ -34,8 +34,8 @@ object FinatraHttpClientWithCredentialProxyModule extends TwitterModule {
    * Note that the timeouts configured in this module are meant to be a reasonable starting point
    * only. To further tuning the settings, either override the flags or create local copy of the module.
    *
-   * @param proxyTwitterHost       Twitter egress proxy host
-   * @param proxyTwitterPort       Twitter egress proxy port
+   * @param proxyExTwitterHost       ExTwitter egress proxy host
+   * @param proxyExTwitterPort       ExTwitter egress proxy port
    * @param proxyRemoteHost        Remote proxy host
    * @param proxyRemotePort        Remote proxy port
    * @param requestTimeout         HTTP client request timeout
@@ -52,8 +52,8 @@ object FinatraHttpClientWithCredentialProxyModule extends TwitterModule {
   @Singleton
   @Named(FinatraHttpClientWithCredentialProxy)
   def providesFinatraHttpClientWithCredentialProxy(
-    @Flag(HttpClientWithProxyTwitterHost) proxyTwitterHost: String,
-    @Flag(HttpClientWithProxyTwitterPort) proxyTwitterPort: Int,
+    @Flag(HttpClientWithProxyExTwitterHost) proxyExTwitterHost: String,
+    @Flag(HttpClientWithProxyExTwitterPort) proxyExTwitterPort: Int,
     @Flag(HttpClientWithProxyRemoteHost) proxyRemoteHost: String,
     @Flag(HttpClientWithProxyRemotePort) proxyRemotePort: Int,
     @Flag(HttpClientRequestTimeout) requestTimeout: Duration,
@@ -64,12 +64,12 @@ object FinatraHttpClientWithCredentialProxyModule extends TwitterModule {
     scalaObjectMapper: ScalaObjectMapper,
     statsReceiver: StatsReceiver
   ): HttpClient = {
-    val twitterProxyHostPort = HttpHostPort(proxyTwitterHost, proxyTwitterPort)
+    val ExTwitterProxyHostPort = HttpHostPort(proxyExTwitterHost, proxyExTwitterPort)
     val proxyRemoteHostPort = HttpHostPort(proxyRemoteHost, proxyRemotePort)
 
     val finagleHttpClientWithCredentialProxy =
       buildFinagleHttpClientWithCredentialProxy(
-        twitterProxyHostPort = twitterProxyHostPort,
+        ExTwitterProxyHostPort = ExTwitterProxyHostPort,
         remoteProxyHostPort = proxyRemoteHostPort,
         requestTimeout = requestTimeout,
         connectTimeout = connectTimeout,
@@ -81,11 +81,11 @@ object FinatraHttpClientWithCredentialProxyModule extends TwitterModule {
     val finagleHttpServiceWithCredentialProxy =
       buildFinagleHttpServiceWithProxy(
         finagleHttpClientWithProxy = finagleHttpClientWithCredentialProxy,
-        twitterProxyHostPort = twitterProxyHostPort
+        ExTwitterProxyHostPort = ExTwitterProxyHostPort
       )
 
     new HttpClient(
-      hostname = twitterProxyHostPort.host,
+      hostname = ExTwitterProxyHostPort.host,
       httpService = finagleHttpServiceWithCredentialProxy,
       mapper = scalaObjectMapper
     )

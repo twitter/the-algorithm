@@ -1,7 +1,7 @@
-package com.twitter.home_mixer.model.request
+package com.ExTwitter.home_mixer.model.request
 
-import com.twitter.dspbidder.commons.thriftscala.DspClientContext
-import com.twitter.product_mixer.core.model.marshalling.request.ProductContext
+import com.ExTwitter.dspbidder.commons.thriftscala.DspClientContext
+import com.ExTwitter.product_mixer.core.model.marshalling.request.ProductContext
 
 case class FollowingProductContext(
   deviceContext: Option[DeviceContext],

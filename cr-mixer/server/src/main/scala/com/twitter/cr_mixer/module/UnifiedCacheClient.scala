@@ -1,20 +1,20 @@
-package com.twitter.cr_mixer.module
+package com.ExTwitter.cr_mixer.module
 
 import com.google.inject.Provides
 import com.google.inject.Singleton
-import com.twitter.app.Flag
-import com.twitter.conversions.DurationOps._
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.finagle.memcached.Client
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.storehaus_internal.memcache.MemcacheStore
-import com.twitter.storehaus_internal.util.ClientName
-import com.twitter.storehaus_internal.util.ZkEndPoint
+import com.ExTwitter.app.Flag
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.cr_mixer.model.ModuleNames
+import com.ExTwitter.finagle.memcached.Client
+import com.ExTwitter.finagle.mtls.authentication.ServiceIdentifier
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.storehaus_internal.memcache.MemcacheStore
+import com.ExTwitter.storehaus_internal.util.ClientName
+import com.ExTwitter.storehaus_internal.util.ZkEndPoint
 import javax.inject.Named
 
-object UnifiedCacheClient extends TwitterModule {
+object UnifiedCacheClient extends ExTwitterModule {
 
   private val TIME_OUT = 20.milliseconds
 

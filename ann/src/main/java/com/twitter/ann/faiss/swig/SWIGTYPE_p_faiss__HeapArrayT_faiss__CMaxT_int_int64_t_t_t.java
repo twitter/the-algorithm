@@ -6,7 +6,7 @@
  * the SWIG interface file instead.
  * ----------------------------------------------------------------------------- */
 
-package com.twitter.ann.faiss;
+package com.ExTwitter.ann.faiss;
 
 public class SWIGTYPE_p_faiss__HeapArrayT_faiss__CMaxT_int_int64_t_t_t {
   private transient long swigCPtr;

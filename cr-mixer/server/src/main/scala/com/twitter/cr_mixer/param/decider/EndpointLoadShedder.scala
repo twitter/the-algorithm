@@ -1,9 +1,9 @@
-package com.twitter.cr_mixer.param.decider
+package com.ExTwitter.cr_mixer.param.decider
 
-import com.twitter.decider.Decider
-import com.twitter.decider.RandomRecipient
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.Future
+import com.ExTwitter.decider.Decider
+import com.ExTwitter.decider.RandomRecipient
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.util.Future
 import javax.inject.Inject
 import scala.util.control.NoStackTrace
 

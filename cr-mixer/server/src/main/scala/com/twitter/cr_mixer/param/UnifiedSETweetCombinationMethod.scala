@@ -1,4 +1,4 @@
-package com.twitter.cr_mixer.param
+package com.ExTwitter.cr_mixer.param
 
 import scala.language.implicitConversions
 

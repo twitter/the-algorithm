@@ -1,7 +1,7 @@
-package com.twitter.ann.hnsw
+package com.ExTwitter.ann.hnsw
 
-import com.twitter.ann.common.EmbeddingType.EmbeddingVector
-import com.twitter.ann.common.{Cosine, Distance, InnerProduct, Metric}
+import com.ExTwitter.ann.common.EmbeddingType.EmbeddingVector
+import com.ExTwitter.ann.common.{Cosine, Distance, InnerProduct, Metric}
 
 private[hnsw] object DistanceFunctionGenerator {
   def apply[T, D <: Distance[D]](

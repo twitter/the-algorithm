@@ -1,22 +1,22 @@
-package com.twitter.cr_mixer.similarity_engine
+package com.ExTwitter.cr_mixer.similarity_engine
 
-import com.twitter.recos.recos_common.thriftscala.SocialProofType
-import com.twitter.cr_mixer.model.SimilarityEngineInfo
-import com.twitter.cr_mixer.model.TweetWithScoreAndSocialProof
-import com.twitter.cr_mixer.param.UtegTweetGlobalParams
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.TweetEntityDisplayLocation
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.UserTweetEntityGraph
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.RecommendTweetEntityRequest
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.RecommendationType
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.UserTweetEntityRecommendationUnion.TweetRec
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi
-import com.twitter.util.Duration
-import com.twitter.util.Future
+import com.ExTwitter.recos.recos_common.thriftscala.SocialProofType
+import com.ExTwitter.cr_mixer.model.SimilarityEngineInfo
+import com.ExTwitter.cr_mixer.model.TweetWithScoreAndSocialProof
+import com.ExTwitter.cr_mixer.param.UtegTweetGlobalParams
+import com.ExTwitter.cr_mixer.thriftscala.SimilarityEngineType
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.recos.user_tweet_entity_graph.thriftscala.TweetEntityDisplayLocation
+import com.ExTwitter.recos.user_tweet_entity_graph.thriftscala.UserTweetEntityGraph
+import com.ExTwitter.recos.user_tweet_entity_graph.thriftscala.RecommendTweetEntityRequest
+import com.ExTwitter.recos.user_tweet_entity_graph.thriftscala.RecommendationType
+import com.ExTwitter.recos.user_tweet_entity_graph.thriftscala.UserTweetEntityRecommendationUnion.TweetRec
+import com.ExTwitter.simclusters_v2.common.UserId
+import com.ExTwitter.simclusters_v2.common.TweetId
+import com.ExTwitter.storehaus.ReadableStore
+import com.ExTwitter.timelines.configapi
+import com.ExTwitter.util.Duration
+import com.ExTwitter.util.Future
 import javax.inject.Singleton
 
 @Singleton

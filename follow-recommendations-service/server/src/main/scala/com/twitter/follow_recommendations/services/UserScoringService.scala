@@ -1,18 +1,18 @@
-package com.twitter.follow_recommendations.services
+package com.ExTwitter.follow_recommendations.services
 
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.StatsUtil.profileStitchSeqResults
-import com.twitter.follow_recommendations.common.clients.impression_store.WtfImpressionStore
-import com.twitter.follow_recommendations.common.clients.socialgraph.SocialGraphClient
-import com.twitter.follow_recommendations.common.rankers.ml_ranker.ranking.HydrateFeaturesTransform
-import com.twitter.follow_recommendations.common.rankers.ml_ranker.ranking.MlRanker
-import com.twitter.follow_recommendations.common.utils.RescueWithStatsUtils.rescueWithStats
-import com.twitter.follow_recommendations.configapi.deciders.DeciderParams
-import com.twitter.follow_recommendations.logging.FrsLogger
-import com.twitter.follow_recommendations.models.ScoringUserRequest
-import com.twitter.follow_recommendations.models.ScoringUserResponse
-import com.twitter.stitch.Stitch
+import com.ExTwitter.finagle.stats.Counter
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.follow_recommendations.common.base.StatsUtil.profileStitchSeqResults
+import com.ExTwitter.follow_recommendations.common.clients.impression_store.WtfImpressionStore
+import com.ExTwitter.follow_recommendations.common.clients.socialgraph.SocialGraphClient
+import com.ExTwitter.follow_recommendations.common.rankers.ml_ranker.ranking.HydrateFeaturesTransform
+import com.ExTwitter.follow_recommendations.common.rankers.ml_ranker.ranking.MlRanker
+import com.ExTwitter.follow_recommendations.common.utils.RescueWithStatsUtils.rescueWithStats
+import com.ExTwitter.follow_recommendations.configapi.deciders.DeciderParams
+import com.ExTwitter.follow_recommendations.logging.FrsLogger
+import com.ExTwitter.follow_recommendations.models.ScoringUserRequest
+import com.ExTwitter.follow_recommendations.models.ScoringUserResponse
+import com.ExTwitter.stitch.Stitch
 import javax.inject.Inject
 import javax.inject.Singleton
 

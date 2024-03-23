@@ -1,27 +1,27 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates
+package com.ExTwitter.home_mixer.product.scored_tweets.feature_hydrator.offline_aggregates
 
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TimelineAggregateMetadataRepository
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TimelineAggregatePartBRepository
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.DataRecordMerger
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.servo.repository.Repository
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.data_processing.jobs.timeline_ranking_user_features.TimelinesPartBStoreRegister
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateType
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.StoreConfig
-import com.twitter.timelines.prediction.adapters.request_context.RequestContextAdapter
-import com.twitter.timelines.prediction.common.aggregates.TimelinesAggregationConfig
-import com.twitter.timelines.suggests.common.dense_data_record.thriftscala.DenseFeatureMetadata
-import com.twitter.user_session_store.thriftjava.UserSession
-import com.twitter.util.Time
+import com.ExTwitter.home_mixer.param.HomeMixerInjectionNames.TimelineAggregateMetadataRepository
+import com.ExTwitter.home_mixer.param.HomeMixerInjectionNames.TimelineAggregatePartBRepository
+import com.ExTwitter.ml.api.DataRecord
+import com.ExTwitter.ml.api.DataRecordMerger
+import com.ExTwitter.ml.api.FeatureContext
+import com.ExTwitter.ml.api.RichDataRecord
+import com.ExTwitter.product_mixer.core.feature.Feature
+import com.ExTwitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
+import com.ExTwitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.servo.repository.Repository
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.timelines.data_processing.jobs.timeline_ranking_user_features.TimelinesPartBStoreRegister
+import com.ExTwitter.timelines.data_processing.ml_util.aggregation_framework.AggregateType
+import com.ExTwitter.timelines.data_processing.ml_util.aggregation_framework.StoreConfig
+import com.ExTwitter.timelines.prediction.adapters.request_context.RequestContextAdapter
+import com.ExTwitter.timelines.prediction.common.aggregates.TimelinesAggregationConfig
+import com.ExTwitter.timelines.suggests.common.dense_data_record.thriftscala.DenseFeatureMetadata
+import com.ExTwitter.user_session_store.thriftjava.UserSession
+import com.ExTwitter.util.Time
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
@@ -59,7 +59,7 @@ class PartBAggregateQueryFeatureHydrator @Inject() (
       TimelinesAggregationConfig.userAggregatesV2,
       TimelinesAggregationConfig.userAggregatesV5Continuous,
       TimelinesAggregationConfig.userAggregatesV6,
-      TimelinesAggregationConfig.twitterWideUserAggregates,
+      TimelinesAggregationConfig.ExTwitterWideUserAggregates,
     ),
     aggregateType = AggregateType.User
   )

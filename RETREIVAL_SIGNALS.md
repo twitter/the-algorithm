@@ -2,7 +2,7 @@
 
 ## Overview
 
-The candidate sourcing stage within the Twitter Recommendation algorithm serves to significantly narrow down the item size from approximately 1 billion to just a few thousand. This process utilizes Twitter user behavior as the primary input for the algorithm. This document comprehensively enumerates all the signals during the candidate sourcing phase.
+The candidate sourcing stage within the ExTwitter Recommendation algorithm serves to significantly narrow down the item size from approximately 1 billion to just a few thousand. This process utilizes ExTwitter user behavior as the primary input for the algorithm. This document comprehensively enumerates all the signals during the candidate sourcing phase.
 
 | Signals               |  Description                                                          |
 | :-------------------- | :-------------------------------------------------------------------- |
@@ -27,7 +27,7 @@ The candidate sourcing stage within the Twitter Recommendation algorithm serves 
 
 ## Usage Details
 
-Twitter uses these user signals as training labels and/or ML features in the each candidate sourcing algorithms. The following tables shows how they are used in the each components.
+ExTwitter uses these user signals as training labels and/or ML features in the each candidate sourcing algorithms. The following tables shows how they are used in the each components.
 
 | Signals               | USS                | SimClusters        |  TwHin             |   UTEG             | FRS                |  Light Ranking     |
 | :-------------------- | :----------------- | :----------------- | :----------------- | :----------------- | :----------------- | :----------------- | 

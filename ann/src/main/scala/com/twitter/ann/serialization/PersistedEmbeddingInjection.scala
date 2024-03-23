@@ -1,10 +1,10 @@
-package com.twitter.ann.serialization
+package com.ExTwitter.ann.serialization
 
-import com.twitter.ann.common.EntityEmbedding
-import com.twitter.ann.common.EmbeddingType._
-import com.twitter.ann.serialization.thriftscala.PersistedEmbedding
-import com.twitter.bijection.Injection
-import com.twitter.mediaservices.commons.codec.ArrayByteBufferCodec
+import com.ExTwitter.ann.common.EntityEmbedding
+import com.ExTwitter.ann.common.EmbeddingType._
+import com.ExTwitter.ann.serialization.thriftscala.PersistedEmbedding
+import com.ExTwitter.bijection.Injection
+import com.ExTwitter.mediaservices.commons.codec.ArrayByteBufferCodec
 import java.nio.ByteBuffer
 import scala.util.Try
 

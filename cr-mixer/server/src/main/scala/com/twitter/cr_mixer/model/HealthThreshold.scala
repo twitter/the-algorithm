@@ -1,4 +1,4 @@
-package com.twitter.cr_mixer.model
+package com.ExTwitter.cr_mixer.model
 
 object HealthThreshold {
   object Enum extends Enumeration {

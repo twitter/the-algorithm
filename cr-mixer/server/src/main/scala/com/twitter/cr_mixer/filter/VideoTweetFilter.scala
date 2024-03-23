@@ -1,13 +1,13 @@
-package com.twitter.cr_mixer.filter
+package com.ExTwitter.cr_mixer.filter
 
-import com.twitter.cr_mixer.filter.VideoTweetFilter.FilterConfig
-import com.twitter.cr_mixer.model.CandidateGeneratorQuery
-import com.twitter.cr_mixer.model.CrCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.model.RelatedTweetCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.RelatedVideoTweetCandidateGeneratorQuery
-import com.twitter.cr_mixer.param.VideoTweetFilterParams
-import com.twitter.util.Future
+import com.ExTwitter.cr_mixer.filter.VideoTweetFilter.FilterConfig
+import com.ExTwitter.cr_mixer.model.CandidateGeneratorQuery
+import com.ExTwitter.cr_mixer.model.CrCandidateGeneratorQuery
+import com.ExTwitter.cr_mixer.model.InitialCandidate
+import com.ExTwitter.cr_mixer.model.RelatedTweetCandidateGeneratorQuery
+import com.ExTwitter.cr_mixer.model.RelatedVideoTweetCandidateGeneratorQuery
+import com.ExTwitter.cr_mixer.param.VideoTweetFilterParams
+import com.ExTwitter.util.Future
 import javax.inject.Singleton
 
 @Singleton

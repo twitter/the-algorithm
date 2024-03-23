@@ -1,49 +1,49 @@
-package com.twitter.home_mixer.module
+package com.ExTwitter.home_mixer.module
 
 import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.conversions.PercentOps._
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.graph_feature_service.{thriftscala => gfs}
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.EarlybirdRepository
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.GraphTwoHopRepository
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.InterestsThriftServiceClient
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TweetypieContentRepository
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.UserFollowedTopicIdsRepository
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.UtegSocialProofRepository
-import com.twitter.home_mixer.util.earlybird.EarlybirdRequestUtil
-import com.twitter.home_mixer.util.tweetypie.RequestFields
-import com.twitter.inject.TwitterModule
-import com.twitter.interests.{thriftscala => int}
-import com.twitter.product_mixer.shared_library.memcached_client.MemcachedClientBuilder
-import com.twitter.product_mixer.shared_library.thrift_client.FinagleThriftClientBuilder
-import com.twitter.product_mixer.shared_library.thrift_client.Idempotent
-import com.twitter.recos.recos_common.{thriftscala => rc}
-import com.twitter.recos.user_tweet_entity_graph.{thriftscala => uteg}
-import com.twitter.search.earlybird.{thriftscala => eb}
-import com.twitter.servo.cache.Cached
-import com.twitter.servo.cache.CachedSerializer
-import com.twitter.servo.cache.FinagleMemcacheFactory
-import com.twitter.servo.cache.MemcacheCacheFactory
-import com.twitter.servo.cache.NonLockingCache
-import com.twitter.servo.cache.ThriftSerializer
-import com.twitter.servo.keyvalue.KeyValueResultBuilder
-import com.twitter.servo.repository.CachingKeyValueRepository
-import com.twitter.servo.repository.ChunkingStrategy
-import com.twitter.servo.repository.KeyValueRepository
-import com.twitter.servo.repository.KeyValueResult
-import com.twitter.servo.repository.keysAsQuery
-import com.twitter.spam.rtf.{thriftscala => sp}
-import com.twitter.tweetypie.{thriftscala => tp}
-import com.twitter.util.Future
-import com.twitter.util.Return
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.conversions.PercentOps._
+import com.ExTwitter.finagle.mtls.authentication.ServiceIdentifier
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.finagle.thrift.ClientId
+import com.ExTwitter.graph_feature_service.{thriftscala => gfs}
+import com.ExTwitter.home_mixer.param.HomeMixerInjectionNames.EarlybirdRepository
+import com.ExTwitter.home_mixer.param.HomeMixerInjectionNames.GraphTwoHopRepository
+import com.ExTwitter.home_mixer.param.HomeMixerInjectionNames.InterestsThriftServiceClient
+import com.ExTwitter.home_mixer.param.HomeMixerInjectionNames.TweetypieContentRepository
+import com.ExTwitter.home_mixer.param.HomeMixerInjectionNames.UserFollowedTopicIdsRepository
+import com.ExTwitter.home_mixer.param.HomeMixerInjectionNames.UtegSocialProofRepository
+import com.ExTwitter.home_mixer.util.earlybird.EarlybirdRequestUtil
+import com.ExTwitter.home_mixer.util.tweetypie.RequestFields
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.interests.{thriftscala => int}
+import com.ExTwitter.product_mixer.shared_library.memcached_client.MemcachedClientBuilder
+import com.ExTwitter.product_mixer.shared_library.thrift_client.FinagleThriftClientBuilder
+import com.ExTwitter.product_mixer.shared_library.thrift_client.Idempotent
+import com.ExTwitter.recos.recos_common.{thriftscala => rc}
+import com.ExTwitter.recos.user_tweet_entity_graph.{thriftscala => uteg}
+import com.ExTwitter.search.earlybird.{thriftscala => eb}
+import com.ExTwitter.servo.cache.Cached
+import com.ExTwitter.servo.cache.CachedSerializer
+import com.ExTwitter.servo.cache.FinagleMemcacheFactory
+import com.ExTwitter.servo.cache.MemcacheCacheFactory
+import com.ExTwitter.servo.cache.NonLockingCache
+import com.ExTwitter.servo.cache.ThriftSerializer
+import com.ExTwitter.servo.keyvalue.KeyValueResultBuilder
+import com.ExTwitter.servo.repository.CachingKeyValueRepository
+import com.ExTwitter.servo.repository.ChunkingStrategy
+import com.ExTwitter.servo.repository.KeyValueRepository
+import com.ExTwitter.servo.repository.KeyValueResult
+import com.ExTwitter.servo.repository.keysAsQuery
+import com.ExTwitter.spam.rtf.{thriftscala => sp}
+import com.ExTwitter.tweetypie.{thriftscala => tp}
+import com.ExTwitter.util.Future
+import com.ExTwitter.util.Return
 import javax.inject.Named
 import javax.inject.Singleton
 import org.apache.thrift.protocol.TCompactProtocol
 
-object ThriftFeatureRepositoryModule extends TwitterModule {
+object ThriftFeatureRepositoryModule extends ExTwitterModule {
 
   private val DefaultRPCChunkSize = 50
   private val GFSInteractionIdsLimit = 10

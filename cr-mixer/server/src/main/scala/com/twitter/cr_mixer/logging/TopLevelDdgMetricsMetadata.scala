@@ -1,8 +1,8 @@
-package com.twitter.cr_mixer
+package com.ExTwitter.cr_mixer
 package logging
 
-import com.twitter.cr_mixer.thriftscala.CrMixerTweetRequest
-import com.twitter.cr_mixer.thriftscala.Product
+import com.ExTwitter.cr_mixer.thriftscala.CrMixerTweetRequest
+import com.ExTwitter.cr_mixer.thriftscala.Product
 
 case class TopLevelDdgMetricsMetadata(
   userId: Option[Long],

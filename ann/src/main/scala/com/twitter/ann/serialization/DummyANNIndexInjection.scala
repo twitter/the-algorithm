@@ -1,7 +1,7 @@
-package com.twitter.ann.serialization
+package com.ExTwitter.ann.serialization
 
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.Long2BigEndian
+import com.ExTwitter.scalding_internal.multiformat.format.keyval.KeyValInjection
+import com.ExTwitter.scalding_internal.multiformat.format.keyval.KeyValInjection.Long2BigEndian
 
 /**
 Dummy injection required to writeup dummy dal dataset to ANN folder.

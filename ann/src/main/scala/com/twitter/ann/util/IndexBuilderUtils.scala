@@ -1,9 +1,9 @@
-package com.twitter.ann.util
+package com.ExTwitter.ann.util
 
-import com.twitter.ann.common.{Appendable, EntityEmbedding}
-import com.twitter.concurrent.AsyncStream
-import com.twitter.logging.Logger
-import com.twitter.util.Future
+import com.ExTwitter.ann.common.{Appendable, EntityEmbedding}
+import com.ExTwitter.concurrent.AsyncStream
+import com.ExTwitter.logging.Logger
+import com.ExTwitter.util.Future
 import java.util.concurrent.atomic.AtomicInteger
 
 object IndexBuilderUtils {

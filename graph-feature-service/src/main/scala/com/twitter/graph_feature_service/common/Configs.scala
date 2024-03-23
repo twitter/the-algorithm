@@ -1,8 +1,8 @@
-package com.twitter.graph_feature_service.common
+package com.ExTwitter.graph_feature_service.common
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.util.Duration
-import com.twitter.util.Time
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.util.Duration
+import com.ExTwitter.util.Time
 import java.nio.ByteBuffer
 import scala.util.hashing.MurmurHash3
 

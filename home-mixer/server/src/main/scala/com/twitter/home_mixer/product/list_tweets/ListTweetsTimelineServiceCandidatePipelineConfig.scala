@@ -1,19 +1,19 @@
-package com.twitter.home_mixer.product.list_tweets
+package com.ExTwitter.home_mixer.product.list_tweets
 
-import com.twitter.home_mixer.candidate_pipeline.TimelineServiceResponseFeatureTransformer
-import com.twitter.home_mixer.marshaller.timelines.TimelineServiceCursorMarshaller
-import com.twitter.home_mixer.product.list_tweets.model.ListTweetsQuery
-import com.twitter.home_mixer.product.list_tweets.param.ListTweetsParam.ServerMaxResultsParam
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.component_library.candidate_source.timeline_service.TimelineServiceTweetCandidateSource
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.timelineservice.{thriftscala => t}
+import com.ExTwitter.home_mixer.candidate_pipeline.TimelineServiceResponseFeatureTransformer
+import com.ExTwitter.home_mixer.marshaller.timelines.TimelineServiceCursorMarshaller
+import com.ExTwitter.home_mixer.product.list_tweets.model.ListTweetsQuery
+import com.ExTwitter.home_mixer.product.list_tweets.param.ListTweetsParam.ServerMaxResultsParam
+import com.ExTwitter.home_mixer.service.HomeMixerAlertConfig
+import com.ExTwitter.product_mixer.component_library.candidate_source.timeline_service.TimelineServiceTweetCandidateSource
+import com.ExTwitter.product_mixer.component_library.model.candidate.TweetCandidate
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
+import com.ExTwitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
+import com.ExTwitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
+import com.ExTwitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
+import com.ExTwitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
+import com.ExTwitter.timelineservice.{thriftscala => t}
 import javax.inject.Inject
 import javax.inject.Singleton
 

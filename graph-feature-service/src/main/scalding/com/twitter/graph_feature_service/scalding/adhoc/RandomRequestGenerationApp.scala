@@ -1,11 +1,11 @@
-package com.twitter.graph_feature_service.scalding.adhoc
+package com.ExTwitter.graph_feature_service.scalding.adhoc
 
-import com.twitter.bijection.Injection
-import com.twitter.frigate.common.constdb_util.Injections
-import com.twitter.ml.api.Feature.Discrete
-import com.twitter.ml.api.{DailySuffixFeatureSource, DataSetPipe, RichDataRecord}
-import com.twitter.scalding._
-import com.twitter.scalding_internal.job.TwitterExecutionApp
+import com.ExTwitter.bijection.Injection
+import com.ExTwitter.frigate.common.constdb_util.Injections
+import com.ExTwitter.ml.api.Feature.Discrete
+import com.ExTwitter.ml.api.{DailySuffixFeatureSource, DataSetPipe, RichDataRecord}
+import com.ExTwitter.scalding._
+import com.ExTwitter.scalding_internal.job.ExTwitterExecutionApp
 import java.nio.ByteBuffer
 import java.util.TimeZone
 
@@ -54,15 +54,15 @@ object RandomRequestGenerationJob {
 }
 
 /**
- * ./bazel bundle graph-feature-service/src/main/scalding/com/twitter/graph_feature_service/scalding/adhoc:all
+ * ./bazel bundle graph-feature-service/src/main/scalding/com/ExTwitter/graph_feature_service/scalding/adhoc:all
  *
  * oscar hdfs --screen --user cassowary --tee gfs_log --bundle gfs_random_request-adhoc \
-      --tool com.twitter.graph_feature_service.scalding.adhoc.RandomRequestGenerationApp \
+      --tool com.ExTwitter.graph_feature_service.scalding.adhoc.RandomRequestGenerationApp \
       -- --date 2018-08-11  \
       --input /atla/proc2/user/timelines/processed/suggests/recap/data_records \
       --output /user/cassowary/gfs/adhoc/timeline_data
  */
-object RandomRequestGenerationApp extends TwitterExecutionApp {
+object RandomRequestGenerationApp extends ExTwitterExecutionApp {
   import RandomRequestGenerationJob._
   override def job: Execution[Unit] = Execution.withId { implicit uniqueId =>
     Execution.getArgs.flatMap { args: Args =>

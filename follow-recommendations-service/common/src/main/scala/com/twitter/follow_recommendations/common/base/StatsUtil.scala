@@ -1,10 +1,10 @@
-package com.twitter.follow_recommendations.common.base
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.quality_factor.QualityFactorObserver
-import com.twitter.stitch.Arrow
-import com.twitter.stitch.Stitch
-import com.twitter.util.Stopwatch
+package com.ExTwitter.follow_recommendations.common.base
+import com.ExTwitter.finagle.stats.Stat
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.product_mixer.core.quality_factor.QualityFactorObserver
+import com.ExTwitter.stitch.Arrow
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.util.Stopwatch
 import java.util.concurrent.TimeUnit
 import scala.util.control.NonFatal
 

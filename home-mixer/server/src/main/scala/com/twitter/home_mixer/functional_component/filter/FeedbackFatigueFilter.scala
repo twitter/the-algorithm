@@ -1,24 +1,24 @@
-package com.twitter.home_mixer.functional_component.filter
+package com.ExTwitter.home_mixer.functional_component.filter
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.FeedbackHistoryFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.SGSValidFollowedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.SGSValidLikedByUserIdsFeature
-import com.twitter.home_mixer.util.CandidatesUtil
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.common.thriftscala.FeedbackEntity
-import com.twitter.timelineservice.model.FeedbackEntry
-import com.twitter.timelineservice.{thriftscala => tls}
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.home_mixer.model.HomeFeatures.AuthorIdFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.FeedbackHistoryFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.IsRetweetFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.SGSValidFollowedByUserIdsFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.SGSValidLikedByUserIdsFeature
+import com.ExTwitter.home_mixer.util.CandidatesUtil
+import com.ExTwitter.product_mixer.component_library.model.candidate.TweetCandidate
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.functional_component.filter.Filter
+import com.ExTwitter.product_mixer.core.functional_component.filter.FilterResult
+import com.ExTwitter.product_mixer.core.model.common.CandidateWithFeatures
+import com.ExTwitter.product_mixer.core.model.common.identifier.FilterIdentifier
+import com.ExTwitter.product_mixer.core.pipeline
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.timelines.common.thriftscala.FeedbackEntity
+import com.ExTwitter.timelineservice.model.FeedbackEntry
+import com.ExTwitter.timelineservice.{thriftscala => tls}
 
 object FeedbackFatigueFilter
     extends Filter[PipelineQuery, TweetCandidate]

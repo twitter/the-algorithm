@@ -1,10 +1,10 @@
-package com.twitter.ann.common
+package com.ExTwitter.ann.common
 
 import com.google.common.io.ByteStreams
-import com.twitter.ann.common.thriftscala.AnnIndexMetadata
-import com.twitter.mediaservices.commons.codec.ArrayByteBufferCodec
-import com.twitter.mediaservices.commons.codec.ThriftByteBufferCodec
-import com.twitter.search.common.file.AbstractFile
+import com.ExTwitter.ann.common.thriftscala.AnnIndexMetadata
+import com.ExTwitter.mediaservices.commons.codec.ArrayByteBufferCodec
+import com.ExTwitter.mediaservices.commons.codec.ThriftByteBufferCodec
+import com.ExTwitter.search.common.file.AbstractFile
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream

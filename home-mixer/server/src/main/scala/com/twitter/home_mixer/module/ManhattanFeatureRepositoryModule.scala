@@ -1,42 +1,42 @@
-package com.twitter.home_mixer.module
+package com.ExTwitter.home_mixer.module
 
 import com.google.inject.Provides
-import com.twitter.bijection.Injection
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.bijection.scrooge.CompactScalaCodec
-import com.twitter.bijection.thrift.ThriftCodec
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.home_mixer.param.HomeMixerInjectionNames._
-import com.twitter.home_mixer.util.InjectionTransformerImplicits._
-import com.twitter.home_mixer.util.LanguageUtil
-import com.twitter.home_mixer.util.TensorFlowUtil
-import com.twitter.inject.TwitterModule
-import com.twitter.manhattan.v1.{thriftscala => mh}
-import com.twitter.ml.api.{thriftscala => ml}
-import com.twitter.ml.featurestore.lib.UserId
-import com.twitter.ml.featurestore.{thriftscala => fs}
-import com.twitter.onboarding.relevance.features.{thriftjava => rf}
-import com.twitter.product_mixer.shared_library.manhattan_client.ManhattanClientBuilder
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.ScalaBinaryThrift
-import com.twitter.search.common.constants.{thriftscala => scc}
-import com.twitter.service.metastore.gen.{thriftscala => smg}
-import com.twitter.servo.cache._
-import com.twitter.servo.manhattan.ManhattanKeyValueRepository
-import com.twitter.servo.repository.CachingKeyValueRepository
-import com.twitter.servo.repository.ChunkingStrategy
-import com.twitter.servo.repository.KeyValueRepository
-import com.twitter.servo.repository.Repository
-import com.twitter.servo.repository.keysAsQuery
-import com.twitter.servo.util.Transformer
-import com.twitter.storage.client.manhattan.bijections.Bijections
-import com.twitter.storehaus_internal.manhattan.ManhattanClusters
-import com.twitter.timelines.author_features.v1.{thriftjava => af}
-import com.twitter.timelines.suggests.common.dense_data_record.{thriftscala => ddr}
-import com.twitter.user_session_store.{thriftscala => uss_scala}
-import com.twitter.user_session_store.{thriftjava => uss}
-import com.twitter.util.Duration
-import com.twitter.util.Try
+import com.ExTwitter.bijection.Injection
+import com.ExTwitter.bijection.scrooge.BinaryScalaCodec
+import com.ExTwitter.bijection.scrooge.CompactScalaCodec
+import com.ExTwitter.bijection.thrift.ThriftCodec
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.finagle.mtls.authentication.ServiceIdentifier
+import com.ExTwitter.home_mixer.param.HomeMixerInjectionNames._
+import com.ExTwitter.home_mixer.util.InjectionTransformerImplicits._
+import com.ExTwitter.home_mixer.util.LanguageUtil
+import com.ExTwitter.home_mixer.util.TensorFlowUtil
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.manhattan.v1.{thriftscala => mh}
+import com.ExTwitter.ml.api.{thriftscala => ml}
+import com.ExTwitter.ml.featurestore.lib.UserId
+import com.ExTwitter.ml.featurestore.{thriftscala => fs}
+import com.ExTwitter.onboarding.relevance.features.{thriftjava => rf}
+import com.ExTwitter.product_mixer.shared_library.manhattan_client.ManhattanClientBuilder
+import com.ExTwitter.scalding_internal.multiformat.format.keyval.KeyValInjection.ScalaBinaryThrift
+import com.ExTwitter.search.common.constants.{thriftscala => scc}
+import com.ExTwitter.service.metastore.gen.{thriftscala => smg}
+import com.ExTwitter.servo.cache._
+import com.ExTwitter.servo.manhattan.ManhattanKeyValueRepository
+import com.ExTwitter.servo.repository.CachingKeyValueRepository
+import com.ExTwitter.servo.repository.ChunkingStrategy
+import com.ExTwitter.servo.repository.KeyValueRepository
+import com.ExTwitter.servo.repository.Repository
+import com.ExTwitter.servo.repository.keysAsQuery
+import com.ExTwitter.servo.util.Transformer
+import com.ExTwitter.storage.client.manhattan.bijections.Bijections
+import com.ExTwitter.storehaus_internal.manhattan.ManhattanClusters
+import com.ExTwitter.timelines.author_features.v1.{thriftjava => af}
+import com.ExTwitter.timelines.suggests.common.dense_data_record.{thriftscala => ddr}
+import com.ExTwitter.user_session_store.{thriftscala => uss_scala}
+import com.ExTwitter.user_session_store.{thriftjava => uss}
+import com.ExTwitter.util.Duration
+import com.ExTwitter.util.Try
 import java.nio.ByteBuffer
 import javax.inject.Named
 import javax.inject.Singleton
@@ -44,7 +44,7 @@ import org.apache.thrift.protocol.TCompactProtocol
 import org.apache.thrift.transport.TMemoryInputTransport
 import org.apache.thrift.transport.TTransport
 
-object ManhattanFeatureRepositoryModule extends TwitterModule {
+object ManhattanFeatureRepositoryModule extends ExTwitterModule {
 
   private val DEFAULT_RPC_CHUNK_SIZE = 50
 

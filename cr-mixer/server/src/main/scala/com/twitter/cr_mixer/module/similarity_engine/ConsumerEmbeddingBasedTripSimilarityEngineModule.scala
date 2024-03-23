@@ -1,27 +1,27 @@
-package com.twitter.cr_mixer.module.similarity_engine
+package com.ExTwitter.cr_mixer.module.similarity_engine
 
 import com.google.inject.Provides
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.model.ModelConfig
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.model.TripTweetWithScore
-import com.twitter.cr_mixer.similarity_engine.ConsumerEmbeddingBasedTripSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.GatingConfig
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.SimilarityEngineConfig
-import com.twitter.cr_mixer.similarity_engine.StandardSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.TripEngineQuery
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.hermit.store.common.ObservedReadableStore
-import com.twitter.inject.TwitterModule
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.trends.trip_v1.trip_tweets.thriftscala.TripTweet
-import com.twitter.trends.trip_v1.trip_tweets.thriftscala.TripDomain
+import com.ExTwitter.cr_mixer.config.TimeoutConfig
+import com.ExTwitter.cr_mixer.model.ModelConfig
+import com.ExTwitter.cr_mixer.model.ModuleNames
+import com.ExTwitter.cr_mixer.model.TripTweetWithScore
+import com.ExTwitter.cr_mixer.similarity_engine.ConsumerEmbeddingBasedTripSimilarityEngine
+import com.ExTwitter.cr_mixer.similarity_engine.SimilarityEngine.GatingConfig
+import com.ExTwitter.cr_mixer.similarity_engine.SimilarityEngine.SimilarityEngineConfig
+import com.ExTwitter.cr_mixer.similarity_engine.StandardSimilarityEngine
+import com.ExTwitter.cr_mixer.similarity_engine.TripEngineQuery
+import com.ExTwitter.cr_mixer.thriftscala.SimilarityEngineType
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.hermit.store.common.ObservedReadableStore
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.simclusters_v2.common.SimClustersEmbedding
+import com.ExTwitter.simclusters_v2.common.UserId
+import com.ExTwitter.storehaus.ReadableStore
+import com.ExTwitter.trends.trip_v1.trip_tweets.thriftscala.TripTweet
+import com.ExTwitter.trends.trip_v1.trip_tweets.thriftscala.TripDomain
 import javax.inject.Named
 
-object ConsumerEmbeddingBasedTripSimilarityEngineModule extends TwitterModule {
+object ConsumerEmbeddingBasedTripSimilarityEngineModule extends ExTwitterModule {
   @Provides
   @Named(ModuleNames.ConsumerEmbeddingBasedTripSimilarityEngine)
   def providesConsumerEmbeddingBasedTripSimilarityEngineModule(

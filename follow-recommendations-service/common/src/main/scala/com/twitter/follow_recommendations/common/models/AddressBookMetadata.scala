@@ -1,7 +1,7 @@
-package com.twitter.follow_recommendations.common.models
+package com.ExTwitter.follow_recommendations.common.models
 
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.hermit.model.Algorithm
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
 
 /**
  * contains information if a candidate is from a candidate source generated using the following signals.

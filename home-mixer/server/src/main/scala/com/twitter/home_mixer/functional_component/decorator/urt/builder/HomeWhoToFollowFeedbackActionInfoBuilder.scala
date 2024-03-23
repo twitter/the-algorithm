@@ -1,20 +1,20 @@
-package com.twitter.home_mixer.functional_component.decorator.urt.builder
+package com.ExTwitter.home_mixer.functional_component.decorator.urt.builder
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.metadata.WhoToFollowFeedbackActionInfoBuilder
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.product.guice.scope.ProductScoped
-import com.twitter.stringcenter.client.StringCenter
+import com.ExTwitter.product_mixer.component_library.decorator.urt.builder.metadata.WhoToFollowFeedbackActionInfoBuilder
+import com.ExTwitter.product_mixer.component_library.model.candidate.UserCandidate
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
+import com.ExTwitter.product_mixer.core.product.guice.scope.ProductScoped
+import com.ExTwitter.stringcenter.client.StringCenter
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Singleton
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.service.{thriftscala => tl}
-import com.twitter.timelines.util.FeedbackRequestSerializer
-import com.twitter.timelineservice.suggests.thriftscala.SuggestType
-import com.twitter.timelineservice.thriftscala.FeedbackType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.timelines.service.{thriftscala => tl}
+import com.ExTwitter.timelines.util.FeedbackRequestSerializer
+import com.ExTwitter.timelineservice.suggests.thriftscala.SuggestType
+import com.ExTwitter.timelineservice.thriftscala.FeedbackType
 
 object HomeWhoToFollowFeedbackActionInfoBuilder {
   private val FeedbackMetadata = tl.FeedbackMetadata(

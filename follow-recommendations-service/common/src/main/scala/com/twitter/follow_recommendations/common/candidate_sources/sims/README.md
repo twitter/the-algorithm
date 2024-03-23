@@ -10,7 +10,7 @@ With over 700 million users to consider, there are multiple ways to define simil
 
 **CosineFollow** (based on user-user follow graph): The similarity between two users is defined as the cosine similarity between their followers. Despite sounding simple, computing all-pair similarity on the entire follow graph is computationally challenging. We are currently using the WHIMP algorithm to find the top 1000 similar users for each user ID. This candidate source has the largest coverage, as it can find similar user candidates for more than 700 million users.
 
-**CosineList** (based on user-list membership graph): The similarity between two users is defined as the cosine similarity between the lists they are included as members (e.g., [here](https://twitter.com/jack/lists/memberships) are the lists that @jack is on). The same algorithm as CosineFollow is used.
+**CosineList** (based on user-list membership graph): The similarity between two users is defined as the cosine similarity between the lists they are included as members (e.g., [here](https://ExTwitter.com/jack/lists/memberships) are the lists that @jack is on). The same algorithm as CosineFollow is used.
 
 **Follow2Vec** (essentially Word2Vec on user-user follow graph): We first train the Word2Vec model on follow sequence data to obtain users' embeddings and then find the most similar users based on the similarity of the embeddings. However, we need enough data for each user to learn a meaningful embedding for them, so we can only obtain embeddings for the top 10 million users (currently in production, testing 30 million users). Furthermore, Word2Vec model training is limited by memory and computation as it is trained on a single machine.
 

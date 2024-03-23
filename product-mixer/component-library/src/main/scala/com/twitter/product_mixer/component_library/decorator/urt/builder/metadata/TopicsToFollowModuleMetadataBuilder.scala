@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.metadata
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.metadata
 
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleMetadataBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.GridCarouselMetadata
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleMetadata
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Param
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleMetadataBuilder
+import com.ExTwitter.product_mixer.core.model.common.CandidateWithFeatures
+import com.ExTwitter.product_mixer.core.model.common.UniversalNoun
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.timeline_module.GridCarouselMetadata
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleMetadata
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.timelines.configapi.Param
 
 object TopicsToFollowModuleMetadataBuilder {
 

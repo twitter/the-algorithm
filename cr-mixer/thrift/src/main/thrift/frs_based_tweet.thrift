@@ -1,10 +1,10 @@
-namespace java com.twitter.cr_mixer.thriftjava
-#@namespace scala com.twitter.cr_mixer.thriftscala
-#@namespace strato com.twitter.cr_mixer
+namespace java com.ExTwitter.cr_mixer.thriftjava
+#@namespace scala com.ExTwitter.cr_mixer.thriftscala
+#@namespace strato com.ExTwitter.cr_mixer
 
 include "product.thrift"
 include "product_context.thrift"
-include "com/twitter/product_mixer/core/client_context.thrift"
+include "com/ExTwitter/product_mixer/core/client_context.thrift"
 
 struct FrsTweetRequest {
 1: required client_context.ClientContext clientContext
@@ -23,7 +23,7 @@ struct FrsTweet {
 # frsPrimarySource - which FRS candidate source is the primary one to generate this author
 4: optional i32 frsPrimarySource
 # frsCandidateSourceScores - FRS candidate sources and the scores for this author
-# for i32 to algorithm mapping, see https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/hermit/hermit-core/src/main/scala/com/twitter/hermit/constants/AlgorithmFeedbackTokens.scala?L12
+# for i32 to algorithm mapping, see https://sourcegraph.ExTwitter.biz/git.ExTwitter.biz/source/-/blob/hermit/hermit-core/src/main/scala/com/ExTwitter/hermit/constants/AlgorithmFeedbackTokens.scala?L12
 5: optional map<i32, double> frsCandidateSourceScores
 # frsPrimaryScore - the score of the FRS primary candidate source
 6: optional double frsAuthorScore

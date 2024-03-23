@@ -1,14 +1,14 @@
-package com.twitter.follow_recommendations.configapi.common
+package com.ExTwitter.follow_recommendations.configapi.common
 
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil.DefinedFeatureName
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil.ValueFeatureName
-import com.twitter.timelines.configapi.BoundedParam
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.timelines.configapi.OptionalOverride
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
+import com.ExTwitter.timelines.configapi.FeatureSwitchOverrideUtil.DefinedFeatureName
+import com.ExTwitter.timelines.configapi.FeatureSwitchOverrideUtil.ValueFeatureName
+import com.ExTwitter.timelines.configapi.BoundedParam
+import com.ExTwitter.timelines.configapi.FSBoundedParam
+import com.ExTwitter.timelines.configapi.FSName
+import com.ExTwitter.timelines.configapi.HasDurationConversion
+import com.ExTwitter.timelines.configapi.OptionalOverride
+import com.ExTwitter.timelines.configapi.Param
+import com.ExTwitter.util.Duration
 
 trait FeatureSwitchConfig {
   def booleanFSParams: Seq[Param[Boolean] with FSName] = Nil

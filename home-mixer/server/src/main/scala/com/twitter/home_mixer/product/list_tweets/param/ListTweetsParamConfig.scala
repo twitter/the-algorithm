@@ -1,11 +1,11 @@
-package com.twitter.home_mixer.product.list_tweets.param
+package com.ExTwitter.home_mixer.product.list_tweets.param
 
-import com.twitter.home_mixer.param.decider.DeciderKey
-import com.twitter.home_mixer.product.list_tweets.param.ListTweetsParam.EnableAdsCandidatePipelineParam
-import com.twitter.home_mixer.product.list_tweets.param.ListTweetsParam.ServerMaxResultsParam
-import com.twitter.home_mixer.product.list_tweets.param.ListTweetsParam.SupportedClientFSName
-import com.twitter.product_mixer.core.product.ProductParamConfig
-import com.twitter.servo.decider.DeciderKeyName
+import com.ExTwitter.home_mixer.param.decider.DeciderKey
+import com.ExTwitter.home_mixer.product.list_tweets.param.ListTweetsParam.EnableAdsCandidatePipelineParam
+import com.ExTwitter.home_mixer.product.list_tweets.param.ListTweetsParam.ServerMaxResultsParam
+import com.ExTwitter.home_mixer.product.list_tweets.param.ListTweetsParam.SupportedClientFSName
+import com.ExTwitter.product_mixer.core.product.ProductParamConfig
+import com.ExTwitter.servo.decider.DeciderKeyName
 import javax.inject.Inject
 import javax.inject.Singleton
 

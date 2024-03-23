@@ -1,5 +1,5 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims_expansion
-import com.twitter.timelines.configapi.FSEnumParam
+package com.ExTwitter.follow_recommendations.common.candidate_sources.sims_expansion
+import com.ExTwitter.timelines.configapi.FSEnumParam
 
 object SimsExpansionSourceParams {
   case object Aggregator

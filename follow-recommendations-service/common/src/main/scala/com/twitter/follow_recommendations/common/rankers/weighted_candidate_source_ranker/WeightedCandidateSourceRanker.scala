@@ -1,11 +1,11 @@
-package com.twitter.follow_recommendations.common.rankers.weighted_candidate_source_ranker
-import com.twitter.follow_recommendations.common.base.Ranker
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.rankers.common.DedupCandidates
-import com.twitter.follow_recommendations.common.rankers.utils.Utils
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
+package com.ExTwitter.follow_recommendations.common.rankers.weighted_candidate_source_ranker
+import com.ExTwitter.follow_recommendations.common.base.Ranker
+import com.ExTwitter.follow_recommendations.common.models.CandidateUser
+import com.ExTwitter.follow_recommendations.common.rankers.common.DedupCandidates
+import com.ExTwitter.follow_recommendations.common.rankers.utils.Utils
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.timelines.configapi.HasParams
 
 /**
  * Candidate Ranker that mixes and ranks multiple candidate lists from different candidate sources with the

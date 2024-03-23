@@ -1,16 +1,16 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+package com.ExTwitter.follow_recommendations.common.candidate_sources.stp
 
-import com.twitter.follow_recommendations.common.clients.socialgraph.RecentEdgesQuery
-import com.twitter.follow_recommendations.common.clients.socialgraph.SocialGraphClient
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasRecentFollowedUserIds
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.socialgraph.thriftscala.RelationshipType
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.onboarding.userrecs.StrongTiePredictionFeaturesOnUserClientColumn
+import com.ExTwitter.follow_recommendations.common.clients.socialgraph.RecentEdgesQuery
+import com.ExTwitter.follow_recommendations.common.clients.socialgraph.SocialGraphClient
+import com.ExTwitter.follow_recommendations.common.models.CandidateUser
+import com.ExTwitter.follow_recommendations.common.models.HasRecentFollowedUserIds
+import com.ExTwitter.hermit.model.Algorithm
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidateSource
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.ExTwitter.socialgraph.thriftscala.RelationshipType
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.strato.generated.client.onboarding.userrecs.StrongTiePredictionFeaturesOnUserClientColumn
 import javax.inject.Singleton
 import javax.inject.Inject
 

@@ -6,7 +6,7 @@ alias(
 target(
     name = "graph_feature_service-server_lib",
     dependencies = [
-        "graph-feature-service/src/main/scala/com/twitter/graph_feature_service/server",
+        "graph-feature-service/src/main/scala/com/ExTwitter/graph_feature_service/server",
     ],
 )
 
@@ -18,37 +18,37 @@ alias(
 target(
     name = "graph_feature_service-worker_lib",
     dependencies = [
-        "graph-feature-service/src/main/scala/com/twitter/graph_feature_service/worker",
+        "graph-feature-service/src/main/scala/com/ExTwitter/graph_feature_service/worker",
     ],
 )
 
 jvm_binary(
     name = "server-bin",
     basename = "graph_feature_service-server",
-    main = "com.twitter.graph_feature_service.server.Main",
+    main = "com.ExTwitter.graph_feature_service.server.Main",
     platform = "java8",
     tags = ["bazel-compatible"],
     dependencies = [
         ":graph_feature_service-server",
         "3rdparty/jvm/ch/qos/logback:logback-classic",
         "finagle/finagle-zipkin-scribe/src/main/scala",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
-        "twitter-server/logback-classic/src/main/scala",
+        "loglens/loglens-logback/src/main/scala/com/ExTwitter/loglens/logback",
+        "ExTwitter-server/logback-classic/src/main/scala",
     ],
 )
 
 jvm_binary(
     name = "worker-bin",
     basename = "graph_feature_service-worker",
-    main = "com.twitter.graph_feature_service.worker.Main",
+    main = "com.ExTwitter.graph_feature_service.worker.Main",
     platform = "java8",
     tags = ["bazel-compatible"],
     dependencies = [
         ":graph_feature_service-worker",
         "3rdparty/jvm/ch/qos/logback:logback-classic",
         "finagle/finagle-zipkin-scribe/src/main/scala",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
-        "twitter-server/logback-classic/src/main/scala",
+        "loglens/loglens-logback/src/main/scala/com/ExTwitter/loglens/logback",
+        "ExTwitter-server/logback-classic/src/main/scala",
     ],
 )
 

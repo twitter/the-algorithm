@@ -1,15 +1,15 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+package com.ExTwitter.follow_recommendations.common.candidate_sources.stp
 
-import com.twitter.follow_recommendations.common.models.AccountProof
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FollowProof
-import com.twitter.follow_recommendations.common.models.Reason
-import com.twitter.hermit.stp.thriftscala.STPResult
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
-import com.twitter.timelines.configapi.HasParams
+import com.ExTwitter.follow_recommendations.common.models.AccountProof
+import com.ExTwitter.follow_recommendations.common.models.CandidateUser
+import com.ExTwitter.follow_recommendations.common.models.FollowProof
+import com.ExTwitter.follow_recommendations.common.models.Reason
+import com.ExTwitter.hermit.stp.thriftscala.STPResult
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidateSource
+import com.ExTwitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.strato.client.Fetcher
+import com.ExTwitter.timelines.configapi.HasParams
 
 /** Base class that all variants of our offline stp dataset can extend. Assumes the same STPResult
  *  value in the key and converts the result into the necessary internal model.

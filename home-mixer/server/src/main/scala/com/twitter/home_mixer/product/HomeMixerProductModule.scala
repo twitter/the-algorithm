@@ -1,9 +1,9 @@
-package com.twitter.home_mixer.product
+package com.ExTwitter.home_mixer.product
 
-import com.twitter.inject.TwitterModule
-import com.twitter.product_mixer.core.product.registry.ProductPipelineRegistryConfig
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.product_mixer.core.product.registry.ProductPipelineRegistryConfig
 
-object HomeMixerProductModule extends TwitterModule {
+object HomeMixerProductModule extends ExTwitterModule {
 
   override def configure(): Unit = {
     bind[ProductPipelineRegistryConfig].to[HomeProductPipelineRegistryConfig]

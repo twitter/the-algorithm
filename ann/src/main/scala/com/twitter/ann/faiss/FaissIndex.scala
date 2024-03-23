@@ -1,9 +1,9 @@
-package com.twitter.ann.faiss
+package com.ExTwitter.ann.faiss
 
-import com.twitter.ann.common.Queryable
-import com.twitter.ann.common._
-import com.twitter.search.common.file.AbstractFile
-import com.twitter.util.logging.Logging
+import com.ExTwitter.ann.common.Queryable
+import com.ExTwitter.ann.common._
+import com.ExTwitter.search.common.file.AbstractFile
+import com.ExTwitter.util.logging.Logging
 
 case class FaissParams(
   nprobe: Option[Int],

@@ -1,15 +1,15 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator.adapters.author_features
+package com.ExTwitter.home_mixer.product.scored_tweets.feature_hydrator.adapters.author_features
 
-import com.twitter.home_mixer.util.DataRecordUtil
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.util.CompactDataRecordConverter
-import com.twitter.ml.api.util.FDsl._
-import com.twitter.timelines.author_features.v1.{thriftjava => af}
-import com.twitter.timelines.prediction.common.adapters.TimelinesAdapterBase
-import com.twitter.timelines.prediction.common.aggregates.TimelinesAggregationConfig
-import com.twitter.timelines.prediction.features.user_health.UserHealthFeatures
+import com.ExTwitter.home_mixer.util.DataRecordUtil
+import com.ExTwitter.ml.api.DataRecord
+import com.ExTwitter.ml.api.Feature
+import com.ExTwitter.ml.api.FeatureContext
+import com.ExTwitter.ml.api.util.CompactDataRecordConverter
+import com.ExTwitter.ml.api.util.FDsl._
+import com.ExTwitter.timelines.author_features.v1.{thriftjava => af}
+import com.ExTwitter.timelines.prediction.common.adapters.TimelinesAdapterBase
+import com.ExTwitter.timelines.prediction.common.aggregates.TimelinesAggregationConfig
+import com.ExTwitter.timelines.prediction.features.user_health.UserHealthFeatures
 import scala.collection.JavaConverters._
 
 object AuthorFeaturesAdapter extends TimelinesAdapterBase[af.AuthorFeatures] {

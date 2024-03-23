@@ -1,8 +1,8 @@
-package com.twitter.cr_mixer.model
+package com.ExTwitter.cr_mixer.model
 
-import com.twitter.contentrecommender.thriftscala.TweetInfo
-import com.twitter.cr_mixer.thriftscala.LineItemInfo
-import com.twitter.simclusters_v2.common.TweetId
+import com.ExTwitter.contentrecommender.thriftscala.TweetInfo
+import com.ExTwitter.cr_mixer.thriftscala.LineItemInfo
+import com.ExTwitter.simclusters_v2.common.TweetId
 
 sealed trait Candidate {
   val tweetId: TweetId

@@ -1,17 +1,17 @@
-package com.twitter.cr_mixer.similarity_engine
+package com.ExTwitter.cr_mixer.similarity_engine
 
-import com.twitter.cr_mixer.model.SimilarityEngineInfo
-import com.twitter.cr_mixer.model.SourceInfo
-import com.twitter.cr_mixer.model.TweetWithScore
-import com.twitter.cr_mixer.param.ConsumerBasedWalsParams
-import com.twitter.cr_mixer.similarity_engine.ConsumerBasedWalsSimilarityEngine.Query
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.cr_mixer.thriftscala.SourceType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi
-import com.twitter.util.Future
+import com.ExTwitter.cr_mixer.model.SimilarityEngineInfo
+import com.ExTwitter.cr_mixer.model.SourceInfo
+import com.ExTwitter.cr_mixer.model.TweetWithScore
+import com.ExTwitter.cr_mixer.param.ConsumerBasedWalsParams
+import com.ExTwitter.cr_mixer.similarity_engine.ConsumerBasedWalsSimilarityEngine.Query
+import com.ExTwitter.cr_mixer.thriftscala.SimilarityEngineType
+import com.ExTwitter.cr_mixer.thriftscala.SourceType
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.simclusters_v2.thriftscala.InternalId
+import com.ExTwitter.storehaus.ReadableStore
+import com.ExTwitter.timelines.configapi
+import com.ExTwitter.util.Future
 import io.grpc.ManagedChannel
 import tensorflow.serving.Predict.PredictRequest
 import tensorflow.serving.Predict.PredictResponse
@@ -25,11 +25,11 @@ import tensorflow.serving.Model
 import org.tensorflow.framework.TensorProto
 import org.tensorflow.framework.DataType
 import org.tensorflow.framework.TensorShapeProto
-import com.twitter.finagle.grpc.FutureConverters
+import com.ExTwitter.finagle.grpc.FutureConverters
 import java.util.ArrayList
 import java.lang
-import com.twitter.util.Return
-import com.twitter.util.Throw
+import com.ExTwitter.util.Return
+import com.ExTwitter.util.Throw
 import java.util.concurrent.ConcurrentHashMap
 import scala.jdk.CollectionConverters._
 
@@ -112,7 +112,7 @@ case class ConsumerBasedWalsSimilarityEngine(
         val inferRequest = getModelInput(query)
 
         FutureConverters
-          .RichListenableFuture(stub.predict(inferRequest)).toTwitter
+          .RichListenableFuture(stub.predict(inferRequest)).toExTwitter
           .transform {
             case Return(resp) =>
               stats.onSuccess(startTimeMs)

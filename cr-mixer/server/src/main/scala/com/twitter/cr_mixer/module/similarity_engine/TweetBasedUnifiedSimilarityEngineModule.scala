@@ -1,27 +1,27 @@
-package com.twitter.cr_mixer.module.similarity_engine
+package com.ExTwitter.cr_mixer.module.similarity_engine
 
 import com.google.inject.Provides
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.model.TweetWithCandidateGenerationInfo
-import com.twitter.cr_mixer.model.TweetWithScore
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.similarity_engine.HnswANNSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.SimClustersANNSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.GatingConfig
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.SimilarityEngineConfig
-import com.twitter.cr_mixer.similarity_engine.StandardSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.TweetBasedQigSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.TweetBasedUnifiedSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.TweetBasedUserTweetGraphSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.TweetBasedUserVideoGraphSimilarityEngine
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.storehaus.ReadableStore
+import com.ExTwitter.cr_mixer.model.ModuleNames
+import com.ExTwitter.cr_mixer.model.TweetWithCandidateGenerationInfo
+import com.ExTwitter.cr_mixer.model.TweetWithScore
+import com.ExTwitter.cr_mixer.config.TimeoutConfig
+import com.ExTwitter.cr_mixer.similarity_engine.HnswANNSimilarityEngine
+import com.ExTwitter.cr_mixer.similarity_engine.SimClustersANNSimilarityEngine
+import com.ExTwitter.cr_mixer.similarity_engine.SimilarityEngine.GatingConfig
+import com.ExTwitter.cr_mixer.similarity_engine.SimilarityEngine.SimilarityEngineConfig
+import com.ExTwitter.cr_mixer.similarity_engine.StandardSimilarityEngine
+import com.ExTwitter.cr_mixer.similarity_engine.TweetBasedQigSimilarityEngine
+import com.ExTwitter.cr_mixer.similarity_engine.TweetBasedUnifiedSimilarityEngine
+import com.ExTwitter.cr_mixer.similarity_engine.TweetBasedUserTweetGraphSimilarityEngine
+import com.ExTwitter.cr_mixer.similarity_engine.TweetBasedUserVideoGraphSimilarityEngine
+import com.ExTwitter.cr_mixer.thriftscala.SimilarityEngineType
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.storehaus.ReadableStore
 import javax.inject.Named
 import javax.inject.Singleton
 
-object TweetBasedUnifiedSimilarityEngineModule extends TwitterModule {
+object TweetBasedUnifiedSimilarityEngineModule extends ExTwitterModule {
 
   @Provides
   @Singleton

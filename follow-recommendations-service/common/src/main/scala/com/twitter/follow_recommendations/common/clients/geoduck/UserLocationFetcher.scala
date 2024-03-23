@@ -1,8 +1,8 @@
-package com.twitter.follow_recommendations.common.clients.geoduck
+package com.ExTwitter.follow_recommendations.common.clients.geoduck
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.models.GeohashAndCountryCode
-import com.twitter.stitch.Stitch
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.follow_recommendations.common.models.GeohashAndCountryCode
+import com.ExTwitter.stitch.Stitch
 
 import javax.inject.Inject
 import javax.inject.Singleton

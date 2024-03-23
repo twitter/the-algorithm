@@ -30,14 +30,14 @@ Features used for the lightweight ranker:
 * isReversePhonebook: whether the user is in the candidate's phone book
 * numMutualFollowPath: number of mutual follow path between the user and the candidate
 * numLowTweepcredFollowPath: number of mutual low TweepCred path between the user and the candidate
-  * Tweepcred is a social network analysis tool that calculates the influence of Twitter users based on their interactions with other users. The tool uses the PageRank algorithm to rank users based on their influence.
+  * Tweepcred is a social network analysis tool that calculates the influence of ExTwitter users based on their interactions with other users. The tool uses the PageRank algorithm to rank users based on their influence.
 * hasForwardEmailPath: is there a third user x in the user's email book that connect user -> x -> candidate?
 * hasReverseEmailPath: is there a third user x in the user's reverse email book that connect user -> x -> candidate?
 * hasForwardPhonebookPath: is there a third user x in the user's phonebook that connect user -> x -> candidate?
 * hasReversePhonebookPath: is there a third user x in the user's reverse phonebook that connect user -> x -> candidate?
 
 ### Offline STP
-Offline STP  is powered by Pointwise Mutual Information, which measures the association between two users based on Twitter's mutual follow graph.
+Offline STP  is powered by Pointwise Mutual Information, which measures the association between two users based on ExTwitter's mutual follow graph.
 An offline job generates candidates based on the overlap between their Mutual and Addressbook Follows and that of the target user. Candidates are then made available online.
 Candidates in OfflineSTP are "accounts that have a high overlap of mutually-followed accounts with an account in your follow graph."
 This can potentially mean that OfflineSTP has a bigger reach than OnlineSTP.

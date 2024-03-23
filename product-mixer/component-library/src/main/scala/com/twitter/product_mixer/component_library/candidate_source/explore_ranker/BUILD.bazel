@@ -6,7 +6,7 @@ scala_library(
     dependencies = [
         "3rdparty/jvm/javax/inject:javax.inject",
         "explore/explore-ranker/thrift/src/main/thrift:thrift-scala",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/candidate_source",
+        "product-mixer/core/src/main/scala/com/ExTwitter/product_mixer/core/functional_component/candidate_source",
         "stitch/stitch-core",
     ],
 )

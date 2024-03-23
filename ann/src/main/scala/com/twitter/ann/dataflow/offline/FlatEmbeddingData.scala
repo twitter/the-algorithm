@@ -1,6 +1,6 @@
-package com.twitter.ann.dataflow.offline
+package com.ExTwitter.ann.dataflow.offline
 
-import com.twitter.beam.schemas.SchemaFieldName
+import com.ExTwitter.beam.schemas.SchemaFieldName
 
 case class FlatEmbeddingData(
   @SchemaFieldName("entityId") entityId: Option[Long],

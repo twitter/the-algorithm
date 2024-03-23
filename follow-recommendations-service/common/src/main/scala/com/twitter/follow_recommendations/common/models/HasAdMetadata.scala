@@ -1,6 +1,6 @@
-package com.twitter.follow_recommendations.common.models
+package com.ExTwitter.follow_recommendations.common.models
 
-import com.twitter.adserver.{thriftscala => t}
+import com.ExTwitter.adserver.{thriftscala => t}
 
 case class AdMetadata(
   insertPosition: Int,

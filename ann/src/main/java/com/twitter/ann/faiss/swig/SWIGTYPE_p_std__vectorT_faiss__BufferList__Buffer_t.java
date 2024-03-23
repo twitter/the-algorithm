@@ -6,7 +6,7 @@
  * the SWIG interface file instead.
  * ----------------------------------------------------------------------------- */
 
-package com.twitter.ann.faiss;
+package com.ExTwitter.ann.faiss;
 
 public class SWIGTYPE_p_std__vectorT_faiss__BufferList__Buffer_t {
   private transient long swigCPtr;

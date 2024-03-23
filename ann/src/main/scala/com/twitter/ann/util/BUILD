@@ -3,7 +3,7 @@ scala_library(
     platform = "java8",
     tags = ["bazel-compatible"],
     dependencies = [
-        "ann/src/main/scala/com/twitter/ann/common",
+        "ann/src/main/scala/com/ExTwitter/ann/common",
         "util/util-logging",
     ],
 )

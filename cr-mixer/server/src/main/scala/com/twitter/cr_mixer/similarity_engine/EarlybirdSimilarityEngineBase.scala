@@ -1,13 +1,13 @@
-package com.twitter.cr_mixer.similarity_engine
+package com.ExTwitter.cr_mixer.similarity_engine
 
-import com.twitter.cr_mixer.model.TweetWithAuthor
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.search.earlybird.thriftscala.EarlybirdRequest
-import com.twitter.search.earlybird.thriftscala.EarlybirdResponseCode
-import com.twitter.search.earlybird.thriftscala.EarlybirdService
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+import com.ExTwitter.cr_mixer.model.TweetWithAuthor
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.search.earlybird.thriftscala.EarlybirdRequest
+import com.ExTwitter.search.earlybird.thriftscala.EarlybirdResponseCode
+import com.ExTwitter.search.earlybird.thriftscala.EarlybirdService
+import com.ExTwitter.simclusters_v2.common.UserId
+import com.ExTwitter.storehaus.ReadableStore
+import com.ExTwitter.util.Future
 
 /**
  * This trait is a base trait for Earlybird similarity engines. All Earlybird similarity

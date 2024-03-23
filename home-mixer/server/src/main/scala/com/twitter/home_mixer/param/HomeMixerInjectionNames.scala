@@ -1,4 +1,4 @@
-package com.twitter.home_mixer.param
+package com.ExTwitter.home_mixer.param
 
 object HomeMixerInjectionNames {
   final val AuthorFeatureRepository = "AuthorFeatureRepository"
@@ -36,7 +36,7 @@ object HomeMixerInjectionNames {
   final val TwhinAuthorFollowFeatureRepository = "TwhinAuthorFollowFeatureRepository"
   final val TwhinUserEngagementFeatureRepository = "TwhinUserEngagementFeatureRepository"
   final val TwhinUserFollowFeatureRepository = "TwhinUserFollowFeatureRepository"
-  final val TwitterListEngagementCache = "TwitterListEngagementCache"
+  final val ExTwitterListEngagementCache = "ExTwitterListEngagementCache"
   final val UserAuthorEngagementCache = "UserAuthorEngagementCache"
   final val UserEngagementCache = "UserEngagementCache"
   final val UserFollowedTopicIdsRepository = "UserFollowedTopicIdsRepository"

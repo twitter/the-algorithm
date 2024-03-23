@@ -1,16 +1,16 @@
-package com.twitter.cr_mixer.filter
+package com.ExTwitter.cr_mixer.filter
 
-import com.twitter.cr_mixer.model.CandidateGeneratorQuery
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.model.UtegTweetCandidateGeneratorQuery
-import com.twitter.cr_mixer.param.UtegTweetGlobalParams
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
-import com.twitter.wtf.candidate.thriftscala.CandidateSeq
+import com.ExTwitter.cr_mixer.model.CandidateGeneratorQuery
+import com.ExTwitter.cr_mixer.model.InitialCandidate
+import com.ExTwitter.cr_mixer.model.ModuleNames
+import com.ExTwitter.cr_mixer.model.UtegTweetCandidateGeneratorQuery
+import com.ExTwitter.cr_mixer.param.UtegTweetGlobalParams
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.frigate.common.util.StatsUtil
+import com.ExTwitter.simclusters_v2.common.UserId
+import com.ExTwitter.storehaus.ReadableStore
+import com.ExTwitter.util.Future
+import com.ExTwitter.wtf.candidate.thriftscala.CandidateSeq
 
 import javax.inject.Inject
 import javax.inject.Named

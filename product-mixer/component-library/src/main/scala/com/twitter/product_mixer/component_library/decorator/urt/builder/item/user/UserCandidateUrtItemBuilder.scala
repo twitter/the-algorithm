@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.user
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.user
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.user.UserCandidateUrtItemBuilder.UserClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.BaseUserCandidate
-import com.twitter.product_mixer.component_library.model.candidate.IsMarkUnreadFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.user.BaseUserReactiveTriggersBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.promoted.BasePromotedMetadataBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseSocialContextBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.User
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.UserDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.UserItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.product_mixer.component_library.decorator.urt.builder.item.user.UserCandidateUrtItemBuilder.UserClientEventInfoElement
+import com.ExTwitter.product_mixer.component_library.model.candidate.BaseUserCandidate
+import com.ExTwitter.product_mixer.component_library.model.candidate.IsMarkUnreadFeature
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.item.user.BaseUserReactiveTriggersBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.promoted.BasePromotedMetadataBuilder
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseSocialContextBuilder
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.user.User
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.user.UserDisplayType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.item.user.UserItem
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
 
 object UserCandidateUrtItemBuilder {
   val UserClientEventInfoElement: String = "user"

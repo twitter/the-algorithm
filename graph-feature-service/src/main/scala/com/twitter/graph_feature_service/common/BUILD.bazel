@@ -4,5 +4,5 @@ scala_library(
         "bazel-compatible",
         "bazel-only",
     ],
-    dependencies = ["src/scala/com/twitter/storehaus_internal/util"],
+    dependencies = ["src/scala/com/ExTwitter/storehaus_internal/util"],
 )

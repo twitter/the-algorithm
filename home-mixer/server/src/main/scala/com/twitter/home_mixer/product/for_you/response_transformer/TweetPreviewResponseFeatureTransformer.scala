@@ -1,15 +1,15 @@
-package com.twitter.home_mixer.product.for_you.response_transformer
+package com.ExTwitter.home_mixer.product.for_you.response_transformer
 
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsTweetPreviewFeature
-import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
-import com.twitter.timelineservice.suggests.{thriftscala => st}
-import com.twitter.search.earlybird.{thriftscala => eb}
+import com.ExTwitter.home_mixer.model.HomeFeatures.AuthorIdFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.IsTweetPreviewFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
+import com.ExTwitter.product_mixer.core.feature.Feature
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
+import com.ExTwitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
+import com.ExTwitter.product_mixer.core.model.common.identifier.TransformerIdentifier
+import com.ExTwitter.timelineservice.suggests.{thriftscala => st}
+import com.ExTwitter.search.earlybird.{thriftscala => eb}
 
 object TweetPreviewResponseFeatureTransformer
     extends CandidateFeatureTransformer[eb.ThriftSearchResult] {

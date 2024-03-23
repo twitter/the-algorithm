@@ -1,29 +1,29 @@
-package com.twitter.cr_mixer.similarity_engine
+package com.ExTwitter.cr_mixer.similarity_engine
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.search.earlybird.thriftscala.EarlybirdRequest
-import com.twitter.search.earlybird.thriftscala.EarlybirdService
-import com.twitter.search.earlybird.thriftscala.ThriftSearchQuery
-import com.twitter.util.Time
-import com.twitter.search.common.query.thriftjava.thriftscala.CollectorParams
-import com.twitter.search.common.ranking.thriftscala.ThriftRankingParams
-import com.twitter.search.common.ranking.thriftscala.ThriftScoringFunctionType
-import com.twitter.search.earlybird.thriftscala.ThriftSearchRelevanceOptions
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.search.earlybird.thriftscala.EarlybirdRequest
+import com.ExTwitter.search.earlybird.thriftscala.EarlybirdService
+import com.ExTwitter.search.earlybird.thriftscala.ThriftSearchQuery
+import com.ExTwitter.util.Time
+import com.ExTwitter.search.common.query.thriftjava.thriftscala.CollectorParams
+import com.ExTwitter.search.common.ranking.thriftscala.ThriftRankingParams
+import com.ExTwitter.search.common.ranking.thriftscala.ThriftScoringFunctionType
+import com.ExTwitter.search.earlybird.thriftscala.ThriftSearchRelevanceOptions
 import javax.inject.Inject
 import javax.inject.Singleton
 import EarlybirdSimilarityEngineBase._
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.similarity_engine.EarlybirdTensorflowBasedSimilarityEngine.EarlybirdTensorflowBasedSearchQuery
-import com.twitter.cr_mixer.util.EarlybirdSearchUtil.EarlybirdClientId
-import com.twitter.cr_mixer.util.EarlybirdSearchUtil.FacetsToFetch
-import com.twitter.cr_mixer.util.EarlybirdSearchUtil.GetCollectorTerminationParams
-import com.twitter.cr_mixer.util.EarlybirdSearchUtil.GetEarlybirdQuery
-import com.twitter.cr_mixer.util.EarlybirdSearchUtil.MetadataOptions
-import com.twitter.cr_mixer.util.EarlybirdSearchUtil.GetNamedDisjunctions
-import com.twitter.search.earlybird.thriftscala.ThriftSearchRankingMode
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.util.Duration
+import com.ExTwitter.cr_mixer.config.TimeoutConfig
+import com.ExTwitter.cr_mixer.similarity_engine.EarlybirdTensorflowBasedSimilarityEngine.EarlybirdTensorflowBasedSearchQuery
+import com.ExTwitter.cr_mixer.util.EarlybirdSearchUtil.EarlybirdClientId
+import com.ExTwitter.cr_mixer.util.EarlybirdSearchUtil.FacetsToFetch
+import com.ExTwitter.cr_mixer.util.EarlybirdSearchUtil.GetCollectorTerminationParams
+import com.ExTwitter.cr_mixer.util.EarlybirdSearchUtil.GetEarlybirdQuery
+import com.ExTwitter.cr_mixer.util.EarlybirdSearchUtil.MetadataOptions
+import com.ExTwitter.cr_mixer.util.EarlybirdSearchUtil.GetNamedDisjunctions
+import com.ExTwitter.search.earlybird.thriftscala.ThriftSearchRankingMode
+import com.ExTwitter.simclusters_v2.common.TweetId
+import com.ExTwitter.simclusters_v2.common.UserId
+import com.ExTwitter.util.Duration
 
 @Singleton
 case class EarlybirdTensorflowBasedSimilarityEngine @Inject() (

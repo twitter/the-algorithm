@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.component_library.candidate_source.earlybird
+package com.ExTwitter.product_mixer.component_library.candidate_source.earlybird
 
-import com.twitter.search.earlybird.{thriftscala => t}
-import com.twitter.inject.Logging
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
+import com.ExTwitter.search.earlybird.{thriftscala => t}
+import com.ExTwitter.inject.Logging
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidateSource
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.stitch.Stitch
 import javax.inject.Inject
 import javax.inject.Singleton
 

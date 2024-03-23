@@ -1,15 +1,15 @@
-package com.twitter.home_mixer.product.list_recommended_users.candidate_source
+package com.ExTwitter.home_mixer.product.list_recommended_users.candidate_source
 
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.search.adaptive.adaptive_results.thriftscala.AdaptiveSearchResultData
-import com.twitter.search.adaptive.adaptive_results.thriftscala.Result
-import com.twitter.search.adaptive.adaptive_results.thriftscala.ResultData
-import com.twitter.search.blender.adaptive_search.thriftscala.AdaptiveSearchResponse
-import com.twitter.search.blender.adaptive_search.thriftscala.Container
-import com.twitter.search.blender.thriftscala.BlenderService
-import com.twitter.search.blender.thriftscala.ThriftBlenderRequest
-import com.twitter.stitch.Stitch
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidateSource
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.search.adaptive.adaptive_results.thriftscala.AdaptiveSearchResultData
+import com.ExTwitter.search.adaptive.adaptive_results.thriftscala.Result
+import com.ExTwitter.search.adaptive.adaptive_results.thriftscala.ResultData
+import com.ExTwitter.search.blender.adaptive_search.thriftscala.AdaptiveSearchResponse
+import com.ExTwitter.search.blender.adaptive_search.thriftscala.Container
+import com.ExTwitter.search.blender.thriftscala.BlenderService
+import com.ExTwitter.search.blender.thriftscala.ThriftBlenderRequest
+import com.ExTwitter.stitch.Stitch
 import javax.inject.Inject
 import javax.inject.Singleton
 

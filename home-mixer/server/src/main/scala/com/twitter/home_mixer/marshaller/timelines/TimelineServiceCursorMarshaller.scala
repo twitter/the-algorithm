@@ -1,10 +1,10 @@
-package com.twitter.home_mixer.marshaller.timelines
+package com.ExTwitter.home_mixer.marshaller.timelines
 
-import com.twitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.BottomCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.GapCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.TopCursor
-import com.twitter.timelineservice.{thriftscala => t}
+import com.ExTwitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.operation.BottomCursor
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.operation.GapCursor
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.operation.TopCursor
+import com.ExTwitter.timelineservice.{thriftscala => t}
 
 object TimelineServiceCursorMarshaller {
 

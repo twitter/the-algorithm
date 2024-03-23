@@ -1,31 +1,31 @@
-package com.twitter.ann.service.loadtest
+package com.ExTwitter.ann.service.loadtest
 
-import com.twitter.ann.annoy.AnnoyCommon
-import com.twitter.ann.annoy.AnnoyRuntimeParams
-import com.twitter.ann.annoy.TypedAnnoyIndex
-import com.twitter.ann.common._
-import com.twitter.ann.common.thriftscala.{Distance => ServiceDistance}
-import com.twitter.ann.common.thriftscala.{RuntimeParams => ServiceRuntimeParams}
-import com.twitter.ann.faiss.FaissCommon
-import com.twitter.ann.faiss.FaissParams
-import com.twitter.ann.hnsw.HnswCommon
-import com.twitter.ann.hnsw.HnswParams
-import com.twitter.ann.hnsw.TypedHnswIndex
-import com.twitter.bijection.Injection
-import com.twitter.cortex.ml.embeddings.common.EntityKind
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.finatra.mtls.modules.ServiceIdentifierModule
-import com.twitter.inject.server.TwitterServer
-import com.twitter.util._
+import com.ExTwitter.ann.annoy.AnnoyCommon
+import com.ExTwitter.ann.annoy.AnnoyRuntimeParams
+import com.ExTwitter.ann.annoy.TypedAnnoyIndex
+import com.ExTwitter.ann.common._
+import com.ExTwitter.ann.common.thriftscala.{Distance => ServiceDistance}
+import com.ExTwitter.ann.common.thriftscala.{RuntimeParams => ServiceRuntimeParams}
+import com.ExTwitter.ann.faiss.FaissCommon
+import com.ExTwitter.ann.faiss.FaissParams
+import com.ExTwitter.ann.hnsw.HnswCommon
+import com.ExTwitter.ann.hnsw.HnswParams
+import com.ExTwitter.ann.hnsw.TypedHnswIndex
+import com.ExTwitter.bijection.Injection
+import com.ExTwitter.cortex.ml.embeddings.common.EntityKind
+import com.ExTwitter.finagle.mtls.authentication.ServiceIdentifier
+import com.ExTwitter.finagle.util.DefaultTimer
+import com.ExTwitter.finatra.mtls.modules.ServiceIdentifierModule
+import com.ExTwitter.inject.server.ExTwitterServer
+import com.ExTwitter.util._
 import java.util.concurrent.TimeUnit
 
 /**
  * To build and upload:
- *  $ ./bazel bundle ann/src/main/scala/com/twitter/ann/service/loadtest:bin --bundle-jvm-archive=zip
+ *  $ ./bazel bundle ann/src/main/scala/com/ExTwitter/ann/service/loadtest:bin --bundle-jvm-archive=zip
  *  $ packer add_version --cluster=smf1 $USER ann-loadtest dist/ann-loadtest.zip
  */
-object AnnLoadTestMain extends TwitterServer {
+object AnnLoadTestMain extends ExTwitterServer {
   private[this] val algo =
     flag[String]("algo", "load test server types: [annoy/hnsw]")
   private[this] val targetQPS =

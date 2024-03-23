@@ -1,12 +1,12 @@
-package com.twitter.ann.scalding.offline
+package com.ExTwitter.ann.scalding.offline
 
-import com.twitter.ann.brute_force.{BruteForceIndex, BruteForceRuntimeParams}
-import com.twitter.ann.common.{Distance, EntityEmbedding, Metric, ReadWriteFuturePool}
-import com.twitter.ann.hnsw.{HnswParams, TypedHnswIndex}
-import com.twitter.ann.util.IndexBuilderUtils
-import com.twitter.scalding.Args
-import com.twitter.util.logging.Logger
-import com.twitter.util.{Await, FuturePool}
+import com.ExTwitter.ann.brute_force.{BruteForceIndex, BruteForceRuntimeParams}
+import com.ExTwitter.ann.common.{Distance, EntityEmbedding, Metric, ReadWriteFuturePool}
+import com.ExTwitter.ann.hnsw.{HnswParams, TypedHnswIndex}
+import com.ExTwitter.ann.util.IndexBuilderUtils
+import com.ExTwitter.scalding.Args
+import com.ExTwitter.util.logging.Logger
+import com.ExTwitter.util.{Await, FuturePool}
 
 /**
  * IndexingStrategy is used for determining how we will build the index when doing a KNN in

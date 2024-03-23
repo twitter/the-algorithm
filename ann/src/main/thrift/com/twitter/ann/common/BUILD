@@ -5,7 +5,7 @@ create_thrift_libraries(
     tags = ["bazel-compatible"],
     dependency_roots = [
         "mediaservices/commons/src/main/thrift",
-        "src/thrift/com/twitter/ml/api:embedding",
+        "src/thrift/com/ExTwitter/ml/api:embedding",
     ],
     generate_languages = [
         "java",

@@ -1,22 +1,22 @@
-package com.twitter.cr_mixer.featureswitch
+package com.ExTwitter.cr_mixer.featureswitch
 
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.abdecider.UserRecipient
-import com.twitter.cr_mixer.{thriftscala => t}
-import com.twitter.core_workflows.user_model.thriftscala.UserState
-import com.twitter.discovery.common.configapi.FeatureContextBuilder
-import com.twitter.featureswitches.FSRecipient
-import com.twitter.featureswitches.UserAgent
-import com.twitter.featureswitches.{Recipient => FeatureSwitchRecipient}
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.thriftscala.ClientContext
-import com.twitter.timelines.configapi.Config
-import com.twitter.timelines.configapi.FeatureValue
-import com.twitter.timelines.configapi.ForcedFeatureContext
-import com.twitter.timelines.configapi.OrElseFeatureContext
-import com.twitter.timelines.configapi.Params
-import com.twitter.timelines.configapi.RequestContext
-import com.twitter.timelines.configapi.abdecider.LoggingABDeciderExperimentContext
+import com.ExTwitter.abdecider.LoggingABDecider
+import com.ExTwitter.abdecider.UserRecipient
+import com.ExTwitter.cr_mixer.{thriftscala => t}
+import com.ExTwitter.core_workflows.user_model.thriftscala.UserState
+import com.ExTwitter.discovery.common.configapi.FeatureContextBuilder
+import com.ExTwitter.featureswitches.FSRecipient
+import com.ExTwitter.featureswitches.UserAgent
+import com.ExTwitter.featureswitches.{Recipient => FeatureSwitchRecipient}
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.product_mixer.core.thriftscala.ClientContext
+import com.ExTwitter.timelines.configapi.Config
+import com.ExTwitter.timelines.configapi.FeatureValue
+import com.ExTwitter.timelines.configapi.ForcedFeatureContext
+import com.ExTwitter.timelines.configapi.OrElseFeatureContext
+import com.ExTwitter.timelines.configapi.Params
+import com.ExTwitter.timelines.configapi.RequestContext
+import com.ExTwitter.timelines.configapi.abdecider.LoggingABDeciderExperimentContext
 import javax.inject.Inject
 import javax.inject.Singleton
 

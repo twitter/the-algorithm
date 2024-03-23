@@ -1,15 +1,15 @@
-package com.twitter.graph_feature_service.server.handlers
+package com.ExTwitter.graph_feature_service.server.handlers
 
-import com.twitter.finatra.thrift.routing.ThriftWarmup
-import com.twitter.graph_feature_service.thriftscala.EdgeType.FavoritedBy
-import com.twitter.graph_feature_service.thriftscala.EdgeType.FollowedBy
-import com.twitter.graph_feature_service.thriftscala.EdgeType.Following
-import com.twitter.graph_feature_service.thriftscala.Server.GetIntersection
-import com.twitter.graph_feature_service.thriftscala.FeatureType
-import com.twitter.graph_feature_service.thriftscala.GfsIntersectionRequest
-import com.twitter.inject.utils.Handler
-import com.twitter.scrooge.Request
-import com.twitter.util.logging.Logger
+import com.ExTwitter.finatra.thrift.routing.ThriftWarmup
+import com.ExTwitter.graph_feature_service.thriftscala.EdgeType.FavoritedBy
+import com.ExTwitter.graph_feature_service.thriftscala.EdgeType.FollowedBy
+import com.ExTwitter.graph_feature_service.thriftscala.EdgeType.Following
+import com.ExTwitter.graph_feature_service.thriftscala.Server.GetIntersection
+import com.ExTwitter.graph_feature_service.thriftscala.FeatureType
+import com.ExTwitter.graph_feature_service.thriftscala.GfsIntersectionRequest
+import com.ExTwitter.inject.utils.Handler
+import com.ExTwitter.scrooge.Request
+import com.ExTwitter.util.logging.Logger
 import javax.inject.Inject
 import javax.inject.Singleton
 import scala.util.Random

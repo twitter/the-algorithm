@@ -1,25 +1,25 @@
-package com.twitter.home_mixer.module
+package com.ExTwitter.home_mixer.module
 
 import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.Memcached
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.HomeAuthorFeaturesCacheClient
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.RealTimeInteractionGraphUserVertexClient
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TimelinesRealTimeAggregateClient
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TwhinAuthorFollowFeatureCacheClient
-import com.twitter.inject.TwitterModule
-import com.twitter.product_mixer.shared_library.memcached_client.MemcachedClientBuilder
-import com.twitter.servo.cache.FinagleMemcacheFactory
-import com.twitter.servo.cache.Memcache
+import com.ExTwitter.conversions.DurationOps._
+import com.ExTwitter.finagle.Memcached
+import com.ExTwitter.finagle.mtls.authentication.ServiceIdentifier
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.home_mixer.param.HomeMixerInjectionNames.HomeAuthorFeaturesCacheClient
+import com.ExTwitter.home_mixer.param.HomeMixerInjectionNames.RealTimeInteractionGraphUserVertexClient
+import com.ExTwitter.home_mixer.param.HomeMixerInjectionNames.TimelinesRealTimeAggregateClient
+import com.ExTwitter.home_mixer.param.HomeMixerInjectionNames.TwhinAuthorFollowFeatureCacheClient
+import com.ExTwitter.inject.ExTwitterModule
+import com.ExTwitter.product_mixer.shared_library.memcached_client.MemcachedClientBuilder
+import com.ExTwitter.servo.cache.FinagleMemcacheFactory
+import com.ExTwitter.servo.cache.Memcache
 import javax.inject.Named
 import javax.inject.Singleton
 
-object MemcachedFeatureRepositoryModule extends TwitterModule {
+object MemcachedFeatureRepositoryModule extends ExTwitterModule {
 
   // This must match the respective parameter on the write path. Note that servo sets a different
-  // hasher by default. See [[com.twitter.hashing.KeyHasher]] for the list of other available
+  // hasher by default. See [[com.ExTwitter.hashing.KeyHasher]] for the list of other available
   // hashers.
   private val memcacheKeyHasher = "ketama"
 

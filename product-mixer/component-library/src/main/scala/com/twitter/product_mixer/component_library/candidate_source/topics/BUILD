@@ -4,8 +4,8 @@ scala_library(
     strict_deps = True,
     tags = ["bazel-compatible"],
     dependencies = [
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/candidate_source/strato",
+        "product-mixer/core/src/main/scala/com/ExTwitter/product_mixer/core/functional_component/candidate_source/strato",
         "strato/config/columns/interests:interests-strato-client",
-        "strato/src/main/scala/com/twitter/strato/client",
+        "strato/src/main/scala/com/ExTwitter/strato/client",
     ],
 )

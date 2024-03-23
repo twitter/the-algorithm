@@ -1,8 +1,8 @@
-namespace java com.twitter.follow_recommendations.thriftjava
-#@namespace scala com.twitter.follow_recommendations.thriftscala
-#@namespace strato com.twitter.follow_recommendations
+namespace java com.ExTwitter.follow_recommendations.thriftjava
+#@namespace scala com.ExTwitter.follow_recommendations.thriftscala
+#@namespace strato com.ExTwitter.follow_recommendations
 
-include "com/twitter/ml/api/data.thrift"
+include "com/ExTwitter/ml/api/data.thrift"
 
 struct CandidateSourceDetails {
   1: optional map<string, double> candidateSourceScores

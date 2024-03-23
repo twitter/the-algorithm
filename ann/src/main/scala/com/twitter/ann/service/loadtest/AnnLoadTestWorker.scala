@@ -1,18 +1,18 @@
-package com.twitter.ann.service.loadtest
+package com.ExTwitter.ann.service.loadtest
 
 import com.google.common.annotations.VisibleForTesting
-import com.twitter.ann.common.Distance
-import com.twitter.ann.common.Queryable
-import com.twitter.ann.common.RuntimeParams
-import com.twitter.concurrent.AsyncMeter
-import com.twitter.concurrent.AsyncStream
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.logging.Logger
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Stopwatch
-import com.twitter.util.Timer
-import com.twitter.util.Try
+import com.ExTwitter.ann.common.Distance
+import com.ExTwitter.ann.common.Queryable
+import com.ExTwitter.ann.common.RuntimeParams
+import com.ExTwitter.concurrent.AsyncMeter
+import com.ExTwitter.concurrent.AsyncStream
+import com.ExTwitter.finagle.util.DefaultTimer
+import com.ExTwitter.logging.Logger
+import com.ExTwitter.util.Duration
+import com.ExTwitter.util.Future
+import com.ExTwitter.util.Stopwatch
+import com.ExTwitter.util.Timer
+import com.ExTwitter.util.Try
 import java.util.concurrent.atomic.AtomicInteger
 
 object QueryTimeConfiguration {

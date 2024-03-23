@@ -1,23 +1,23 @@
-package com.twitter.ann.scalding.offline
+package com.ExTwitter.ann.scalding.offline
 
-import com.twitter.ann.common.Metric
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.ml.featurestore.lib.UserId
-import com.twitter.ml.featurestore.lib.embedding.EmbeddingWithEntity
-import com.twitter.cortex.ml.embeddings.common.EntityKind
-import com.twitter.entityembeddings.neighbors.thriftscala.{EntityKey, NearestNeighbors}
-import com.twitter.scalding.commons.source.VersionedKeyValSource
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding.{Args, DateOps, DateParser, DateRange, Execution, TypedTsv, UniqueID}
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.search.common.file.{AbstractFile, LocalFile}
+import com.ExTwitter.ann.common.Metric
+import com.ExTwitter.bijection.scrooge.BinaryScalaCodec
+import com.ExTwitter.ml.featurestore.lib.UserId
+import com.ExTwitter.ml.featurestore.lib.embedding.EmbeddingWithEntity
+import com.ExTwitter.cortex.ml.embeddings.common.EntityKind
+import com.ExTwitter.entityembeddings.neighbors.thriftscala.{EntityKey, NearestNeighbors}
+import com.ExTwitter.scalding.commons.source.VersionedKeyValSource
+import com.ExTwitter.scalding.typed.TypedPipe
+import com.ExTwitter.scalding.{Args, DateOps, DateParser, DateRange, Execution, TypedTsv, UniqueID}
+import com.ExTwitter.scalding_internal.job.ExTwitterExecutionApp
+import com.ExTwitter.search.common.file.{AbstractFile, LocalFile}
 import java.util.TimeZone
 
 /**
  * Generates the nearest neighbour for users and store them in Manhattan format i.e sequence files.
  * See README for oscar usage.
  */
-object KnnOfflineJob extends TwitterExecutionApp {
+object KnnOfflineJob extends ExTwitterExecutionApp {
   override def job: Execution[Unit] = Execution.withId { implicit uniqueId =>
     Execution.getArgs.flatMap { args: Args =>
       val knnDirectoryOpt: Option[String] = args.optional("knn_directory")

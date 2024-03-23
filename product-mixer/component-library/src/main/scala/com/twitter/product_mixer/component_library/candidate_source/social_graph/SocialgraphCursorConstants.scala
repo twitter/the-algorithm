@@ -1,4 +1,4 @@
-package com.twitter.product_mixer.component_library.candidate_source.social_graph
+package com.ExTwitter.product_mixer.component_library.candidate_source.social_graph
 
 object SocialgraphCursorConstants {
   val EndCursor: Long = 0L

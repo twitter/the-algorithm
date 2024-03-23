@@ -1,17 +1,17 @@
-package com.twitter.cr_mixer.module.core
+package com.ExTwitter.cr_mixer.module.core
 
-import com.twitter.inject.TwitterModule
+import com.ExTwitter.inject.ExTwitterModule
 import com.google.inject.Provides
 import javax.inject.Singleton
-import com.twitter.util.Duration
-import com.twitter.app.Flag
-import com.twitter.cr_mixer.config.TimeoutConfig
+import com.ExTwitter.util.Duration
+import com.ExTwitter.app.Flag
+import com.ExTwitter.cr_mixer.config.TimeoutConfig
 
 /**
  * All timeout settings in CrMixer.
  * Timeout numbers are defined in source/cr-mixer/server/config/deploy.aurora
  */
-object TimeoutConfigModule extends TwitterModule {
+object TimeoutConfigModule extends ExTwitterModule {
 
   /**
    * Flag names for client timeout

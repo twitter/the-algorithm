@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.common.utils
+package com.ExTwitter.follow_recommendations.common.utils
 
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.util.Duration
-import com.twitter.util.Time
+import com.ExTwitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.ExTwitter.snowflake.id.SnowflakeId
+import com.ExTwitter.util.Duration
+import com.ExTwitter.util.Time
 
 object UserSignupUtil {
   def signupTime(hasClientContext: HasClientContext): Option[Time] =

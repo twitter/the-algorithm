@@ -1,11 +1,11 @@
-package com.twitter.cr_mixer.source_signal
+package com.ExTwitter.cr_mixer.source_signal
 
-import com.twitter.cr_mixer.model.GraphSourceInfo
-import com.twitter.cr_mixer.source_signal.SourceFetcher.FetcherQuery
-import com.twitter.cr_mixer.thriftscala.SourceType
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.util.Future
+import com.ExTwitter.cr_mixer.model.GraphSourceInfo
+import com.ExTwitter.cr_mixer.source_signal.SourceFetcher.FetcherQuery
+import com.ExTwitter.cr_mixer.thriftscala.SourceType
+import com.ExTwitter.frigate.common.util.StatsUtil
+import com.ExTwitter.simclusters_v2.common.UserId
+import com.ExTwitter.util.Future
 
 /***
  * A SourceGraphFetcher is a trait that extends from `SourceFetcher`

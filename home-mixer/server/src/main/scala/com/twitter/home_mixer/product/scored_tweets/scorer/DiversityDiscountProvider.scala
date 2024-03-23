@@ -1,9 +1,9 @@
-package com.twitter.home_mixer.product.scored_tweets.scorer
+package com.ExTwitter.home_mixer.product.scored_tweets.scorer
 
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.ScoreFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
+import com.ExTwitter.home_mixer.model.HomeFeatures.AuthorIdFeature
+import com.ExTwitter.home_mixer.model.HomeFeatures.ScoreFeature
+import com.ExTwitter.product_mixer.component_library.model.candidate.TweetCandidate
+import com.ExTwitter.product_mixer.core.model.common.CandidateWithFeatures
 
 trait DiversityDiscountProvider {
 

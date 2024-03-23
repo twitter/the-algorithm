@@ -1,4 +1,4 @@
-package com.twitter.follow_recommendations.common.utils
+package com.ExTwitter.follow_recommendations.common.utils
 
 /**
  * Typeclass for any Recommendation type that has a weight

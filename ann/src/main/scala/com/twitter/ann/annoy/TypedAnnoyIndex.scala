@@ -1,9 +1,9 @@
-package com.twitter.ann.annoy
+package com.ExTwitter.ann.annoy
 
-import com.twitter.ann.common._
-import com.twitter.bijection.Injection
-import com.twitter.search.common.file.AbstractFile
-import com.twitter.util.FuturePool
+import com.ExTwitter.ann.common._
+import com.ExTwitter.bijection.Injection
+import com.ExTwitter.search.common.file.AbstractFile
+import com.ExTwitter.util.FuturePool
 
 // Class to provide Annoy based ann index.
 object TypedAnnoyIndex {

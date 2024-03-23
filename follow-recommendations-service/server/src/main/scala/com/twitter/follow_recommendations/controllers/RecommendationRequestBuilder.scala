@@ -1,14 +1,14 @@
-package com.twitter.follow_recommendations.controllers
+package com.ExTwitter.follow_recommendations.controllers
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.models.ClientContextConverter
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.follow_recommendations.models.DebugParams
-import com.twitter.follow_recommendations.models.DisplayContext
-import com.twitter.follow_recommendations.models.RecommendationRequest
-import com.twitter.follow_recommendations.{thriftscala => t}
-import com.twitter.gizmoduck.thriftscala.UserType
-import com.twitter.stitch.Stitch
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.follow_recommendations.common.models.ClientContextConverter
+import com.ExTwitter.follow_recommendations.common.models.DisplayLocation
+import com.ExTwitter.follow_recommendations.models.DebugParams
+import com.ExTwitter.follow_recommendations.models.DisplayContext
+import com.ExTwitter.follow_recommendations.models.RecommendationRequest
+import com.ExTwitter.follow_recommendations.{thriftscala => t}
+import com.ExTwitter.gizmoduck.thriftscala.UserType
+import com.ExTwitter.stitch.Stitch
 import javax.inject.Inject
 import javax.inject.Singleton
 

@@ -1,8 +1,8 @@
-package com.twitter.cr_mixer.param
+package com.ExTwitter.cr_mixer.param
 
-import com.twitter.timelines.configapi.CompositeConfig
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.Param
+import com.ExTwitter.timelines.configapi.CompositeConfig
+import com.ExTwitter.timelines.configapi.FSName
+import com.ExTwitter.timelines.configapi.Param
 
 object CrMixerParamConfig {
 

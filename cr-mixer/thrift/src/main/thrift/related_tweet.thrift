@@ -1,10 +1,10 @@
-namespace java com.twitter.cr_mixer.thriftjava
-#@namespace scala com.twitter.cr_mixer.thriftscala
-#@namespace strato com.twitter.cr_mixer
+namespace java com.ExTwitter.cr_mixer.thriftjava
+#@namespace scala com.ExTwitter.cr_mixer.thriftscala
+#@namespace strato com.ExTwitter.cr_mixer
 
 include "product.thrift"
-include "com/twitter/product_mixer/core/client_context.thrift"
-include "com/twitter/simclusters_v2/identifier.thrift"
+include "com/ExTwitter/product_mixer/core/client_context.thrift"
+include "com/ExTwitter/simclusters_v2/identifier.thrift"
 
 struct RelatedTweetRequest {
   1: required identifier.InternalId internalId

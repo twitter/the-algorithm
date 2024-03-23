@@ -1,17 +1,17 @@
-package com.twitter.ann.scalding.offline
-import com.twitter.ann.common.Distance
-import com.twitter.ann.common.Metric
-import com.twitter.cortex.ml.embeddings.common.EntityKind
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding._
-import com.twitter.scalding_internal.job.TwitterExecutionApp
+package com.ExTwitter.ann.scalding.offline
+import com.ExTwitter.ann.common.Distance
+import com.ExTwitter.ann.common.Metric
+import com.ExTwitter.cortex.ml.embeddings.common.EntityKind
+import com.ExTwitter.ml.featurestore.lib.EntityId
+import com.ExTwitter.scalding.typed.TypedPipe
+import com.ExTwitter.scalding._
+import com.ExTwitter.scalding_internal.job.ExTwitterExecutionApp
 
 /**
  * This job do an exhaustive search for nearest neighbours helpful for debugging recommendations
  * for a given list of sample queryIds and entity embeddings for the recos to be made.
  * Sample job script:
-  ./bazel bundle ann/src/main/scala/com/twitter/ann/scalding/offline:ann-offline-deploy
+  ./bazel bundle ann/src/main/scala/com/ExTwitter/ann/scalding/offline:ann-offline-deploy
 
   oscar hdfs \
   --screen --tee log.txt \
@@ -19,8 +19,8 @@ import com.twitter.scalding_internal.job.TwitterExecutionApp
   --hadoop-properties "yarn.app.mapreduce.am.resource.mb=6000;yarn.app.mapreduce.am.command-opts='-Xmx7500m';mapreduce.map.memory.mb=7500;mapreduce.reduce.java.opts='-Xmx6000m';mapreduce.reduce.memory.mb=7500;mapred.task.timeout=36000000;" \
   --bundle ann-offline-deploy \
   --min-split-size 284217728 \
-  --host hadoopnest1.smf1.twitter.com \
-  --tool com.twitter.ann.scalding.offline.KnnEntityRecoDebugJob -- \
+  --host hadoopnest1.smf1.ExTwitter.com \
+  --tool com.ExTwitter.ann.scalding.offline.KnnEntityRecoDebugJob -- \
   --neighbors 10 \
   --metric InnerProduct \
   --query_entity_kind user \
@@ -33,7 +33,7 @@ import com.twitter.scalding_internal.job.TwitterExecutionApp
   --output_path /user/apoorvs/adhochadoop/test \
   --reducers 100
  */
-object KnnEntityRecoDebugJob extends TwitterExecutionApp {
+object KnnEntityRecoDebugJob extends ExTwitterExecutionApp {
   override def job: Execution[Unit] = Execution.withId { implicit uniqueId =>
     Execution.getArgs.flatMap { args: Args =>
       val queryEntityKind = EntityKind.getEntityKind(args("query_entity_kind"))

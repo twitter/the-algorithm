@@ -1,31 +1,31 @@
-package com.twitter.follow_recommendations.products.home_timeline
+package com.ExTwitter.follow_recommendations.products.home_timeline
 
-import com.twitter.follow_recommendations.assembler.models.ActionConfig
-import com.twitter.follow_recommendations.assembler.models.FollowedByUsersProof
-import com.twitter.follow_recommendations.assembler.models.FooterConfig
-import com.twitter.follow_recommendations.assembler.models.GeoContextProof
-import com.twitter.follow_recommendations.assembler.models.HeaderConfig
-import com.twitter.follow_recommendations.assembler.models.Layout
-import com.twitter.follow_recommendations.assembler.models.TitleConfig
-import com.twitter.follow_recommendations.assembler.models.UserListLayout
-import com.twitter.follow_recommendations.assembler.models.UserListOptions
-import com.twitter.follow_recommendations.common.base.BaseRecommendationFlow
-import com.twitter.follow_recommendations.common.base.IdentityTransform
-import com.twitter.follow_recommendations.common.base.Transform
-import com.twitter.follow_recommendations.flows.ads.PromotedAccountsFlow
-import com.twitter.follow_recommendations.flows.ads.PromotedAccountsFlowRequest
-import com.twitter.follow_recommendations.blenders.PromotedAccountsBlender
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.follow_recommendations.common.models.Recommendation
-import com.twitter.follow_recommendations.flows.post_nux_ml.PostNuxMlFlow
-import com.twitter.follow_recommendations.flows.post_nux_ml.PostNuxMlRequestBuilder
-import com.twitter.follow_recommendations.products.common.Product
-import com.twitter.follow_recommendations.products.common.ProductRequest
-import com.twitter.follow_recommendations.products.home_timeline.configapi.HomeTimelineParams._
-import com.twitter.inject.Injector
-import com.twitter.product_mixer.core.model.marshalling.request
-import com.twitter.product_mixer.core.product.guice.ProductScope
-import com.twitter.stitch.Stitch
+import com.ExTwitter.follow_recommendations.assembler.models.ActionConfig
+import com.ExTwitter.follow_recommendations.assembler.models.FollowedByUsersProof
+import com.ExTwitter.follow_recommendations.assembler.models.FooterConfig
+import com.ExTwitter.follow_recommendations.assembler.models.GeoContextProof
+import com.ExTwitter.follow_recommendations.assembler.models.HeaderConfig
+import com.ExTwitter.follow_recommendations.assembler.models.Layout
+import com.ExTwitter.follow_recommendations.assembler.models.TitleConfig
+import com.ExTwitter.follow_recommendations.assembler.models.UserListLayout
+import com.ExTwitter.follow_recommendations.assembler.models.UserListOptions
+import com.ExTwitter.follow_recommendations.common.base.BaseRecommendationFlow
+import com.ExTwitter.follow_recommendations.common.base.IdentityTransform
+import com.ExTwitter.follow_recommendations.common.base.Transform
+import com.ExTwitter.follow_recommendations.flows.ads.PromotedAccountsFlow
+import com.ExTwitter.follow_recommendations.flows.ads.PromotedAccountsFlowRequest
+import com.ExTwitter.follow_recommendations.blenders.PromotedAccountsBlender
+import com.ExTwitter.follow_recommendations.common.models.DisplayLocation
+import com.ExTwitter.follow_recommendations.common.models.Recommendation
+import com.ExTwitter.follow_recommendations.flows.post_nux_ml.PostNuxMlFlow
+import com.ExTwitter.follow_recommendations.flows.post_nux_ml.PostNuxMlRequestBuilder
+import com.ExTwitter.follow_recommendations.products.common.Product
+import com.ExTwitter.follow_recommendations.products.common.ProductRequest
+import com.ExTwitter.follow_recommendations.products.home_timeline.configapi.HomeTimelineParams._
+import com.ExTwitter.inject.Injector
+import com.ExTwitter.product_mixer.core.model.marshalling.request
+import com.ExTwitter.product_mixer.core.product.guice.ProductScope
+import com.ExTwitter.stitch.Stitch
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -87,7 +87,7 @@ class HomeTimelineProduct @Inject() (
           )),
         footer = Some(
           FooterConfig(
-            Some(ActionConfig(homeTimelineStrings.whoToFollowModuleFooter, "http://twitter.com"))))
+            Some(ActionConfig(homeTimelineStrings.whoToFollowModuleFooter, "http://ExTwitter.com"))))
       )
     }
   }

@@ -3,7 +3,7 @@ create_thrift_libraries(
     sources = ["*.thrift"],
     platform = "java8",
     tags = ["bazel-compatible"],
-    dependency_roots = ["src/thrift/com/twitter/ml/featurestore:ml-feature-store"],
+    dependency_roots = ["src/thrift/com/ExTwitter/ml/featurestore:ml-feature-store"],
     generate_languages = [
         "java",
         "scala",

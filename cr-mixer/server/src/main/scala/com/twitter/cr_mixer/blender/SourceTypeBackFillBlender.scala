@@ -1,15 +1,15 @@
-package com.twitter.cr_mixer.blender
+package com.ExTwitter.cr_mixer.blender
 
-import com.twitter.cr_mixer.blender.ImplicitSignalBackFillBlender.BackFillSourceTypes
-import com.twitter.cr_mixer.blender.ImplicitSignalBackFillBlender.BackFillSourceTypesWithVideo
-import com.twitter.cr_mixer.model.BlendedCandidate
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.param.BlenderParams
-import com.twitter.cr_mixer.thriftscala.SourceType
-import com.twitter.cr_mixer.util.InterleaveUtil
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.timelines.configapi.Params
-import com.twitter.util.Future
+import com.ExTwitter.cr_mixer.blender.ImplicitSignalBackFillBlender.BackFillSourceTypes
+import com.ExTwitter.cr_mixer.blender.ImplicitSignalBackFillBlender.BackFillSourceTypesWithVideo
+import com.ExTwitter.cr_mixer.model.BlendedCandidate
+import com.ExTwitter.cr_mixer.model.InitialCandidate
+import com.ExTwitter.cr_mixer.param.BlenderParams
+import com.ExTwitter.cr_mixer.thriftscala.SourceType
+import com.ExTwitter.cr_mixer.util.InterleaveUtil
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.timelines.configapi.Params
+import com.ExTwitter.util.Future
 import javax.inject.Inject
 
 case class SourceTypeBackFillBlender @Inject() (globalStats: StatsReceiver) {

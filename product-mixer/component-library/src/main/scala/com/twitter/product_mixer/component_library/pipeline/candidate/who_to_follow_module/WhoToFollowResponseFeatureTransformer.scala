@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module
+package com.ExTwitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module
 
-import com.twitter.adserver.{thriftscala => ad}
-import com.twitter.hermit.{thriftscala => h}
-import com.twitter.peoplediscovery.api.{thriftscala => t}
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
+import com.ExTwitter.adserver.{thriftscala => ad}
+import com.ExTwitter.hermit.{thriftscala => h}
+import com.ExTwitter.peoplediscovery.api.{thriftscala => t}
+import com.ExTwitter.product_mixer.component_library.model.candidate.UserCandidate
+import com.ExTwitter.product_mixer.core.feature.Feature
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
+import com.ExTwitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
+import com.ExTwitter.product_mixer.core.model.common.identifier.TransformerIdentifier
 
 object AdImpressionFeature extends Feature[UserCandidate, Option[ad.AdImpression]]
 object HermitContextTypeFeature extends Feature[UserCandidate, Option[h.ContextType]]

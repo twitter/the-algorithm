@@ -1,18 +1,18 @@
-package com.twitter.home_mixer.functional_component.gate
+package com.ExTwitter.home_mixer.functional_component.gate
 
-import com.twitter.common_internal.analytics.twitter_client_user_agent_parser.UserAgent
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelinemixer.clients.persistence.TimelineResponseV3
-import com.twitter.timelinemixer.injection.store.persistence.TimelinePersistenceUtils
-import com.twitter.timelines.configapi.Param
-import com.twitter.timelines.util.client_info.ClientPlatform
-import com.twitter.timelineservice.model.rich.EntityIdType
-import com.twitter.util.Duration
-import com.twitter.util.Time
+import com.ExTwitter.common_internal.analytics.ExTwitter_client_user_agent_parser.UserAgent
+import com.ExTwitter.product_mixer.core.feature.Feature
+import com.ExTwitter.product_mixer.core.functional_component.gate.Gate
+import com.ExTwitter.product_mixer.core.model.common.identifier.GateIdentifier
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.timelinemixer.clients.persistence.TimelineResponseV3
+import com.ExTwitter.timelinemixer.injection.store.persistence.TimelinePersistenceUtils
+import com.ExTwitter.timelines.configapi.Param
+import com.ExTwitter.timelines.util.client_info.ClientPlatform
+import com.ExTwitter.timelineservice.model.rich.EntityIdType
+import com.ExTwitter.util.Duration
+import com.ExTwitter.util.Time
 
 /**
  * Gate used to reduce the frequency of injections. Note that the actual interval between injections may be

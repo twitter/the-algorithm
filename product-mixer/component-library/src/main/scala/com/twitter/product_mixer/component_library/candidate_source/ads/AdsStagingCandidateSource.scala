@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.component_library.candidate_source.ads
+package com.ExTwitter.product_mixer.component_library.candidate_source.ads
 
-import com.twitter.adserver.thriftscala.AdImpression
-import com.twitter.adserver.thriftscala.AdRequestParams
-import com.twitter.adserver.thriftscala.AdRequestResponse
-import com.twitter.product_mixer.core.functional_component.candidate_source.strato.StratoKeyFetcherSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.generated.client.ads.admixer.MakeAdRequestStagingClientColumn
+import com.ExTwitter.adserver.thriftscala.AdImpression
+import com.ExTwitter.adserver.thriftscala.AdRequestParams
+import com.ExTwitter.adserver.thriftscala.AdRequestResponse
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.strato.StratoKeyFetcherSource
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.strato.client.Fetcher
+import com.ExTwitter.strato.generated.client.ads.admixer.MakeAdRequestStagingClientColumn
 import javax.inject.Inject
 import javax.inject.Singleton
 

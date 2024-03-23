@@ -1,10 +1,10 @@
-package com.twitter.follow_recommendations.models
+package com.ExTwitter.follow_recommendations.models
 
-import com.twitter.follow_recommendations.common.models.DebugOptions
-import com.twitter.follow_recommendations.common.models.DebugOptions.fromDebugParamsThrift
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
-import com.twitter.follow_recommendations.{thriftscala => t}
-import com.twitter.timelines.configapi.{FeatureValue => ConfigApiFeatureValue}
+import com.ExTwitter.follow_recommendations.common.models.DebugOptions
+import com.ExTwitter.follow_recommendations.common.models.DebugOptions.fromDebugParamsThrift
+import com.ExTwitter.follow_recommendations.logging.{thriftscala => offline}
+import com.ExTwitter.follow_recommendations.{thriftscala => t}
+import com.ExTwitter.timelines.configapi.{FeatureValue => ConfigApiFeatureValue}
 
 case class DebugParams(
   featureOverrides: Option[Map[String, ConfigApiFeatureValue]],

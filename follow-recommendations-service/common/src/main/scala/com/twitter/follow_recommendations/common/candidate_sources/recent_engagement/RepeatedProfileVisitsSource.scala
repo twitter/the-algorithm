@@ -1,22 +1,22 @@
-package com.twitter.follow_recommendations.common.candidate_sources.recent_engagement
+package com.ExTwitter.follow_recommendations.common.candidate_sources.recent_engagement
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
-import com.twitter.dds.jobs.repeated_profile_visits.thriftscala.ProfileVisitorInfo
-import com.twitter.experiments.general_metrics.thriftscala.IdType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.clients.real_time_real_graph.Engagement
-import com.twitter.follow_recommendations.common.clients.real_time_real_graph.RealTimeRealGraphClient
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.timelines.configapi.Params
-import com.twitter.hermit.model.Algorithm
-import com.twitter.inject.Logging
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.rux.RepeatedProfileVisitsAggregateClientColumn
+import com.ExTwitter.dds.jobs.repeated_profile_visits.thriftscala.ProfileVisitorInfo
+import com.ExTwitter.experiments.general_metrics.thriftscala.IdType
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.follow_recommendations.common.clients.real_time_real_graph.Engagement
+import com.ExTwitter.follow_recommendations.common.clients.real_time_real_graph.RealTimeRealGraphClient
+import com.ExTwitter.follow_recommendations.common.models.CandidateUser
+import com.ExTwitter.timelines.configapi.HasParams
+import com.ExTwitter.timelines.configapi.Params
+import com.ExTwitter.hermit.model.Algorithm
+import com.ExTwitter.inject.Logging
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidateSource
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.ExTwitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.strato.generated.client.rux.RepeatedProfileVisitsAggregateClientColumn
 
 @Singleton
 class RepeatedProfileVisitsSource @Inject() (

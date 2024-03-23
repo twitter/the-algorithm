@@ -1,18 +1,18 @@
-package com.twitter.ann.scalding.offline
+package com.ExTwitter.ann.scalding.offline
 
-import com.twitter.ann.common._
-import com.twitter.ann.hnsw.{HnswParams, TypedHnswIndex}
-import com.twitter.bijection.Injection
-import com.twitter.cortex.ml.embeddings.common.{EntityKind, Helpers, UserKind}
-import com.twitter.entityembeddings.neighbors.thriftscala.{EntityKey, NearestNeighbors, Neighbor}
-import com.twitter.ml.api.embedding.Embedding
-import com.twitter.ml.api.embedding.EmbeddingMath.{Float => math}
-import com.twitter.ml.featurestore.lib.embedding.EmbeddingWithEntity
-import com.twitter.ml.featurestore.lib.{EntityId, UserId}
-import com.twitter.scalding.typed.{TypedPipe, UnsortedGrouped}
-import com.twitter.scalding.{Args, DateRange, Stat, TextLine, UniqueID}
-import com.twitter.search.common.file.AbstractFile
-import com.twitter.util.{Await, FuturePool}
+import com.ExTwitter.ann.common._
+import com.ExTwitter.ann.hnsw.{HnswParams, TypedHnswIndex}
+import com.ExTwitter.bijection.Injection
+import com.ExTwitter.cortex.ml.embeddings.common.{EntityKind, Helpers, UserKind}
+import com.ExTwitter.entityembeddings.neighbors.thriftscala.{EntityKey, NearestNeighbors, Neighbor}
+import com.ExTwitter.ml.api.embedding.Embedding
+import com.ExTwitter.ml.api.embedding.EmbeddingMath.{Float => math}
+import com.ExTwitter.ml.featurestore.lib.embedding.EmbeddingWithEntity
+import com.ExTwitter.ml.featurestore.lib.{EntityId, UserId}
+import com.ExTwitter.scalding.typed.{TypedPipe, UnsortedGrouped}
+import com.ExTwitter.scalding.{Args, DateRange, Stat, TextLine, UniqueID}
+import com.ExTwitter.search.common.file.AbstractFile
+import com.ExTwitter.util.{Await, FuturePool}
 import scala.util.Random
 
 case class Index[T, D <: Distance[D]](

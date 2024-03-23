@@ -1,10 +1,10 @@
-package com.twitter.follow_recommendations.common.candidate_sources.base
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.timelines.configapi.Param
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+package com.ExTwitter.follow_recommendations.common.candidate_sources.base
+import com.ExTwitter.product_mixer.core.functional_component.candidate_source.CandidateSource
+import com.ExTwitter.stitch.Stitch
+import com.ExTwitter.timelines.configapi.HasParams
+import com.ExTwitter.timelines.configapi.Param
+import com.ExTwitter.finagle.stats.StatsReceiver
+import com.ExTwitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
 
 /**
  * A wrapper of CandidateSource to make it easier to do experimentation

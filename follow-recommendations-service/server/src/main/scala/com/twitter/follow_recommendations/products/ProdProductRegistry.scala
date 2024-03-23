@@ -1,11 +1,11 @@
-package com.twitter.follow_recommendations.products
+package com.ExTwitter.follow_recommendations.products
 
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.follow_recommendations.products.common.ProductRegistry
-import com.twitter.follow_recommendations.products.explore_tab.ExploreTabProduct
-import com.twitter.follow_recommendations.products.home_timeline.HomeTimelineProduct
-import com.twitter.follow_recommendations.products.home_timeline_tweet_recs.HomeTimelineTweetRecsProduct
-import com.twitter.follow_recommendations.products.sidebar.SidebarProduct
+import com.ExTwitter.follow_recommendations.common.models.DisplayLocation
+import com.ExTwitter.follow_recommendations.products.common.ProductRegistry
+import com.ExTwitter.follow_recommendations.products.explore_tab.ExploreTabProduct
+import com.ExTwitter.follow_recommendations.products.home_timeline.HomeTimelineProduct
+import com.ExTwitter.follow_recommendations.products.home_timeline_tweet_recs.HomeTimelineTweetRecsProduct
+import com.ExTwitter.follow_recommendations.products.sidebar.SidebarProduct
 
 import javax.inject.Inject
 import javax.inject.Singleton

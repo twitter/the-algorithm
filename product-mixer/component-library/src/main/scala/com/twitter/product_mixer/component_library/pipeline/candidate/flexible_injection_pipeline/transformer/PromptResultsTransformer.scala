@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer
+package com.ExTwitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer
 
-import com.twitter.onboarding.injections.{thriftscala => flipinjection}
-import com.twitter.product_mixer.component_library.candidate_source.flexible_injection_pipeline.IntermediatePrompt
-import com.twitter.product_mixer.component_library.model.candidate.BasePromptCandidate
-import com.twitter.product_mixer.component_library.model.candidate.FullCoverPromptCandidate
-import com.twitter.product_mixer.component_library.model.candidate.HalfCoverPromptCandidate
-import com.twitter.product_mixer.component_library.model.candidate.InlinePromptCandidate
-import com.twitter.product_mixer.component_library.model.candidate.PromptCarouselTileCandidate
-import com.twitter.product_mixer.component_library.model.candidate.RelevancePromptCandidate
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
+import com.ExTwitter.onboarding.injections.{thriftscala => flipinjection}
+import com.ExTwitter.product_mixer.component_library.candidate_source.flexible_injection_pipeline.IntermediatePrompt
+import com.ExTwitter.product_mixer.component_library.model.candidate.BasePromptCandidate
+import com.ExTwitter.product_mixer.component_library.model.candidate.FullCoverPromptCandidate
+import com.ExTwitter.product_mixer.component_library.model.candidate.HalfCoverPromptCandidate
+import com.ExTwitter.product_mixer.component_library.model.candidate.InlinePromptCandidate
+import com.ExTwitter.product_mixer.component_library.model.candidate.PromptCarouselTileCandidate
+import com.ExTwitter.product_mixer.component_library.model.candidate.RelevancePromptCandidate
+import com.ExTwitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
+import com.ExTwitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
 
 object PromptResultsTransformer
     extends CandidatePipelineResultsTransformer[
@@ -19,7 +19,7 @@ object PromptResultsTransformer
 
   /**
    * Transforms a Flip Injection to a Product Mixer domain object deriving from BasePromptCandidate.
-   * Supported injection types have to match those declared in com.twitter.product_mixer.component_library.transformer.flexible_injection_pipeline.FlipQueryTransformer#supportedPromptFormats
+   * Supported injection types have to match those declared in com.ExTwitter.product_mixer.component_library.transformer.flexible_injection_pipeline.FlipQueryTransformer#supportedPromptFormats
    */
   override def transform(input: IntermediatePrompt): BasePromptCandidate[Any] =
     input.injection match {

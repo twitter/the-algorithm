@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.social_context
+package com.ExTwitter.product_mixer.component_library.decorator.urt.builder.social_context
 
-import com.twitter.hermit.{thriftscala => h}
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseSocialContextBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FollowGeneralContextType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.GeneralContext
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.GeneralContextType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.LocationGeneralContextType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.NewUserGeneralContextType
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.ExTwitter.hermit.{thriftscala => h}
+import com.ExTwitter.product_mixer.component_library.model.candidate.UserCandidate
+import com.ExTwitter.product_mixer.core.feature.Feature
+import com.ExTwitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.ExTwitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseSocialContextBuilder
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.FollowGeneralContextType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.GeneralContext
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.GeneralContextType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.LocationGeneralContextType
+import com.ExTwitter.product_mixer.core.model.marshalling.response.urt.metadata.NewUserGeneralContextType
+import com.ExTwitter.product_mixer.core.pipeline.PipelineQuery
 
 case class WhoToFollowSocialContextBuilder(
   socialTextFeature: Feature[_, Option[String]],
